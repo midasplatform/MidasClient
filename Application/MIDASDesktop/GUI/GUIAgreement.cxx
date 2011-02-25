@@ -4,6 +4,12 @@
 #include "midasSynchronizer.h"
 #include "midasAuthenticator.h"
 
+#if defined(_WIN32)
+# include <windows.h>
+#else
+# include <unistd.h>
+#endif
+
 GUIAgreement::GUIAgreement(MIDASDesktopUI* parent)
 : m_Parent(parent)
 {
@@ -20,7 +26,7 @@ GUIAgreement::~GUIAgreement()
 bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
 {
   //first make sure user isn't anonymous
-  if(m_Parent->getAuthenticator()->IsAnonymous())
+  if(m_Parent->getSynchronizer()->GetAuthenticator()->IsAnonymous())
     {
     std::stringstream text;
     text << "Error: Anonymous users cannot pull this resource "
@@ -50,10 +56,16 @@ bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
     m_Done = false;
     m_Canceled = false;
     emit displayDialog();
-    while(!m_Done && !m_Canceled)
+
+    while(!m_Canceled && !m_Done)
       {
-      //busy wait until we get an accept or reject
+      #if defined(_WIN32)
+        Sleep(25);
+      #else
+        usleep(25000);
+      #endif
       }
+
     if(m_Canceled)
       {
       return false;
@@ -74,6 +86,7 @@ void GUIAgreement::cancel()
 bool GUIAgreement::checkUserHasAgreed(midasSynchronizer* synch)
 {
   emit checkingAgreement();
+
   std::stringstream url;
   url << "midas.check.user.agreement?id=" << synch->GetServerHandle()
     << "&type=" << synch->GetResourceType();
@@ -82,7 +95,8 @@ bool GUIAgreement::checkUserHasAgreed(midasSynchronizer* synch)
   parser.AddTag("/rsp/hasAgreed", hasAgreed);
   mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
 
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!mws::WebAPI::Instance()->Execute(url.str().c_str(),
+     m_Parent->getSynchronizer()->GetAuthenticator()))
     {
     std::stringstream error;
     error << "Failed when querying server for user agreement validation: "

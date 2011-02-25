@@ -198,7 +198,6 @@ endif(WIN32)
 
 if(UNIX)
   find_package(X11)
-  
   find_library(XFT_LIBRARY Xft)
   find_library(GLIB_LIBRARY glib-2.0)
   find_library(GTHREAD_LIBRARY gthread-2.0)
@@ -259,18 +258,52 @@ target_link_libraries(MIDASDesktopLib
   ${QT_QTMAIN_LIBRARY}
 )
 
-target_link_libraries(MIDASDesktop
-  MIDASDesktopLib
-)
+if ( APPLE ) 
+    # Link with frameworks required for static Qt
+    find_library ( CARBON_LIBRARY Carbon )
+    find_library ( APLICATIONSERVICES_LIBRARY ApplicationServices )
+    find_library ( APPKIT_LIBRARY AppKit )
+    target_link_libraries(MIDASDesktop
+      MIDASDesktopLib
+      ${APPKIT_LIBRARY}
+      ${CARBON_LIBRARY}
+      ${APPLICATIONSERVICES_LIBRARY}
+    )
+    set(QT_QTGUI_MENU_NIB
+        "/Library/Frameworks/QtGui.framework/Versions/Current/Resources/qt_menu.nib"
+        CACHE PATH "Location of the qt_menu.nib resource to be packaged for install")
+    install(DIRECTORY ${QT_QTGUI_MENU_NIB} DESTINATION bin COMPONENT Runtime)
+else ( APPLE )
+  target_link_libraries(MIDASDesktop MIDASDesktopLib)
+endif( APPLE )
 
-install(TARGETS MIDASDesktop DESTINATION bin)
+install(TARGETS MIDASDesktop DESTINATION bin COMPONENT Runtime)
 
 # -----Install Qt Shared libraries-------------
 if (DEFINED QT_QMAKE_EXECUTABLE)
-    set (QTLIBLIST QtCore QtGui)
-
+    set (QTLIBLIST QTCORE QTGUI)
+    if(UNIX OR APPLE)
+      list(APPEND QTLIBLIST QTDBUS)
+    endif()
+    set (QT_INSTALL_LIB_DIR bin)
     foreach(qtlib ${QTLIBLIST})
-      if(WIN32)
+      if(APPLE)
+        # We statically link on our mac installer currently.
+        #INSTALL(DIRECTORY "${QT_${qtlib}_LIBRARY_RELEASE}" 
+          #DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime)
+      elseif(UNIX)
+        # Install .so and versioned .so.x.y
+        get_filename_component(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
+        get_filename_component(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
+        file(GLOB libFiles_tmp "${QT_LIB_DIR_tmp}/${QT_LIB_NAME_tmp}*")
+        foreach(libFile ${libFiles_tmp})
+          if(NOT libFile MATCHES "\\.debug")
+            install(FILES ${libFile}
+              COMPONENT Runtime
+              DESTINATION ${QT_INSTALL_LIB_DIR})
+          endif()
+        endforeach()
+      elseif(WIN32)
         get_filename_component(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
 
         install(FILES ${QT_DLL_PATH_tmp}/${qtlib}${type}d4.dll
@@ -281,6 +314,6 @@ if (DEFINED QT_QMAKE_EXECUTABLE)
           DESTINATION bin
           CONFIGURATIONS Release
           COMPONENT Applications)
-      endif(WIN32)
+      endif()
     endforeach(qtlib)
 endif(DEFINED QT_QMAKE_EXECUTABLE)

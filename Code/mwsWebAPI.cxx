@@ -10,6 +10,7 @@
 =========================================================================*/
 #include "mwsWebAPI.h"
 #include "mwsRestXMLParser.h"
+#include "midasAuthenticator.h"
 #include <iostream>
 
 namespace mws {
@@ -67,7 +68,7 @@ void WebAPI::SetPostData(const char* postData)
 }
 
 /** Execute the command */
-bool WebAPI::Execute(const char* url)
+bool WebAPI::Execute(const char* url, midasAuthenticator* auth)
 {
   m_RestAPI->SetProgressCallback(NULL, NULL);
   std::stringstream fullUrl;
@@ -79,6 +80,21 @@ bool WebAPI::Execute(const char* url)
     fullUrl << "&token=" << m_APIToken;
     }
   bool success = m_RestAPI->Execute(fullUrl.str().c_str(), m_PostData);
+
+  if((!success || m_RestAPI->GetXMLParser()->GetErrorCode() != 0) && !m_APIToken.empty() && auth && !m_RestAPI->ShouldCancel())
+    {
+    mws::RestXMLParser parser = *m_RestAPI->GetXMLParser(); //copy the parser or expat will crash...
+    auth->GetLog()->Message("Operation failed. Refreshing login token and retrying...");
+    if(!auth->Login(this))
+      {
+      auth->GetLog()->Error("Attempt to get new tokens failed.");
+      return false;
+      }
+    fullUrl.str(std::string());
+    fullUrl << url << "&token=" << m_APIToken;
+    m_RestAPI->SetXMLParser(&parser);
+    success = m_RestAPI->Execute(fullUrl.str().c_str(), m_PostData);
+    }
 
   if(success && m_RestAPI->GetXMLParser()->GetErrorCode() == 0)
     {
@@ -95,7 +111,7 @@ bool WebAPI::CheckConnection()
   parser.AddTag("/rsp/version", version);
   this->GetRestAPI()->SetXMLParser(&parser);
   std::string url = "midas.info";
-  if(!this->Execute(url.c_str()))
+  if(!this->Execute(url.c_str(), NULL))
     {
     std::cout << this->GetErrorMessage() << std::endl;
     return false;
@@ -133,25 +149,47 @@ RestXMLParser* WebAPI::GetRestXMLParser()
 }
  
 // Download a file 
-bool WebAPI::DownloadFile(const char* url, const char* filename)
+bool WebAPI::DownloadFile(const char* url, const char* filename,
+                          midasAuthenticator* auth)
 {
+  std::string fullUrl(url);
+  if(!m_APIToken.empty())
+    {
+    fullUrl += "&token=" + m_APIToken;
+    }
   m_RestAPI->SetXMLParser(NULL);
-  bool success = m_RestAPI->Download(filename,url,RestAPI::FILE);
+  bool success = m_RestAPI->Download(filename,fullUrl,RestAPI::FILE);
+
+  if(!success && !m_APIToken.empty() && auth && !m_RestAPI->ShouldCancel())
+    {
+    auth->GetLog()->Message("Operation failed. Refreshing login token and retrying...");
+    if(!auth->Login(this))
+      {
+      auth->GetLog()->Error("Attempt to get new tokens failed.");
+      m_RestAPI->SetXMLParser(m_RestXMLParser);
+      return false;
+      }
+    fullUrl = url;
+    fullUrl += "&token=" + m_APIToken;
+    // Try again with the new token
+    success = m_RestAPI->Download(filename,fullUrl,RestAPI::FILE);
+    }
   m_RestAPI->SetXMLParser(m_RestXMLParser);
   return success;
 }
  
 // Upload a file 
-bool WebAPI::UploadFile(const char* url, const char* filename)
+bool WebAPI::UploadFile(const char* url, const char* filename,
+                        midasAuthenticator* auth)
 {
   if(m_APIToken == "")
     {
     std::cerr << "Token should be defined to upload to MIDAS." << std::endl;
     std::cerr << "Please use the Login() function to get a token." << std::endl;
     this->GetRestXMLParser()->SetErrorMessage("Cannot push using anonymous access.");
-    return false;   
+    return false;
     }
-  
+
   std::string completeUrl = url;
   completeUrl += "&token=";
   completeUrl += m_APIToken;
@@ -182,7 +220,7 @@ bool WebAPI::Login(const char* appname,
   url << "midas.login?email=" << email;
   url << "&apikey=" << apikey;
   url << "&appname=" << appname;
-  if(!this->Execute(url.str().c_str()))
+  if(!this->Execute(url.str().c_str(), NULL))
     {
     std::cout << this->GetErrorMessage() << std::endl;
     return false;

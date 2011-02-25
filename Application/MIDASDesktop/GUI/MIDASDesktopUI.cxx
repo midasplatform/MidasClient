@@ -81,6 +81,8 @@
 #include "mwsWebAPI.h"
 #include "TreeViewUpdateHandler.h"
 
+#include <QDesktopWidget>
+
 // ------------- TreeModel / TreeView -------------
 MIDASDesktopUI::MIDASDesktopUI()
 {
@@ -88,7 +90,14 @@ MIDASDesktopUI::MIDASDesktopUI()
   int time = static_cast<unsigned int>(kwsys::SystemTools::GetTime() * 1000);
   srand (time); //init random number generator
   this->setWindowTitle( STR2QSTR( MIDAS_CLIENT_VERSION_STR ) );
-  
+
+  // center the main window
+  int scrn = QApplication::desktop()->screenNumber(this);
+  QRect desk(QApplication::desktop()->availableGeometry(scrn));
+  move((desk.width() - frameGeometry().width()) / 2,
+      (desk.height() - frameGeometry().height()) / 2);
+  // center the main window
+
   // ------------- Instantiate and setup tray icon -------------
   showAction = new QAction(tr("&Show MIDASDesktop"), this);
   connect(showAction, SIGNAL(triggered()), this, SLOT(showNormal()));
@@ -196,7 +205,7 @@ MIDASDesktopUI::MIDASDesktopUI()
   connect(treeViewClient, SIGNAL(resourceDropped(int, int)),
     this, SLOT( pullRecursive(int, int) ) );
 
-  connect(treeViewClient, SIGNAL( bitstreamOpenRequest() ), this, SLOT( viewDirectory() ) );
+  connect(treeViewClient, SIGNAL( bitstreamOpenRequest() ), this, SLOT( openBitstream() ) );
 
   connect(treeViewServer, SIGNAL(midasCommunityTreeItemSelected(const MidasCommunityTreeItem*)),
     this, SLOT( updateInfoPanel(const MidasCommunityTreeItem*) ));
@@ -305,10 +314,8 @@ MIDASDesktopUI::MIDASDesktopUI()
   this->m_database = NULL;
   this->m_synch = new midasSynchronizer();
   this->m_resourceUpdateHandler = new TreeViewUpdateHandler(treeViewClient);
-  this->m_auth = new midasAuthenticator();
   this->m_progress = new GUIProgress(this->progressBar);
   this->Log = new GUILogger(this);
-  this->m_auth->SetLog(this->Log);
   this->m_synch->SetLog(this->Log);
   this->m_synch->SetOverwriteHandler(this->m_overwriteHandler);
   this->m_synch->SetProgressReporter(m_progress);
@@ -365,7 +372,6 @@ MIDASDesktopUI::~MIDASDesktopUI()
   delete connectLabel;
   delete cancelButton;
   delete refreshTimer;
-  delete m_auth;
   delete Log;
   delete m_progress;
   delete m_synch;
@@ -384,12 +390,12 @@ MIDASDesktopUI::~MIDASDesktopUI()
     m_ReadDatabaseThread->wait();
     }
 
-  if(m_PollFilesystemThread && m_PollFilesystemThread->isRunning())
+  /*if(m_PollFilesystemThread && m_PollFilesystemThread->isRunning())
     {
-    m_PollFilesystemThread->terminate();
+    m_PollFilesystemThread->Terminate();
     m_PollFilesystemThread->wait();
     }
-  delete m_PollFilesystemThread;
+  delete m_PollFilesystemThread;*/
   delete m_ReadDatabaseThread;
   delete authorsEditor;
   delete keywordsEditor;
@@ -1257,7 +1263,27 @@ void MIDASDesktopUI::viewDirectory()
 {
   MidasTreeItem* resource = const_cast<MidasTreeItem*>(
     treeViewClient->getSelectedMidasTreeItem());
+  midasResourceRecord record = m_database->GetRecordByUuid(resource->getUuid());
 
+  std::string path = record.Type == midasResourceType::BITSTREAM ?
+    kwsys::SystemTools::GetParentDirectory(record.Path.c_str())
+    : record.Path;
+
+  path = "file:" + path;
+  QUrl url(path.c_str());
+  if(!QDesktopServices::openUrl(url))
+    {
+    std::stringstream text;
+    text << "The operating system does not know how to open "
+      << path << std::endl;
+    GetLog()->Error(text.str());
+    }
+}
+
+void MIDASDesktopUI::openBitstream()
+{
+  MidasTreeItem* resource = const_cast<MidasTreeItem*>(
+    treeViewClient->getSelectedMidasTreeItem());
   std::string path = m_database->GetRecordByUuid(resource->getUuid()).Path;
 
   path = "file:" + path;
@@ -1374,7 +1400,7 @@ void MIDASDesktopUI::signIn(bool ok)
     connectLabel->show();
 
     std::stringstream text;
-    text << "Signed in with profile " << m_auth->GetProfile();
+    text << "Signed in with profile " << m_synch->GetAuthenticator()->GetProfile();
     GetLog()->Message(text.str());
     m_signIn = true;
     displayStatus(tr(""));
@@ -1445,7 +1471,6 @@ void MIDASDesktopUI::setLocalDatabase(std::string file)
 
   if(midasUtils::IsDatabaseValid(file))
     {
-    this->m_auth->SetDatabase(file);
     this->m_synch->SetDatabase(file);
     this->m_database = this->m_synch->GetDatabase();
     QSettings settings("Kitware", "MIDASDesktop");
@@ -1482,7 +1507,6 @@ void MIDASDesktopUI::setLocalDatabase(std::string file)
 void MIDASDesktopUI::setServerURL(std::string url)
 {
   this->m_synch->SetServerURL(url);
-  this->m_auth->SetServerURL(url);
   mws::WebAPI::Instance()->SetServerUrl(url.c_str());
   this->m_url = url;
 }
@@ -1498,8 +1522,8 @@ void MIDASDesktopUI::createProfile(std::string name, std::string email,
     }
 
   std::string msg;
-  m_auth->SetServerURL(m_url);
-  if(m_auth->AddAuthProfile(email, apiName, apiKey, rootDir, name))
+  m_synch->GetAuthenticator()->SetServerURL(m_url);
+  if(m_synch->GetAuthenticator()->AddAuthProfile(email, apiName, apiKey, rootDir, name))
     {
     msg = "Successfully created profile \"" + name + "\".";
     this->dlg_signInUI->profileCreated(name);
@@ -1642,6 +1666,7 @@ void MIDASDesktopUI::storeLastPollTime()
 {
   enableActions(false);
   mws::NewResources newResources;
+  newResources.SetAuthenticator(m_synch->GetAuthenticator());
   newResources.SetSince(m_database->GetSetting(midasDatabaseProxy::LAST_FETCH_TIME));
   newResources.Fetch();
   enableActions(true);
@@ -1745,7 +1770,7 @@ void MIDASDesktopUI::deleteServerResource(bool val)
   mws::RestXMLParser parser;
   mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
   std::stringstream text;
-  if(mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(mws::WebAPI::Instance()->Execute(url.str().c_str(), m_synch->GetAuthenticator()))
     {
     text << "Successfully deleted " << typeName
          << " with id=" << id << " from the server.";
