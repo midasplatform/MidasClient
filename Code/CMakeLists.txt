@@ -63,6 +63,8 @@ set(MIDASRest_SRCS
   mdsSQLiteDatabase.cxx
   mdsDatabaseAPI.cxx
   mdsDatabaseAPI.h
+  mdsDatabaseInfo.cxx
+  mdsDatabaseInfo.h
   mdsCommunity.h
   mdsCommunity.cxx
   mdsCollection.h
@@ -148,4 +150,13 @@ install (FILES ${midas_db} DESTINATION "." COMPONENT Runtime)
 #
 add_library(MIDAS ${MIDASRest_SRCS} ${MIDASSynch_SRCS})
 add_dependencies(MIDAS reconfigure_tabledefs)
-target_link_libraries(MIDAS cmcurl ITKEXPAT sqlite ${MIDASCPP_KWSYS_LIBRARY})
+target_link_libraries(MIDAS
+  cmcurl
+  ITKEXPAT
+  sqlite
+  ${MIDASCPP_KWSYS_LIBRARY}
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${QT_QTMAIN_LIBRARY}
+)
+
