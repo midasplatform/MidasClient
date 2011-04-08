@@ -8,8 +8,10 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
 #include "mwsBitstream.h"
 #include "mdoBitstream.h"
+#include "mdoAssetstore.h"
 #include "mdoItem.h"
 #include "mwsItem.h"
 #include <sstream>
@@ -19,45 +21,80 @@
 
 namespace mws{
 
-/** Custom XML parser */
-class BitstreamXMLParser : public RestXMLParser
+/** Custom XML parser: midas.bitstream.locations */
+class BitstreamLocationXMLParser : public RestXMLParser
 {
 public:
    
-  BitstreamXMLParser()
+  BitstreamLocationXMLParser()
     {
     m_Bitstream = NULL;
+    m_Location = NULL;
+    m_CurrentValue = "";
     };
-  ~BitstreamXMLParser() {};  
+  ~BitstreamLocationXMLParser() {};  
 
-  /// Callback function -- called from XML parser with start-of-element
-  /// information.
-  virtual void StartElement(const char * name,const char **atts)
+  // Callback function called from XML parser with start-of-element
+  virtual void StartElement(const char* name, const char** atts)
     {
     RestXMLParser::StartElement(name,atts);
+    m_CurrentValue = "";
+
+    if(!strcmp(name, "data"))
+      {
+      m_Location = new mdo::Assetstore;
+      }
     }
 
-  /// Callback function -- called from XML parser when ending tag
-  /// encountered
+  // Callback function called from XML parser when ending tag encountered
   virtual void EndElement(const char *name)
     {
+    if(!strcmp(name, "data"))
+      {
+      m_Bitstream->AddLocation(m_Location);
+      }
+    else if(!strcmp(name, "id"))
+      {
+      m_Location->SetId(atoi(m_CurrentValue.c_str()));
+      }
+    else if(!strcmp(name, "internal_id"))
+      {
+      m_Location->SetInternalId(m_CurrentValue);
+      }
+    else if(!strcmp(name, "path"))
+      {
+      m_Location->SetPath(m_CurrentValue);
+      }
+    else if(!strcmp(name, "name"))
+      {
+      m_Location->SetName(m_CurrentValue);
+      }
+    else if(!strcmp(name, "type"))
+      {
+      m_Location->SetType(
+        mdo::Assetstore::AssetstoreType(atoi(m_CurrentValue.c_str())));
+      }
+    else if(!strcmp(name, "enabled"))
+      {
+      m_Location->SetEnabled(bool(atoi(m_CurrentValue.c_str())));
+      }
+    m_Bitstream->AddLocation(m_Location);
     RestXMLParser::EndElement(name);
     }
-    
-  /// Callback function -- called from XML parser with the character data
-  /// for an XML element
-  virtual void CharacterDataHandler(const char *inData, int inLength)
+
+  // Callback function called from XML parser with the character data
+  virtual void CharacterDataHandler(const char* inData, int inLength)
     {
     RestXMLParser::CharacterDataHandler(inData,inLength);
+    m_CurrentValue.append(inData, inLength);
     }
-  
-  /** Set the bitstream object */
-  void SetBitstream(mdo::Bitstream* item) {m_Bitstream = item;}
-  
-protected:
 
-  mdo::Bitstream* m_Bitstream;
-  
+  void SetBitstream(mdo::Bitstream* bitstream) { m_Bitstream = bitstream; }
+
+protected:
+  mdo::Bitstream*  m_Bitstream;
+  mdo::Assetstore* m_Location;
+  std::string      m_CurrentValue;
 };
 
 
@@ -92,8 +129,7 @@ bool Bitstream::Fetch()
     return false;
     }
 
-  BitstreamXMLParser parser;
-  parser.SetBitstream(m_Bitstream);
+  RestXMLParser parser;
   m_Bitstream->Clear();
   parser.AddTag("/rsp/name",m_Bitstream->GetName());
   parser.AddTag("/rsp/size",m_Bitstream->GetSize());
@@ -101,13 +137,10 @@ bool Bitstream::Fetch()
   parser.AddTag("/rsp/parent",m_Bitstream->GetParent());
   parser.AddTag("/rsp/hasAgreement",m_Bitstream->RefAgreement());
   
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-  
   std::stringstream url;
   url << "midas.bitstream.get?id=" << m_Bitstream->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str(), &parser))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   m_Bitstream->SetFetched(true);
@@ -132,9 +165,23 @@ bool Bitstream::FetchParent()
   m_Bitstream->SetParentItem(parent);
   parent->SetId(m_Bitstream->GetParentId());
 
-  mws::Item remote;
+  Item remote;
   remote.SetObject(parent);
   return remote.Fetch(); 
+}
+
+bool Bitstream::FetchLocations()
+{
+  BitstreamLocationXMLParser parser;
+  parser.SetBitstream(m_Bitstream);
+
+  std::stringstream url;
+  url << "midas.bitstream.locations?id=" << m_Bitstream->GetId();
+  if(!WebAPI::Instance()->Execute(url.str().c_str(), &parser))
+    {
+    return false;
+    }
+  return true;
 }
 
 bool Bitstream::Delete()
@@ -151,17 +198,42 @@ bool Bitstream::Delete()
     return false;
     }
 
-  RestXMLParser parser;
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-
   std::stringstream url;
   url << "midas.bitstream.delete?id=" << m_Bitstream->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str()))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   return true;
+}
+
+//-------------------------------------------------------------------
+bool Bitstream::Download()
+{
+  this->FetchLocations();
+
+  if(m_Bitstream->GetLocations().size() > 1)
+    {
+    //TODO handle multiple locations
+    }
+
+  std::stringstream fields;
+  fields << "midas.bitstream.download?id=" << m_Bitstream->GetId();
+  return WebAPI::Instance()->DownloadFile(fields.str().c_str(),
+    m_Bitstream->GetName().c_str());
+}
+
+//-------------------------------------------------------------------
+bool Bitstream::Upload()
+{
+  std::stringstream fields;
+  fields << "midas.upload.bitstream?uuid=" << m_Bitstream->GetUuid() <<
+    "&itemid=" << m_Bitstream->GetParentId() << "&mode=stream&filename=" <<
+    midasUtils::EscapeForURL(m_Bitstream->GetName()) << "&path=" <<
+    midasUtils::EscapeForURL(m_Bitstream->GetName()) << "&size=" <<
+    m_Bitstream->GetSize();
+  return WebAPI::Instance()->UploadFile(fields.str().c_str(),
+    m_Bitstream->GetPath().c_str());
 }
 
 } // end namespace

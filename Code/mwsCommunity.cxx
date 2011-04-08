@@ -225,13 +225,10 @@ bool Community::Fetch()
   parser.AddTag("/rsp/hasAgreement",m_Community->RefAgreement());
   parser.AddTag("/rsp/size",m_Community->GetSize());
   
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-  
   std::stringstream url;
   url << "midas.community.get?id=" << m_Community->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str(), &parser))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   m_Community->SetFetched(true);
@@ -243,14 +240,11 @@ bool Community::FetchTree()
 {
   CommunityXMLParser parser;
   parser.SetCommunity(m_Community);
-   
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
   
   std::stringstream url;
   url << "midas.community.tree?id=" << m_Community->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!mws::WebAPI::Instance()->Execute(url.str().c_str(), &parser))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   return true;
@@ -291,15 +285,11 @@ bool Community::Delete()
     std::cerr << "Community::Delete() : Community id not set" << std::endl;
     return false;
     }
-       
-  RestXMLParser parser;
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
 
   std::stringstream url;
   url << "midas.community.delete?id=" << m_Community->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str()))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   return true;
@@ -318,10 +308,8 @@ bool Community::Create()
     midasUtils::EscapeForURL(m_Community->GetDescription())
     << "&links=" << midasUtils::EscapeForURL(m_Community->GetLinks());
 
-  mws::RestXMLParser parser;
-  mws::WebAPI::Instance()->SetPostData(postData.str().c_str());
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-  return mws::WebAPI::Instance()->Execute("midas.community.create");
+  return WebAPI::Instance()->Execute("midas.community.create", NULL,
+    postData.str().c_str());
 }
 
 } // end namespace

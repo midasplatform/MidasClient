@@ -144,13 +144,10 @@ bool Item::Fetch()
   parser.AddTag("/rsp/hasAgreement",m_Item->RefAgreement());
   parser.AddTag("/rsp/size",m_Item->GetSize());
   
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-  
   std::stringstream url;
   url << "midas.item.get?id=" << m_Item->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str(), &parser))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   
@@ -194,15 +191,11 @@ bool Item::Delete()
     std::cerr << "Item::Delete() : Item id not set" << std::endl;
     return false;
     }
-       
-  RestXMLParser parser;
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
 
   std::stringstream url;
   url << "midas.item.delete?id=" << m_Item->GetId();
-  if(!mws::WebAPI::Instance()->Execute(url.str().c_str()))
+  if(!WebAPI::Instance()->Execute(url.str().c_str()))
     {
-    std::cout << mws::WebAPI::Instance()->GetErrorMessage() << std::endl;
     return false;
     }
   return true;
@@ -219,10 +212,8 @@ bool Item::Create()
     << "&authors=" << midasUtils::EscapeForURL(m_Item->GetAuthorsString())
     << "&keywords=" << midasUtils::EscapeForURL(m_Item->GetKeywordsString());
 
-  mws::RestXMLParser parser;
-  mws::WebAPI::Instance()->SetPostData(postData.str().c_str());
-  mws::WebAPI::Instance()->GetRestAPI()->SetXMLParser(&parser);
-  return mws::WebAPI::Instance()->Execute("midas.item.create");
+  return WebAPI::Instance()->Execute("midas.item.create", NULL,
+                                     postData.str().c_str());
 }
 
 } // end namespace
