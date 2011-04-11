@@ -25,6 +25,7 @@ class AddAuthorUI;
 class AddKeywordUI;
 class AgreementUI;
 class FileOverwriteUI;
+class MirrorPickerUI;
 
 class midasSynchronizer;
 class midasProgressReporter;
@@ -48,6 +49,10 @@ namespace mdo {
 
 namespace mds {
   class ResourceUpdateHandler;
+}
+
+namespace mws {
+  class MirrorHandler;
 }
 
 extern "C" {
@@ -232,6 +237,7 @@ private:
   AddKeywordUI*               dlg_addKeywordUI;
   AgreementUI*                dlg_agreementUI;
   FileOverwriteUI*            dlg_overwriteUI;
+  MirrorPickerUI*             dlg_mirrorPickerUI;
   // ------------- UI Dialogs -------------
 
   // ------------- status bar -------------
@@ -265,6 +271,7 @@ private:
   std::vector<std::string>    m_dirtyUuids;
   std::vector<mdo::Object*>   m_SearchResults;
   mds::ResourceUpdateHandler* m_resourceUpdateHandler;
+  mws::MirrorHandler*         m_mirrorHandler;
 
   // ----------- threads -----------------
   RefreshServerTreeThread*    m_RefreshThread;

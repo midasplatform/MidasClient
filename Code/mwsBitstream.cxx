@@ -18,6 +18,7 @@
 #include <iostream>
 #include "mwsRestXMLParser.h"
 #include "mwsWebAPI.h"
+#include "mwsMirrorHandler.h"
 
 namespace mws{
 
@@ -78,7 +79,6 @@ public:
       {
       m_Location->SetEnabled(bool(atoi(m_CurrentValue.c_str())));
       }
-    m_Bitstream->AddLocation(m_Location);
     RestXMLParser::EndElement(name);
     }
 
@@ -134,7 +134,7 @@ bool Bitstream::Fetch()
   parser.AddTag("/rsp/name",m_Bitstream->GetName());
   parser.AddTag("/rsp/size",m_Bitstream->GetSize());
   parser.AddTag("/rsp/uuid",m_Bitstream->GetUuid());
-  parser.AddTag("/rsp/parent",m_Bitstream->GetParent());
+  parser.AddTag("/rsp/parent",m_Bitstream->GetParentStr());
   parser.AddTag("/rsp/hasAgreement",m_Bitstream->RefAgreement());
   
   std::stringstream url;
@@ -212,13 +212,20 @@ bool Bitstream::Download()
 {
   this->FetchLocations();
 
-  if(m_Bitstream->GetLocations().size() > 1)
-    {
-    //TODO handle multiple locations
-    }
-
   std::stringstream fields;
   fields << "midas.bitstream.download?id=" << m_Bitstream->GetId();
+
+  if(m_Bitstream->GetLocations().size() > 1 &&
+    WebAPI::Instance()->GetMirrorHandler())
+    {
+    mdo::Assetstore* location =
+      WebAPI::Instance()->GetMirrorHandler()->HandleMirroredBitstream(
+      m_Bitstream);
+    if(location != NULL)
+      {
+      fields << "&location=" << location->GetId();
+      }
+    }
   return WebAPI::Instance()->DownloadFile(fields.str().c_str(),
     m_Bitstream->GetName().c_str());
 }

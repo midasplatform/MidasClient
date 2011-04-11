@@ -37,6 +37,7 @@
 #include "GUIFileOverwriteHandler.h"
 #include "GUILogger.h"
 #include "GUIProgress.h"
+#include "GUIMirrorHandler.h"
 #include "Utils.h"
 #include "ResourceEdit.h"
 #include "ButtonDelegate.h"
@@ -55,6 +56,7 @@
 #include "ProcessingStatusUI.h"
 #include "PullUI.h"
 #include "SignInUI.h"
+#include "MirrorPickerUI.h"
 // ------------- Dialogs -------------
 
 // ------------- Threads -------------
@@ -133,6 +135,7 @@ MIDASDesktopUI::MIDASDesktopUI()
   m_overwriteHandler =         new GUIFileOverwriteHandler( this );
   dlg_overwriteUI =            new FileOverwriteUI( this,
     dynamic_cast<GUIFileOverwriteHandler*>(this->m_overwriteHandler));
+  dlg_mirrorPickerUI =         new MirrorPickerUI( this );
   ProcessingStatusUI::init( this );
   // ------------- Instantiate and setup UI dialogs -------------
 
@@ -311,6 +314,7 @@ MIDASDesktopUI::MIDASDesktopUI()
   // ------------- setup client members and logging ----
   this->m_synch = new midasSynchronizer();
   this->m_resourceUpdateHandler = new TreeViewUpdateHandler(treeViewClient);
+  this->m_mirrorHandler = new GUIMirrorHandler(dlg_mirrorPickerUI);
   this->m_progress = new GUIProgress(this->progressBar);
   this->Log = new GUILogger(this);
   this->m_synch->SetLog(this->Log);
@@ -318,6 +322,7 @@ MIDASDesktopUI::MIDASDesktopUI()
   mds::DatabaseInfo::Instance()->SetResourceUpdateHandler(m_resourceUpdateHandler);
   mws::WebAPI::Instance()->SetLog(this->Log);
   mws::WebAPI::Instance()->SetAuthenticator(m_synch->GetAuthenticator());
+  mws::WebAPI::Instance()->SetMirrorHandler(m_mirrorHandler);
   this->m_synch->SetOverwriteHandler(this->m_overwriteHandler);
   this->m_synch->SetProgressReporter(m_progress);
   this->m_signIn = false;
@@ -334,12 +339,18 @@ MIDASDesktopUI::MIDASDesktopUI()
   connect(dynamic_cast<GUIProgress*>(m_progress), SIGNAL( OverallProgressTotal(double, double) ), this, SLOT( totalProgressUpdate(double, double) ) );
   // ------------- Progress bar ------------------------
 
+  // ------------- Mirror handler ----------------------
+  connect(dynamic_cast<GUIMirrorHandler*>(m_mirrorHandler), SIGNAL( prompt(mdo::Bitstream*) ),
+    dlg_mirrorPickerUI, SLOT( exec(mdo::Bitstream*) ) );
+  connect(dlg_mirrorPickerUI, SIGNAL( accepted() ),
+    dynamic_cast<GUIMirrorHandler*>(m_mirrorHandler), SLOT( dialogAccepted() ) );
+  // ------------- Mirror handler ----------------------
+
   // ------------- Handle stored settings -------------
   QSettings settings("Kitware", "MIDASDesktop");
   std::string lastDatabase =
     settings.value("lastDatabase", "").toString().toStdString();
   this->setLocalDatabase(lastDatabase);
-
   // ------------- Handle stored settings -------------
 }
 
@@ -368,6 +379,7 @@ MIDASDesktopUI::~MIDASDesktopUI()
   delete dlg_overwriteUI;
   delete dlg_deleteClientResourceUI;
   delete dlg_deleteServerResourceUI;
+  delete dlg_mirrorPickerUI;
   delete stateLabel;
   delete connectLabel;
   delete cancelButton;
@@ -377,6 +389,7 @@ MIDASDesktopUI::~MIDASDesktopUI()
   delete m_synch;
   delete m_agreementHandler;
   delete m_overwriteHandler;
+  delete m_mirrorHandler;
   if(m_RefreshThread && m_RefreshThread->isRunning())
     {
     m_RefreshThread->terminate();
@@ -1554,14 +1567,9 @@ void MIDASDesktopUI::pushResources()
     }
   delete m_SynchronizerThread;
 
-  midasSynchronizer* synchronizer = new midasSynchronizer;
-  synchronizer->SetLog(this->m_synch->GetLog());
-  synchronizer->SetProgressReporter(this->m_progress);
-  synchronizer->SetOperation(midasSynchronizer::OPERATION_PUSH);
-
+  m_synch->SetOperation(midasSynchronizer::OPERATION_PUSH);
   m_SynchronizerThread = new SynchronizerThread;
-  m_SynchronizerThread->SetSynchronizer(synchronizer);
-  m_SynchronizerThread->SetDelete(true); //delete this synchronizer object when done
+  m_SynchronizerThread->SetSynchronizer(m_synch);
 
   connect(m_SynchronizerThread, SIGNAL(enableActions(bool) ),
     this, SLOT(enableActions(bool) ) );
