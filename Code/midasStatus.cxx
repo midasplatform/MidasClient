@@ -11,6 +11,23 @@
 
 #include "midasStatus.h"
 
+midasStatus::midasStatus(int id, std::string uuid, std::string name,
+                         midasDirtyAction::Action action,
+                         midasResourceType::ResourceType type,
+                         std::string path)
+: Id(id), UUID(uuid), Name(name), DirtyAction(action), Type(type), Path(path)
+{
+}
+
+midasStatus::~midasStatus()
+{
+}
+
+int midasStatus::GetId()
+{
+  return this->Id;
+}
+
 std::string midasStatus::GetName()
 {
   return this->Name;
