@@ -1564,6 +1564,7 @@ void midasSynchronizer::CountBitstreams()
   else if(this->Operation == midasSynchronizer::OPERATION_PUSH)
     {
     int count = 0;
+    double totalSize = 0;
     mds::DatabaseAPI db;
     std::vector<midasStatus> status = db.GetStatusEntries();
 
@@ -1573,10 +1574,17 @@ void midasSynchronizer::CountBitstreams()
       if(i->GetType() == midasResourceType::BITSTREAM)
         {
         count++;
+        mdo::Bitstream bitstream;
+        bitstream.SetId(i->GetId());
+        mds::Bitstream mdsBitstream;
+        mdsBitstream.SetObject(&bitstream);
+        mdsBitstream.Fetch();
+        totalSize += midasUtils::StringToDouble(bitstream.GetSize());
         }
       }
     this->TotalBitstreams = count;
     this->Progress->SetMaxCount(count);
+    this->Progress->SetMaxTotal(totalSize);
     this->Progress->UpdateOverallCount(0);
     }
 }

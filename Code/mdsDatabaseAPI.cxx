@@ -653,7 +653,7 @@ std::vector<midasStatus> DatabaseAPI::GetStatusEntries()
 
   std::vector<std::string> uuids;
   std::vector<midasDirtyAction::Action> actions;
-  
+
   while(this->Database->GetNextRow())
     {
     uuids.push_back(this->Database->GetValueAsString(0));
@@ -667,7 +667,7 @@ std::vector<midasStatus> DatabaseAPI::GetStatusEntries()
     midasResourceRecord record = this->GetRecordByUuid(uuids[i]);
     std::string name = this->GetName(record.Type, record.Id);
 
-    midasStatus status(uuids[i], name, actions[i],
+    midasStatus status(record.Id, uuids[i], name, actions[i],
       midasResourceType::ResourceType(record.Type), record.Path);
 
     statlist.push_back(status);
