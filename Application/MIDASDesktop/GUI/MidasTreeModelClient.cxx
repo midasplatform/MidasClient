@@ -172,10 +172,10 @@ void MidasTreeModelClient::updateResource(mdo::Object* object)
 
 void MidasTreeModelClient::deleteResource(mdo::Object* object)
 {
-  QModelIndex index = this->getIndexByUuid(object->GetUuid());
+  /*QModelIndex index = this->getIndexByUuid(object->GetUuid());
   MidasTreeItem* treeItem = const_cast<MidasTreeItem*>(this->midasTreeItem(index));
   treeItem->removeFromTree();
-  emit layoutChanged();
+  emit layoutChanged();*/
 }
 
 void MidasTreeModelClient::fetchMore(const QModelIndex& parent)
