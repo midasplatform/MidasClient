@@ -1053,6 +1053,7 @@ int midasSynchronizer::Push()
     std::stringstream text;
     text << "There are no staged resources to push." << std::endl;
     Log->Error(text.str());
+    return MIDAS_FAILURE;
     }
 
   bool success = true;
@@ -1540,7 +1541,7 @@ std::string midasSynchronizer::ResolveAddPath()
 void midasSynchronizer::CountBitstreams()
 {
   if(this->Operation == midasSynchronizer::OPERATION_PULL
-     && this->Recursive)
+     && this->Recursive && !this->PathMode)
     {
     if(this->ResourceType == midasResourceType::BITSTREAM)
       {
