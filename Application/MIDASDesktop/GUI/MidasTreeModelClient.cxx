@@ -22,7 +22,8 @@
 #include "mdsBitstream.h"
 #include "mdoObject.h"
 
-MidasTreeModelClient::MidasTreeModelClient(QObject *parent) : MidasTreeModel(parent)
+MidasTreeModelClient::MidasTreeModelClient(QObject *parent)
+: MidasTreeModel(parent)
 {
   this->AlterList = true;
 }
