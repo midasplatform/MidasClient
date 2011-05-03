@@ -221,7 +221,7 @@ int midasSynchronizer::Perform()
 }
 
 //-------------------------------------------------------------------
-int midasSynchronizer::Add()
+int midasSynchronizer::Add(mdo::Bitstream* result)
 {
   if(this->ServerHandle != "")
     {
@@ -357,11 +357,18 @@ int midasSynchronizer::Add()
 
     mds::Bitstream mdsBitstream;
     mdsBitstream.SetObject(&bitstream);
+
     if(!mdsBitstream.Commit())
       {
       std::stringstream text;
       text << "Commit failed for bitstream " << name << std::endl;
       return MIDAS_FAILURE;
+      }
+
+    if(result)
+      {
+      result->SetId(id);
+      result->SetUuid(uuid.c_str());
       }
     }
   db.MarkDirtyResource(uuid, midasDirtyAction::ADDED);
@@ -1313,7 +1320,23 @@ bool midasSynchronizer::Push(mdo::Collection* coll)
     std::stringstream text;
     text << "Pushed collection " << coll->GetName() << std::endl;
     Log->Message(text.str());
-    return true;
+
+    if(this->Recursive)
+      {
+      mdsColl.SetRecursive(false); //only fetch immediate children
+      mdsColl.FetchTree();
+      bool ok = true;
+      for(std::vector<mdo::Item*>::const_iterator i = coll->GetItems().begin();
+          i != coll->GetItems().end(); ++i)
+        {
+        ok &= this->Push(*i);
+        }
+      return ok;
+      }
+    else
+      {
+      return true;
+      }
     }
   else
     {
@@ -1363,7 +1386,30 @@ bool midasSynchronizer::Push(mdo::Community* comm)
     text << "Pushed community " << comm->GetName() << std::endl;
     Log->Message(text.str());
     Log->Status(text.str());
-    return true;
+
+    if(this->Recursive)
+      {
+      mdsComm.SetRecursive(false);
+      mdsComm.FetchTree();
+      bool ok = true;
+      for(std::vector<mdo::Community*>::const_iterator i =
+          comm->GetCommunities().begin(); i != comm->GetCommunities().end();
+          ++i)
+        {
+        ok &= this->Push(*i);
+        }
+      for(std::vector<mdo::Collection*>::const_iterator i =
+          comm->GetCollections().begin(); i != comm->GetCollections().end();
+          ++i)
+        {
+        ok &= this->Push(*i);
+        }
+      return ok;
+      }
+    else
+      {
+      return true;
+      }
     }
   else
     {
@@ -1417,7 +1463,23 @@ bool midasSynchronizer::Push(mdo::Item* item)
     std::stringstream text;
     text << "Pushed item " << item->GetTitle() << std::endl;
     Log->Message(text.str());
-    return true;
+    
+    if(this->Recursive)
+      {
+      mdsItem.FetchTree();
+      bool ok = true;
+      for(std::vector<mdo::Bitstream*>::const_iterator i =
+          item->GetBitstreams().begin(); i != item->GetBitstreams().end();
+          ++i)
+        {
+        ok &= this->Push(*i);
+        }
+      return ok;
+      }
+    else
+      {
+      return true;
+      }
     }
   else
     {
@@ -1500,16 +1562,20 @@ int midasSynchronizer::Upload()
 
   this->ResourceType = midasResourceType::BITSTREAM;
 
+  mdo::Bitstream* bitstream = new mdo::Bitstream;
+  
   int rc;
-  if((rc = this->Add()) != MIDAS_OK)
+  if((rc = this->Add(bitstream)) != MIDAS_OK)
     {
     return rc;
     }
 
-  if((rc = this->Push()) != MIDAS_OK)
+  if((rc = this->Push(bitstream)) != MIDAS_OK)
     {
-    //TODO roll back the add?
+    return rc;
     }
+
+  delete bitstream;
 
   return rc;
 }
