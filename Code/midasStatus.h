@@ -27,14 +27,14 @@ class midasStatus
 
     int GetId();
     std::string GetName();
-    std::string GetUUID();
+    std::string GetUuid();
     std::string GetPath();
     midasDirtyAction::Action GetDirtyAction();
     midasResourceType::ResourceType GetType();
   protected:
     int Id;
     std::string Name;
-    std::string UUID;
+    std::string Uuid;
     std::string Path;
     midasDirtyAction::Action DirtyAction;
     midasResourceType::ResourceType Type;

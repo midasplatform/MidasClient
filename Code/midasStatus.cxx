@@ -15,7 +15,7 @@ midasStatus::midasStatus(int id, std::string uuid, std::string name,
                          midasDirtyAction::Action action,
                          midasResourceType::ResourceType type,
                          std::string path)
-: Id(id), UUID(uuid), Name(name), DirtyAction(action), Type(type), Path(path)
+: Id(id), Uuid(uuid), Name(name), DirtyAction(action), Type(type), Path(path)
 {
 }
 
@@ -33,9 +33,9 @@ std::string midasStatus::GetName()
   return this->Name;
 }
 
-std::string midasStatus::GetUUID()
+std::string midasStatus::GetUuid()
 {
-  return this->UUID;
+  return this->Uuid;
 }
     
 midasDirtyAction::Action midasStatus::GetDirtyAction()
