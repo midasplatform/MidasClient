@@ -27,6 +27,7 @@ set(MIDASDesktopUI_SRCS
   GUI/GUIAgreement.cxx
   GUI/GUIFileOverwriteHandler.cxx
   GUI/GUIMirrorHandler.cxx
+  GUI/GUIUpgradeHandler.cxx
   GUI/GUILogger.cxx
   GUI/GUIProgress.cxx
   GUI/MidasTreeView.cxx
@@ -58,6 +59,7 @@ set(MIDASDesktopUI_SRCS
   GUI/AddAuthorUI.cxx
   GUI/AddKeywordUI.cxx
   GUI/AgreementUI.cxx
+  GUI/UpgradeUI.cxx
   GUI/FileOverwriteUI.cxx
   GUI/TextEditDelegate.cxx
 )
@@ -77,6 +79,7 @@ set(MIDASDesktopUI_UI_SRCS
   GUI/AddAuthorUI.ui
   GUI/AddKeywordUI.ui
   GUI/AgreementUI.ui
+  GUI/UpgradeUI.ui
   GUI/FileOverwriteUI.ui
   GUI/MirrorPickerUI.ui
 )
@@ -121,6 +124,7 @@ set(MIDASDesktopUI_MOC_SRCS
   GUI/GUIMirrorHandler.h
   GUI/GUIProgress.h
   GUI/GUILogger.h
+  GUI/GUIUpgradeHandler.h
   GUI/ResourceEdit.h
   GUI/TextEditDelegate.h
   GUI/ButtonDelegate.h
@@ -129,6 +133,7 @@ set(MIDASDesktopUI_MOC_SRCS
   GUI/AddAuthorUI.h
   GUI/AddKeywordUI.h
   GUI/AgreementUI.h
+  GUI/UpgradeUI.h
   GUI/FileOverwriteUI.h
   GUI/TreeViewUpdateHandler.h
   GUI/MirrorPickerUI.h
