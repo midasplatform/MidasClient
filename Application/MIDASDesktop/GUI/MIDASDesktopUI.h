@@ -17,6 +17,7 @@
 class CreateMidasResourceUI; 
 class SignInUI;
 class PullUI;
+class PushUI;
 class CreateProfileUI;
 class DeleteResourceUI;
 class AboutUI;
@@ -24,6 +25,7 @@ class PreferencesUI;
 class AddAuthorUI;
 class AddKeywordUI;
 class AgreementUI;
+class UpgradeUI;
 class FileOverwriteUI;
 class MirrorPickerUI;
 
@@ -50,6 +52,7 @@ namespace mdo {
 
 namespace mds {
   class ResourceUpdateHandler;
+  class UpgradeHandler;
 }
 
 namespace mws {
@@ -191,6 +194,7 @@ public slots:
                      const QStringList & files);
   void addBitstreamsProgress(int current, int total, const QString& message);
   void pullRecursive(int type, int id);
+  void dragNDropPush(int type, int id);
   void viewInBrowser();
   void viewDirectory();
   void openBitstream();
@@ -234,11 +238,13 @@ private:
   AboutUI*                    dlg_aboutUI;
   PreferencesUI*              dlg_preferencesUI;
   PullUI*                     dlg_pullUI;
+  PushUI*                     dlg_pushUI;
   DeleteResourceUI*           dlg_deleteClientResourceUI;
   DeleteResourceUI*           dlg_deleteServerResourceUI;
   AddAuthorUI*                dlg_addAuthorUI;
   AddKeywordUI*               dlg_addKeywordUI;
   AgreementUI*                dlg_agreementUI;
+  UpgradeUI*                  dlg_upgradeUI;
   FileOverwriteUI*            dlg_overwriteUI;
   MirrorPickerUI*             dlg_mirrorPickerUI;
   // ------------- UI Dialogs -------------
@@ -274,6 +280,7 @@ private:
   std::vector<std::string>    m_dirtyUuids;
   std::vector<mdo::Object*>   m_SearchResults;
   mds::ResourceUpdateHandler* m_resourceUpdateHandler;
+  mds::UpgradeHandler*        m_dbUpgradeHandler;
   mws::MirrorHandler*         m_mirrorHandler;
 
   // ----------- threads -----------------

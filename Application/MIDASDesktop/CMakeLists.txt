@@ -23,9 +23,11 @@ set(MIDASDesktopUI_SRCS
   GUI/AboutUI.cxx
   GUI/PreferencesUI.cxx
   GUI/PullUI.cxx
+  GUI/PushUI.cxx
   GUI/GUIAgreement.cxx
   GUI/GUIFileOverwriteHandler.cxx
   GUI/GUIMirrorHandler.cxx
+  GUI/GUIUpgradeHandler.cxx
   GUI/GUILogger.cxx
   GUI/GUIProgress.cxx
   GUI/MidasTreeView.cxx
@@ -57,6 +59,7 @@ set(MIDASDesktopUI_SRCS
   GUI/AddAuthorUI.cxx
   GUI/AddKeywordUI.cxx
   GUI/AgreementUI.cxx
+  GUI/UpgradeUI.cxx
   GUI/FileOverwriteUI.cxx
   GUI/TextEditDelegate.cxx
 )
@@ -71,10 +74,12 @@ set(MIDASDesktopUI_UI_SRCS
   GUI/SignInUI.ui
   GUI/AboutUI.ui
   GUI/PullUI.ui
+  GUI/PushUI.ui
   GUI/PreferencesUI.ui
   GUI/AddAuthorUI.ui
   GUI/AddKeywordUI.ui
   GUI/AgreementUI.ui
+  GUI/UpgradeUI.ui
   GUI/FileOverwriteUI.ui
   GUI/MirrorPickerUI.ui
 )
@@ -87,6 +92,7 @@ set(MIDASDesktopUI_MOC_SRCS
   GUI/CreateProfileUI.h
   GUI/DeleteResourceUI.h
   GUI/PullUI.h
+  GUI/PushUI.h
   GUI/SignInUI.h
   GUI/SignInThread.h
   GUI/SearchThread.h
@@ -118,6 +124,7 @@ set(MIDASDesktopUI_MOC_SRCS
   GUI/GUIMirrorHandler.h
   GUI/GUIProgress.h
   GUI/GUILogger.h
+  GUI/GUIUpgradeHandler.h
   GUI/ResourceEdit.h
   GUI/TextEditDelegate.h
   GUI/ButtonDelegate.h
@@ -126,6 +133,7 @@ set(MIDASDesktopUI_MOC_SRCS
   GUI/AddAuthorUI.h
   GUI/AddKeywordUI.h
   GUI/AgreementUI.h
+  GUI/UpgradeUI.h
   GUI/FileOverwriteUI.h
   GUI/TreeViewUpdateHandler.h
   GUI/MirrorPickerUI.h

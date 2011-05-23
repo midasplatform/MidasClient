@@ -9,29 +9,22 @@
 
 =========================================================================*/
 
-#include "midasStatus.h"
+#ifndef __MDSUPGRADE_H
+#define __MDSUPGRADE_H
 
-std::string midasStatus::GetName()
-{
-  return this->Name;
-}
+#include "midasStandardIncludes.h"
+#include "mdoVersion.h"
 
-std::string midasStatus::GetUuid()
-{
-  return this->Uuid;
-}
-    
-midasDirtyAction::Action midasStatus::GetDirtyAction()
-{
-  return this->DirtyAction;
-}
+namespace mds {
 
-midasResourceType::ResourceType midasStatus::GetType()
+class Upgrade
 {
-  return this->Type;
-}
+public:
+  static bool UpgradeDatabase(const std::string& path, mdo::Version dbVersion);
 
-std::string midasStatus::GetPath()
-{
-  return this->Path;
-}
+protected:
+  static bool Upgrade1_8_0();
+};
+
+} // end namespace mds
+#endif
