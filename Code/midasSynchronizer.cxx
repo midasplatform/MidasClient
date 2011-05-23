@@ -370,6 +370,7 @@ int midasSynchronizer::Add(mdo::Bitstream* result)
       result->SetId(id);
       result->SetUuid(uuid.c_str());
       }
+
     }
   db.MarkDirtyResource(uuid, midasDirtyAction::ADDED);
 
