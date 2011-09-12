@@ -29,6 +29,8 @@
 #include "mdsCommunity.h"
 #include "mdsCollection.h"
 #include "mdsItem.h"
+#include "m3doFolder.h"
+#include "m3doItem.h"
 #include "mdsDatabaseAPI.h"
 #include "midasAuthenticator.h"
 #include "midasLog.h"
@@ -75,6 +77,9 @@
 // ------------- TreeModel / TreeView -------------
 #include "MidasTreeViewBase.h"
 #include "MidasTreeItem.h"
+#include "Midas3TreeItem.h"
+#include "Midas3FolderTreeItem.h"
+#include "Midas3ItemTreeItem.h"
 #include "MidasTreeViewServer.h"
 #include "Midas3TreeViewServer.h"
 #include "MidasTreeModelServer.h"
@@ -603,22 +608,28 @@ void MIDASDesktopUI::updateActionState(const MidasTreeItem* item)
   this->dlg_pullUI->setResourceType(item->getType());
   this->dlg_pullUI->setResourceName(item->data(0).toString().toStdString());
 
-  if (item->getType() == midasResourceType::COMMUNITY)
+  if(item->getType() == midasResourceType::COMMUNITY)
     {
     this->activateActions(true, ACTION_COMMUNITY);
     }
-  else if (item->getType() == midasResourceType::COLLECTION)
+  else if(item->getType() == midasResourceType::COLLECTION)
     {
     this->activateActions(true, ACTION_COLLECTION);
     }
-  else if (item->getType() == midasResourceType::ITEM)
+  else if(item->getType() == midasResourceType::ITEM)
     {
     this->activateActions(true, ACTION_ITEM | ACTION_BITSTREAM);
     }
-  else if (item->getType() == midasResourceType::BITSTREAM)
+  else if(item->getType() == midasResourceType::BITSTREAM)
     {
     this->activateActions(true, ACTION_BITSTREAM);
     }
+}
+
+void MIDASDesktopUI::updateActionState(const Midas3TreeItem* item)
+{
+  //TODO
+  (void)item;
 }
 
 void MIDASDesktopUI::updateActionStateClient(const MidasTreeItem* item)
@@ -772,6 +783,101 @@ void MIDASDesktopUI::updateInfoPanel(const MidasBitstreamTreeItem* bitstreamTree
 {
   this->m_editMode = false;
   infoPanel(const_cast<MidasBitstreamTreeItem*>(bitstreamTreeItem), false);
+}
+
+void MIDASDesktopUI::updateInfoPanel(const Midas3FolderTreeItem* folderTreeItem)
+{
+  this->m_editMode = false;
+  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip | QTableWidgetDescriptionItem::AlignLeft;
+  bool isComm = folderTreeItem->getFolder()->GetResourceType() == midas3ResourceType::COMMUNITY;
+
+  midasTreeItemInfoGroupBox->setTitle(isComm ? "Community information" : "Folder information"); 
+  midasTreeItemInfoTable->setGridStyle(Qt::NoPen);
+  midasTreeItemInfoTable->clearSelection();
+
+  m3do::Folder* folder = folderTreeItem->getFolder();
+
+  int i = 0;
+
+  if(folder->GetName() != "") i++;
+  if(folder->GetDescription() != "") i++;
+
+  midasTreeItemInfoTable->setRowCount(i);
+  i = 0; 
+  
+  if(folder->GetName() != "")
+    {
+    midasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    midasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold));
+    midasTreeItemInfoTable->setItem(i, 1, new QTableWidgetMidas3FolderDescItem(folder, folder->GetName().c_str(), FOLDER3_NAME, options));
+    midasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++; 
+    }
+
+  if(folder->GetDescription() != "")
+    {
+    midasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    midasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold));
+    midasTreeItemInfoTable->setItem(i, 1, new QTableWidgetMidas3FolderDescItem(folder, folder->GetDescription().c_str(), FOLDER3_DESCRIPTION, options));
+    //textMetadataEditor->setField(FOLDER3_DESCRIPTION);
+    //textMetadataEditor->setItem(folderTreeItem);
+    //midasTreeItemInfoTable->setItemDelegateForRow(i, textMetadataEditor);
+    midasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  midasTreeItemInfoTable->resizeColumnsToContents();
+  int leftoverSpace = midasTreeItemInfoTable->width() - midasTreeItemInfoTable->columnWidth(0) - midasTreeItemInfoTable->columnWidth(1);
+  midasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
+  midasTreeItemInfoTable->resizeColumnsToContents();
+  midasTreeItemInfoTable->resizeRowsToContents();
+}
+
+void MIDASDesktopUI::updateInfoPanel(const Midas3ItemTreeItem* itemTreeItem)
+{
+  this->m_editMode = false;
+  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip | QTableWidgetDescriptionItem::AlignLeft;
+
+  midasTreeItemInfoGroupBox->setTitle("Item information"); 
+  midasTreeItemInfoTable->setGridStyle(Qt::NoPen);
+  midasTreeItemInfoTable->clearSelection();
+
+  m3do::Item* item = itemTreeItem->getItem();
+
+  int i = 0;
+
+  if(item->GetName() != "") i++;
+  if(item->GetDescription() != "") i++;
+
+  midasTreeItemInfoTable->setRowCount(i);
+  i = 0; 
+  
+  if(item->GetName() != "")
+    {
+    midasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    midasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold));
+    midasTreeItemInfoTable->setItem(i, 1, new QTableWidgetMidas3ItemDescItem(item, item->GetName().c_str(), ITEM3_NAME, options));
+    midasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++; 
+    }
+
+  if(item->GetDescription() != "")
+    {
+    midasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    midasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold));
+    midasTreeItemInfoTable->setItem(i, 1, new QTableWidgetMidas3ItemDescItem(item, item->GetDescription().c_str(), ITEM3_DESCRIPTION, options));
+    //textMetadataEditor->setField(ITEM3_DESCRIPTION);
+    //textMetadataEditor->setItem(itemTreeItem);
+    //midasTreeItemInfoTable->setItemDelegateForRow(i, textMetadataEditor);
+    midasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  midasTreeItemInfoTable->resizeColumnsToContents();
+  int leftoverSpace = midasTreeItemInfoTable->width() - midasTreeItemInfoTable->columnWidth(0) - midasTreeItemInfoTable->columnWidth(1);
+  midasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
+  midasTreeItemInfoTable->resizeColumnsToContents();
+  midasTreeItemInfoTable->resizeRowsToContents();
 }
 
 /** Show the community information */
@@ -1477,6 +1583,13 @@ void MIDASDesktopUI::signIn(bool ok)
     if(IS_MIDAS3)
       {
       this->treeViewServer = new Midas3TreeViewServer(this);
+
+      connect(treeViewServer, SIGNAL(midasTreeItemSelected(const Midas3TreeItem*)),
+            this, SLOT(updateActionState(const Midas3TreeItem*)));
+      connect(treeViewServer, SIGNAL(midas3FolderTreeItemSelected(const Midas3FolderTreeItem*)),
+            this, SLOT(updateInfoPanel(const Midas3FolderTreeItem*)));
+      connect(treeViewServer, SIGNAL(midas3ItemTreeItemSelected(const Midas3ItemTreeItem*)),
+              this, SLOT(updateInfoPanel(const Midas3ItemTreeItem*)));
       }
     else
       {
@@ -1553,11 +1666,24 @@ void MIDASDesktopUI::createLocalDatabase()
 
   if(file != "")
     {
-    this->Log->Message("Creating new local database at " + file);
-    this->actionNew_Local_Database->setEnabled(false);
-    this->setProgressIndeterminate();
-    QFuture<bool> future = QtConcurrent::run(midasUtils::CreateNewDatabase, file);
-    m_CreateDBWatcher.setFuture(future);
+    QMessageBox msgBox;
+    msgBox.setText("Do you want to create a MIDAS 2 or MIDAS 3 database?");
+    msgBox.setInformativeText("");
+    QAbstractButton* midas2Button = msgBox.addButton("MIDAS 2", QMessageBox::YesRole);
+    QAbstractButton* midas3Button = msgBox.addButton("MIDAS 3", QMessageBox::YesRole);
+    QAbstractButton* cancelButton = msgBox.addButton("Cancel", QMessageBox::NoRole);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.exec();
+ 
+    if(msgBox.clickedButton() != cancelButton)
+      {
+      this->Log->Message("Creating new local database at " + file);
+      this->actionNew_Local_Database->setEnabled(false);
+      this->setProgressIndeterminate();
+      bool midas3 = msgBox.clickedButton() == midas3Button;
+      QFuture<bool> future = QtConcurrent::run(midasUtils::CreateNewDatabase, file, midas3);
+      m_CreateDBWatcher.setFuture(future);
+      }
     }
 }
 
