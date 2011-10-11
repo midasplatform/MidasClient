@@ -6,7 +6,7 @@ ExternalProject_Add(CTK
   BINARY_DIR CTK-build
   PREFIX CTK-cmake
   GIT_REPOSITORY "git://github.com/zachmullen/CTK.git"
-  GIT_TAG "v1.8.3"
+  GIT_TAG "origin/add-midascpp-library"
   CMAKE_GENERATOR "${CMAKE_GENERATOR}"
   INSTALL_COMMAND ""
   CMAKE_ARGS
