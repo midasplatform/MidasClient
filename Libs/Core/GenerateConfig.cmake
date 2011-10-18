@@ -1,0 +1,35 @@
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/UseMIDASClientCore.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/UseMIDASClientCore.cmake COPYONLY)
+
+# Library directory
+SET(MIDASClientCore_LIBRARY_DIRS_CONFIG
+  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  #${sqlite_LIBRARY_DIRS}
+)
+
+# Include directories
+SET(MIDASClientCore_INCLUDE_DIRS_CONFIG
+  ${CMAKE_CURRENT_SOURCE_DIR}/Code
+  ${CMAKE_CURRENT_BINARY_DIR}/Code
+  ${QT_INCLUDES}
+  ${MIDASClient_SOURCE_DIR}/Libs/External/sqlite
+  )
+
+# Libraries
+SET(MIDASClientCore_LIBRARIES_CONFIG
+  MIDASClientCore
+  sqlite
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${QT_QTSCRIPT_LIBRARY}
+  ${QT_QTNETWORK_LIBRARY}
+)
+
+# Use file
+SET(MIDASClientCore_USE_FILE_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/UseMIDASClientCore.cmake)
+
+# Configure config file
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/MIDASClientCoreConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/MIDASClientCoreConfig.cmake @ONLY)
