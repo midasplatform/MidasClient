@@ -45,7 +45,7 @@ mdo::Assetstore * GUIMirrorHandler::HandleMirroredBitstream(
         }
       }
     }
-  emit prompt(bitstream); // blocking connection
+  emit Prompt(bitstream); // blocking connection
 
   mdo::Assetstore* selectedLocation = m_MirrorDialog->GetSelectedLocation();
   if( m_MirrorDialog->ApplyToAll() )

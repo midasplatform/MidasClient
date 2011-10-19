@@ -190,8 +190,8 @@ MIDASDesktopUI::MIDASDesktopUI()
   // ------------- Auto Refresh Timer -----------
   m_RefreshTimer = new QTimer(this);
 
-  connect(m_PreferencesUI, SIGNAL(intervalChanged() ), this, SLOT(SetTimerInterval() ) );
-  connect(m_PreferencesUI, SIGNAL(settingChanged() ), this, SLOT(AdjustTimerSettings() ) );
+  connect(m_PreferencesUI, SIGNAL(IntervalChanged() ), this, SLOT(SetTimerInterval() ) );
+  connect(m_PreferencesUI, SIGNAL(SettingChanged() ), this, SLOT(AdjustTimerSettings() ) );
   // ------------- Auto Refresh Timer -----------
 
   // ------------- Item info panel -------------
@@ -248,26 +248,26 @@ MIDASDesktopUI::MIDASDesktopUI()
   connect(m_ActionCreateProfile, SIGNAL(triggered() ), m_CreateProfileUI, SLOT(exec() ) );
 
   connect(m_CreateProfileUI,
-          SIGNAL(createdProfile(std::string, std::string, std::string, std::string, std::string, std::string) ),
+          SIGNAL(CreatedProfile(std::string, std::string, std::string, std::string, std::string, std::string) ),
           this, SLOT(CreateProfile(std::string, std::string, std::string, std::string, std::string, std::string) ) );
-  connect(m_CreateProfileUI, SIGNAL(deletedProfile(std::string) ),
-          m_SignInUI, SLOT(removeProfile(std::string) ) );
-  connect(m_CreateProfileUI, SIGNAL(deletedProfile(std::string) ),
+  connect(m_CreateProfileUI, SIGNAL(DeletedProfile(std::string) ),
+          m_SignInUI, SLOT(RemoveProfile(std::string) ) );
+  connect(m_CreateProfileUI, SIGNAL(DeletedProfile(std::string) ),
           dynamic_cast<GUILogger *>(this->Log), SLOT(Status(std::string) ) );
 
-  connect(m_SignInUI, SIGNAL(createProfileRequest() ), m_CreateProfileUI, SLOT(exec() ) );
-  connect(m_SignInUI, SIGNAL(signingIn() ), this, SLOT(SigningIn() ) );
-  connect(m_SignInUI, SIGNAL(signedIn(bool) ), this, SLOT(SignIn(bool) ) );
+  connect(m_SignInUI, SIGNAL(CreateProfileRequest() ), m_CreateProfileUI, SLOT(exec() ) );
+  connect(m_SignInUI, SIGNAL(SigningIn() ), this, SLOT(SigningIn() ) );
+  connect(m_SignInUI, SIGNAL(SignedIn(bool) ), this, SLOT(SignIn(bool) ) );
 
-  connect(m_DeleteClientResourceUI, SIGNAL(deleteResource(bool) ), this, SLOT(DeleteLocalResource(bool) ) );
-  connect(m_DeleteServerResourceUI, SIGNAL(deleteResource(bool) ), this, SLOT(DeleteServerResource(bool) ) );
-  connect(m_PushUI, SIGNAL(pushedResources(int) ), this, SLOT(PushReturned(int) ) );
-  connect(m_PushUI, SIGNAL(enableActions(bool) ), this, SLOT(EnableActions(bool) ) );
+  connect(m_DeleteClientResourceUI, SIGNAL(DeleteResource(bool) ), this, SLOT(DeleteLocalResource(bool) ) );
+  connect(m_DeleteServerResourceUI, SIGNAL(DeleteResource(bool) ), this, SLOT(DeleteServerResource(bool) ) );
+  connect(m_PushUI, SIGNAL(PushedResources(int) ), this, SLOT(PushReturned(int) ) );
+  connect(m_PushUI, SIGNAL(EnableActions(bool) ), this, SLOT(EnableActions(bool) ) );
 
-  connect(m_PreferencesUI, SIGNAL(unifyingTree() ), this, SLOT(UnifyingTree() ) );
-  connect(m_PreferencesUI, SIGNAL(treeUnified() ), this, SLOT(TreeUnified() ) );
+  connect(m_PreferencesUI, SIGNAL(UnifyingTree() ), this, SLOT(UnifyingTree() ) );
+  connect(m_PreferencesUI, SIGNAL(TreeUnified() ), this, SLOT(TreeUnified() ) );
 
-  connect(m_PullUI, SIGNAL(enableActions(bool) ), this, SLOT(EnableActions(bool) ) );
+  connect(m_PullUI, SIGNAL(EnableActions(bool) ), this, SLOT(EnableActions(bool) ) );
 
   connect(m_ActionChooseLocalDatabase, SIGNAL(triggered() ), this, SLOT(ChooseLocalDatabase() ) );
   connect(m_ActionNewLocalDatabase, SIGNAL(triggered() ), this, SLOT(CreateLocalDatabase() ) );
@@ -340,7 +340,7 @@ MIDASDesktopUI::MIDASDesktopUI()
   m_EditMode = false;
   m_Cancel = false;
 
-  connect(dynamic_cast<GUIAgreement *>(m_AgreementHandler), SIGNAL(errorMessage(const QString &) ),
+  connect(dynamic_cast<GUIAgreement *>(m_AgreementHandler), SIGNAL(ErrorMessage(const QString &) ),
           this, SLOT(LogError(const QString &) ) );
   // ------------- setup handlers and logging -------------
 
@@ -630,9 +630,9 @@ void MIDASDesktopUI::IconActivated(QSystemTrayIcon::ActivationReason reason)
 void MIDASDesktopUI::UpdateActionState(const MidasTreeItem* item)
 {
   this->ActivateActions(false, ACTION_ALL_CONNECTED);
-  m_PullUI->setPullId(item->GetId() );
-  m_PullUI->setResourceType(item->GetType() );
-  m_PullUI->setResourceName(item->GetData(0).toString().toStdString() );
+  m_PullUI->SetPullId(item->GetId() );
+  m_PullUI->SetResourceType(item->GetType() );
+  m_PullUI->SetResourceName(item->GetData(0).toString().toStdString() );
 
   if( item->GetType() == midasResourceType::COMMUNITY )
     {
@@ -655,9 +655,9 @@ void MIDASDesktopUI::UpdateActionState(const MidasTreeItem* item)
 void MIDASDesktopUI::UpdateActionState(const Midas3TreeItem* item)
 {
   this->ActivateActions(false, ACTION_ALL_CONNECTED);
-  m_PullUI->setPullId(item->GetId() );
-  m_PullUI->setResourceType(item->GetType() );
-  m_PullUI->setResourceName(item->GetData(0).toString().toStdString() );
+  m_PullUI->SetPullId(item->GetId() );
+  m_PullUI->SetResourceType(item->GetType() );
+  m_PullUI->SetResourceName(item->GetData(0).toString().toStdString() );
 
   if( item->GetType() == midas3ResourceType::COMMUNITY )
     {
@@ -787,13 +787,13 @@ void MIDASDesktopUI::Cancel()
     {
     m_SynchronizerThread->Cancel();
     }
-  if( m_PullUI->getSynchronizerThread() )
+  if( m_PullUI->GetSynchronizerThread() )
     {
-    m_PullUI->getSynchronizerThread()->Cancel();
+    m_PullUI->GetSynchronizerThread()->Cancel();
     }
-  if( m_PushUI->getSynchronizerThread() )
+  if( m_PushUI->GetSynchronizerThread() )
     {
-    m_PushUI->getSynchronizerThread()->Cancel();
+    m_PushUI->GetSynchronizerThread()->Cancel();
     }
   if( m_DirtyUuids.size() )
     {
@@ -2276,8 +2276,8 @@ void MIDASDesktopUI::SetLocalDatabase(std::string file)
 
     connect(m_PollFilesystemThread, SIGNAL(needToRefresh() ), this, SLOT(
               UpdateClientTreeView() ), Qt::BlockingQueuedConnection);
-    connect(m_PullUI, SIGNAL(startingSynchronizer() ), m_PollFilesystemThread, SLOT(Pause() ) );
-    connect(m_PullUI, SIGNAL(pulledResources() ), m_PollFilesystemThread, SLOT(Resume() ) );
+    connect(m_PullUI, SIGNAL(StartingSynchronizer() ), m_PollFilesystemThread, SLOT(Pause() ) );
+    connect(m_PullUI, SIGNAL(PulledResources() ), m_PollFilesystemThread, SLOT(Resume() ) );
 
     m_PollFilesystemThread->start();
     }
@@ -2308,7 +2308,7 @@ void MIDASDesktopUI::CreateProfile(const std::string& name, const std::string& e
   if( m_Synch->GetAuthenticator()->AddAuthProfile(email, apiName, password, rootDir, name) )
     {
     msg = "Successfully created profile \"" + name + "\".";
-    m_SignInUI->profileCreated(name);
+    m_SignInUI->ProfileCreated(name);
     }
   else
     {
@@ -2343,13 +2343,13 @@ void MIDASDesktopUI::PushResources()
     {
     const Midas3TreeItem* resource =
       dynamic_cast<Midas3TreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem();
-    m_PushUI->setObject(resource ? resource->GetObject() : NULL);
+    m_PushUI->SetObject(resource ? resource->GetObject() : NULL);
     }
   else
     {
     const MidasTreeItem* resource =
       dynamic_cast<MidasTreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem();
-    m_PushUI->setObject(resource ? resource->GetObject() : NULL);
+    m_PushUI->SetObject(resource ? resource->GetObject() : NULL);
     }
   m_PushUI->exec();
 }
@@ -2622,10 +2622,10 @@ void MIDASDesktopUI::PullRecursive(int type, int id)
                             "Are you sure you want to pull the selected resource and all of its children?",
                             QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok )
     {
-    m_PullUI->setPull();
-    m_PullUI->setRecursive(true);
-    m_PullUI->setResourceType(type);
-    m_PullUI->setPullId(id);
+    m_PullUI->SetPull();
+    m_PullUI->SetRecursive(true);
+    m_PullUI->SetResourceType(type);
+    m_PullUI->SetPullId(id);
     m_PullUI->accept();
     }
 }
@@ -2665,8 +2665,8 @@ void MIDASDesktopUI::DragNDropPush(int type, int id)
   obj->SetId(id);
   obj->SetUuid(uuid.c_str() );
 
-  m_PushUI->setObject(obj);
-  m_PushUI->setDelete(true); // will delete obj when done
+  m_PushUI->SetObject(obj);
+  m_PushUI->SetDelete(true); // will delete obj when done
   m_PushUI->exec();
 }
 

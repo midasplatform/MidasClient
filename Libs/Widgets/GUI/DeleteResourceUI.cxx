@@ -16,39 +16,39 @@
 #include "DeleteResourceUI.h"
 
 /** Constructor */
-DeleteResourceUI::DeleteResourceUI(QWidget* parent, bool server) :
-  QDialog(parent), m_Server(server)
+DeleteResourceUI::DeleteResourceUI(QWidget* parent, bool server)
+  : QDialog(parent), m_Server(server)
 {
-  setupUi(this);
+  this->setupUi(this);
 }
 
 DeleteResourceUI::~DeleteResourceUI()
 {
 }
 
-void DeleteResourceUI::init()
+void DeleteResourceUI::Init()
 {
   if( this->m_Server )
     {
-    this->deleteLabel->setText("<b>Are you sure you want to delete the selected resource on the server?</b>");
-    this->deleteFileCheckBox->hide();
+    m_DeleteLabel->setText("<b>Are you sure you want to delete the selected resource on the server?</b>");
+    m_DeleteFileCheckbox->hide();
     }
   else
     {
-    this->deleteLabel->setText("<b>Are you sure you want to delete the selected resource on the client?</b>");
-    this->deleteFileCheckBox->show();
+    m_DeleteLabel->setText("<b>Are you sure you want to delete the selected resource on the client?</b>");
+    m_DeleteFileCheckbox->show();
     }
 }
 
 int DeleteResourceUI::exec()
 {
-  this->init();
+  this->Init();
   return QDialog::exec();
 }
 
 void DeleteResourceUI::accept()
 {
-  emit deleteResource(this->deleteFileCheckBox->isChecked() );
+  emit DeleteResource(m_DeleteFileCheckbox->isChecked() );
 
   QDialog::accept();
 }

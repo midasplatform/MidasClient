@@ -32,14 +32,14 @@ public:
   bool WasCanceled();
 
 signals:
-  void errorMessage(const QString &);
+  void ErrorMessage(const QString &);
 
 public slots:
   void reject();
 
   void exec();
 
-  void openBrowser();
+  void OpenBrowser();
 
 private:
   QString m_Url;

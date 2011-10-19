@@ -33,7 +33,7 @@ public:
   Action HandleConflict(std::string path);
 
 signals:
-  void displayDialog();
+  void DisplayDialog();
 
 private:
   FileOverwriteUI* m_Dialog;

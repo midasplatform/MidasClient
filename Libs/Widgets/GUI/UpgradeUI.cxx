@@ -44,7 +44,8 @@ int UpgradeUI::exec()
   " to the current version (" << m_ProductVersion << ") before "
   " you can use it.  Your existing data will be preserved.<br><br>"
   "Would you like to upgrade the database now?";
-  this->upgradeLabel->setText(text.str().c_str() );
+
+  m_UpgradeLabel->setText(text.str().c_str() );
   return QDialog::exec();
 }
 

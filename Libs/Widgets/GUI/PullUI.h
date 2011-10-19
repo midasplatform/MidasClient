@@ -29,28 +29,28 @@ public:
   PullUI(QWidget* parent, midasSynchronizer* synch);
   ~PullUI();
 
-  void setPullId(int id);
+  void SetPullId(int id);
 
-  void setResourceType(int type);
+  void SetResourceType(int type);
 
-  void setResourceName(std::string name);
+  void SetResourceName(const std::string& name);
 
-  void setPull();
+  void SetPull();
 
-  void setClone();
+  void SetClone();
 
-  void setRecursive(bool value);
+  void SetRecursive(bool value);
 
-  SynchronizerThread * getSynchronizerThread();
+  SynchronizerThread* GetSynchronizerThread();
 
-  void init();
+  void Init();
 
 signals:
-  void pulledResources();
+  void PulledResources();
 
-  void enableActions(bool);
+  void EnableActions(bool);
 
-  void startingSynchronizer();
+  void StartingSynchronizer();
 
 public slots:
 
@@ -58,13 +58,13 @@ public slots:
 
   virtual void accept();
 
-  void radioButtonChanged();
+  void RadioButtonChanged();
 
-  void resetState();
+  void ResetState();
 
-  void pulled(int rc);
+  void Pulled(int rc);
 
-  void cloned(int rc);
+  void Cloned(int rc);
 
 private:
 

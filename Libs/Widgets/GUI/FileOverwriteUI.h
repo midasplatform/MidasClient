@@ -31,16 +31,16 @@ public:
   bool ShouldApplyToAll();
 
 public slots:
-  void setPath(const std::string& path);
+  void SetPath(const std::string& path);
 
-  void overwrite();
+  void Overwrite();
 
-  void useExisting();
+  void UseExisting();
 
   void exec();
 
 signals:
-  void selectionMade(int val, bool applyToAll);
+  void SelectionMade(int val, bool applyToAll);
 
 private:
   std::string m_Path;

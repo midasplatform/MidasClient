@@ -18,7 +18,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QRadioButton" name="selectedRadioButton">
+    <widget class="QRadioButton" name="m_SelectedRadioButton">
      <property name="text">
       <string>Push selected resource</string>
      </property>
@@ -28,7 +28,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QRadioButton" name="pushAllRadioButton">
+    <widget class="QRadioButton" name="m_PushAllRadioButton">
      <property name="text">
       <string>Push all dirty resources</string>
      </property>
@@ -45,7 +45,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QCheckBox" name="recursiveCheckbox">
+    <widget class="QCheckBox" name="m_RecursiveCheckbox">
      <property name="enabled">
       <bool>true</bool>
      </property>

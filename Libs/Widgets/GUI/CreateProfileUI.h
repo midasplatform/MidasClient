@@ -26,14 +26,14 @@ public:
   CreateProfileUI(QWidget* parent);
   ~CreateProfileUI();
 
-  void init();
+  void Init();
 
 signals:
-  void createdProfile(std::string name, std::string email, std::string apiName, std::string password,
+  void CreatedProfile(std::string name, std::string email, std::string apiName, std::string password,
                       std::string rootDir,
                       std::string serverURL);
 
-  void deletedProfile(std::string name);
+  void DeletedProfile(std::string name);
 
 public slots:
 
@@ -41,15 +41,15 @@ public slots:
 
   virtual void accept();
 
-  void fillData(const QString& profileName);
+  void FillData(const QString& profileName);
 
-  void anonymousChanged(int state);
+  void AnonymousChanged(int state);
 
-  void rootDirChecked(int state);
+  void RootDirChecked(int state);
 
-  void deleteProfile();
+  void DeleteProfile();
 
-  void browseRootDir();
+  void BrowseRootDir();
 
 };
 

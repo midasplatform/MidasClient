@@ -21,21 +21,21 @@
 AddAuthorUI::AddAuthorUI(QWidget* parent)
   : ButtonEditUI(parent)
 {
-  setupUi(this);
+  this->setupUi(this);
 }
 
 void AddAuthorUI::exec()
 {
-  firstNameEdit->setText("");
-  lastNameEdit->setText("");
-  firstNameEdit->setFocus(Qt::PopupFocusReason);
+  m_FirstNameEdit->setText("");
+  m_LastNameEdit->setText("");
+  m_FirstNameEdit->setFocus(Qt::PopupFocusReason);
   QDialog::exec();
 }
 
 void AddAuthorUI::accept()
 {
-  QString first = firstNameEdit->text().trimmed();
-  QString last = lastNameEdit->text().trimmed();
+  QString first = m_FirstNameEdit->text().trimmed();
+  QString last = m_LastNameEdit->text().trimmed();
 
   if( last == "" )
     {
@@ -51,8 +51,7 @@ void AddAuthorUI::accept()
     }
 
   QString author = first == "" ? last : last + ", " + first;
-  emit    text(author);
+  emit text(author);
 
   QDialog::accept();
 }
-

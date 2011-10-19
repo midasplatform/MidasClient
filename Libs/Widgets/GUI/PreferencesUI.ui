@@ -20,7 +20,7 @@
    <string>Preferences</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MIDASDesktopIcons.qrc">
+   <iconset>
     <normaloff>:/icons/MIDAS_Desktop_Icon.png</normaloff>:/icons/MIDAS_Desktop_Icon.png</iconset>
   </property>
   <property name="sizeGripEnabled">
@@ -31,11 +31,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="m_TabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="clientTab">
+     <widget class="QWidget" name="m_ClientTab">
       <attribute name="title">
        <string>Client</string>
       </attribute>
@@ -120,7 +120,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QLabel" name="workingDirLabel">
+            <widget class="QLabel" name="m_WorkingDirLabel">
              <property name="text">
               <string>&lt;b&gt;Client Storage Location&lt;/b&gt;&lt;p&gt;This is the root directory under which top level communities that you pull or create will be stored on disk.&lt;/p&gt;</string>
              </property>
@@ -132,10 +132,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QLineEdit" name="workingDirEdit"/>
+              <widget class="QLineEdit" name="m_WorkingDirEdit"/>
              </item>
              <item>
-              <widget class="QPushButton" name="workingDirBrowseButton">
+              <widget class="QPushButton" name="m_WorkingDirBrowseButton">
                <property name="toolTip">
                 <string>Browse...</string>
                </property>
@@ -149,14 +149,14 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QCheckBox" name="copyResourcesCheckBox">
+              <widget class="QCheckBox" name="m_CopyResourcesCheckbox">
                <property name="text">
                 <string>Place all resources into this tree</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="copyNowButton">
+              <widget class="QPushButton" name="m_CopyNowButton">
                <property name="toolTip">
                 <string>Move or copy all local data to the new location on disk specified above</string>
                </property>
@@ -168,14 +168,14 @@
             </layout>
            </item>
            <item>
-            <widget class="QLabel" name="uiLabel">
+            <widget class="QLabel" name="m_UiLabel">
              <property name="text">
               <string>&lt;hr&gt;&lt;b&gt;User Interface&lt;/b&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="guiStyleCheckBox">
+            <widget class="QCheckBox" name="m_GuiStyleCheckbox">
              <property name="text">
               <string>Force native GUI style</string>
              </property>
@@ -200,7 +200,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="autoRefreshTab">
+     <widget class="QWidget" name="m_ServerTab">
       <attribute name="title">
        <string>Server</string>
       </attribute>
@@ -279,8 +279,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>234</width>
-            <height>184</height>
+            <width>357</width>
+            <height>410</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -298,7 +298,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QComboBox" name="settingComboBox">
+              <widget class="QComboBox" name="m_SettingComboBox">
                <item>
                 <property name="text">
                  <string>Auto-Refresh When Minimized To Tray</string>
@@ -334,7 +334,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="QLabel" name="refreshLabel1">
+              <widget class="QLabel" name="m_RefreshLabel1">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -356,7 +356,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="timeSpinBox">
+              <widget class="QSpinBox" name="m_TimeSpinBox">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -372,7 +372,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="refreshLabel2">
+              <widget class="QLabel" name="m_RefreshLabel2">
                <property name="enabled">
                 <bool>false</bool>
                </property>

@@ -14,12 +14,12 @@
    <string>License Agreement Required</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MIDASDesktopIcons.qrc">
+   <iconset>
     <normaloff>:/icons/MIDAS_Desktop_Icon.png</normaloff>:/icons/MIDAS_Desktop_Icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="agreementLabel">
+    <widget class="QLabel" name="m_AgreementLabel">
      <property name="text">
       <string/>
      </property>
@@ -34,7 +34,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="openBrowserButton">
+      <widget class="QPushButton" name="m_OpenBrowserButton">
        <property name="text">
         <string>Go to MIDAS server</string>
        </property>

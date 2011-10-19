@@ -17,10 +17,10 @@
 
 #include "MIDASConfig.h"
 
-AboutUI::AboutUI(QWidget* parent) :
-  QDialog(parent)
+AboutUI::AboutUI(QWidget* parent) 
+  : QDialog(parent)
 {
-  setupUi(this);
+  this->setupUi(this);
 }
 
 AboutUI::~AboutUI()
@@ -29,7 +29,7 @@ AboutUI::~AboutUI()
 
 void AboutUI::reset()
 {
-  this->releaseLabel->setText( QString("MIDAS Desktop ") + MIDAS_CLIENT_VERSION );
+  m_ReleaseLabel->setText( QString("MIDAS Desktop ") + MIDAS_CLIENT_VERSION );
 }
 
 int AboutUI::exec()

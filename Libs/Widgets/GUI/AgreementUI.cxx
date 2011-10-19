@@ -22,10 +22,10 @@
 AgreementUI::AgreementUI(QWidget* parent)
   : QDialog(parent), m_Canceled(false)
 {
-  setupUi(this);
+  this->setupUi(this);
   this->setModal(true);
-  connect(openBrowserButton, SIGNAL(released() ),
-          this, SLOT(openBrowser() ) );
+  connect(m_OpenBrowserButton, SIGNAL(released() ),
+          this, SLOT(OpenBrowser() ) );
 
   m_Url = "";
 }
@@ -56,11 +56,11 @@ void AgreementUI::exec()
   labelText += "<br><br>Click the button below to login and agree "
     "to the license, then click OK once you have agreed.";
 
-  this->agreementLabel->setText(labelText);
+  m_AgreementLabel->setText(labelText);
   QDialog::exec();
 }
 
-void AgreementUI::openBrowser()
+void AgreementUI::OpenBrowser()
 {
   QUrl qurl(m_Url);
 
@@ -68,7 +68,7 @@ void AgreementUI::openBrowser()
     {
     std::stringstream text;
     text << "Error: could not open " << m_Url.toStdString() << " in the browser.";
-    emit errorMessage(text.str().c_str() );
+    emit ErrorMessage(text.str().c_str() );
     }
 }
 

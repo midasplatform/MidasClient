@@ -27,28 +27,28 @@ public:
   PreferencesUI(QWidget* parent);
   ~PreferencesUI();
 public slots:
-  void enableActions(int index);
+  void EnableActions(int index);
 
-  void unifyTree();
+  void UnifyTree();
 
-  void selectWorkingDir();
+  void SelectWorkingDir();
 
-  void unifyTreeDone();
+  void UnifyTreeDone();
 
-  void reset();
+  void Reset();
 
   int exec();
 
   virtual void accept();
 
 signals:
-  void intervalChanged();
+  void IntervalChanged();
 
-  void settingChanged();
+  void SettingChanged();
 
-  void unifyingTree(); // start
+  void UnifyingTree(); // start
 
-  void treeUnified();  // finish
+  void TreeUnified();  // finish
 
 protected:
   bool             m_UnifiedTree;

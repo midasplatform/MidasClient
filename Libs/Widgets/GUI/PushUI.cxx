@@ -22,11 +22,11 @@
 PushUI::PushUI(QWidget* parent, midasSynchronizer* synch)
   : QDialog(parent), m_Delete(false), m_Object(NULL), m_Synch(synch), m_SynchThread(NULL)
 {
-  setupUi(this);
-  resetState();
+  this->setupUi(this);
+  this->ResetState();
 
-  connect( pushAllRadioButton, SIGNAL( released() ), this, SLOT( radioButtonChanged() ) );
-  connect( selectedRadioButton, SIGNAL( released() ), this, SLOT( radioButtonChanged() ) );
+  connect( m_PushAllRadioButton, SIGNAL( released() ), this, SLOT( RadioButtonChanged() ) );
+  connect( m_SelectedRadioButton, SIGNAL( released() ), this, SLOT( RadioButtonChanged() ) );
 }
 
 PushUI::~PushUI()
@@ -34,50 +34,50 @@ PushUI::~PushUI()
   delete m_SynchThread;
 }
 
-SynchronizerThread * PushUI::getSynchronizerThread()
+SynchronizerThread * PushUI::GetSynchronizerThread()
 {
   return m_SynchThread;
 }
 
-void PushUI::setObject(mdo::Object* object)
+void PushUI::SetObject(mdo::Object* object)
 {
   m_Object = object;
 }
 
-void PushUI::setDelete(bool val)
+void PushUI::SetDelete(bool val)
 {
   m_Delete = val;
 }
 
-void PushUI::resetState()
+void PushUI::ResetState()
 {
-  this->selectedRadioButton->setChecked(true);
-  this->radioButtonChanged();
+  m_SelectedRadioButton->setChecked(true);
+  this->RadioButtonChanged();
 }
 
-void PushUI::radioButtonChanged()
+void PushUI::RadioButtonChanged()
 {
-  bool val = selectedRadioButton->isChecked();
+  bool val = m_SelectedRadioButton->isChecked();
 
-  recursiveCheckbox->setEnabled(val);
+  m_RecursiveCheckbox->setEnabled(val);
 }
 
-void PushUI::init()
+void PushUI::Init()
 {
   if( m_Object )
     {
-    selectedRadioButton->setChecked(true);
+    m_SelectedRadioButton->setChecked(true);
     }
   else
     {
-    pushAllRadioButton->setChecked(true);
+    m_PushAllRadioButton->setChecked(true);
     }
-  this->radioButtonChanged();
+  this->RadioButtonChanged();
 }
 
 int PushUI::exec()
 {
-  this->init();
+  this->Init();
   return QDialog::exec();
 }
 
@@ -89,7 +89,7 @@ void PushUI::accept()
 
   m_Synch->SetOperation(midasSynchronizer::OPERATION_PUSH);
 
-  if( m_Object && this->selectedRadioButton->isChecked() )
+  if( m_Object && m_SelectedRadioButton->isChecked() )
     {
     std::stringstream text;
     text << m_Object->GetId();
@@ -98,7 +98,7 @@ void PushUI::accept()
     m_Synch->SetServerHandle(m_Object->GetUuid() );
     m_Synch->SetResourceType(m_Object->GetResourceType() );
     m_Synch->SetResourceType3(m_Object->GetResourceType() );
-    m_Synch->SetRecursive(recursiveCheckbox->isChecked() );
+    m_Synch->SetRecursive(m_RecursiveCheckbox->isChecked() );
     }
   else
     {
@@ -107,14 +107,14 @@ void PushUI::accept()
     }
 
   connect(m_SynchThread, SIGNAL( performReturned(int) ),
-          this, SIGNAL( pushedResources(int) ) );
+          this, SIGNAL( PushedResources(int) ) );
   connect(m_SynchThread, SIGNAL( enableActions(bool) ),
-          this, SIGNAL( enableActions(bool) ) );
+          this, SIGNAL( EnableActions(bool) ) );
 
   if( m_Delete )
     {
     connect(m_SynchThread, SIGNAL( finished() ),
-            this, SLOT( deleteObject() ) );
+            this, SLOT( DeleteObject() ) );
     }
 
   m_SynchThread->start();
@@ -127,15 +127,14 @@ void PushUI::reject()
 {
   if( m_Delete )
     {
-    this->deleteObject();
+    this->DeleteObject();
     }
 
   m_Delete = false;
   QDialog::reject();
 }
 
-void PushUI::deleteObject()
+void PushUI::DeleteObject()
 {
   delete m_Object;
 }
-

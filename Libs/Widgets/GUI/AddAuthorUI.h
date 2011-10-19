@@ -24,6 +24,7 @@ class AddAuthorUI : public ButtonEditUI, private Ui::AddAuthorDialog
   Q_OBJECT
 public:
   AddAuthorUI(QWidget* parent);
+
 public slots:
   void exec();
 

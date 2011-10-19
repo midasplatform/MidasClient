@@ -26,16 +26,16 @@
 PreferencesUI::PreferencesUI(QWidget* parent)
   : QDialog(parent)
 {
-  setupUi(this);
+  this->setupUi(this);
 
   m_UnifyTreeThread = NULL;
 
-  connect(settingComboBox, SIGNAL(currentIndexChanged(int) ), this,
-          SLOT( enableActions(int) ) );
-  connect(workingDirBrowseButton, SIGNAL(released() ), this,
-          SLOT( selectWorkingDir() ) );
-  connect(copyNowButton, SIGNAL(released() ), this,
-          SLOT( unifyTree() ) );
+  connect(m_SettingComboBox, SIGNAL(currentIndexChanged(int) ), this,
+          SLOT( EnableActions(int) ) );
+  connect(m_WorkingDirBrowseButton, SIGNAL(released() ), this,
+          SLOT( SelectWorkingDir() ) );
+  connect(m_CopyNowButton, SIGNAL(released() ), this,
+          SLOT( UnifyTree() ) );
 }
 
 PreferencesUI::~PreferencesUI()
@@ -43,7 +43,7 @@ PreferencesUI::~PreferencesUI()
   delete m_UnifyTreeThread;
 }
 
-void PreferencesUI::unifyTree()
+void PreferencesUI::UnifyTree()
 {
   bool copy = false;
 
@@ -78,12 +78,12 @@ void PreferencesUI::unifyTree()
 
   connect(m_UnifyTreeThread, SIGNAL( finished() ), this, SLOT(unifyTreeDone() ) );
 
-  emit unifyingTree();
+  emit UnifyingTree();
 
   m_UnifyTreeThread->start();
 }
 
-void PreferencesUI::reset()
+void PreferencesUI::Reset()
 {
   mds::DatabaseAPI db;
   std::string      interval = db.GetSetting(
@@ -98,13 +98,13 @@ void PreferencesUI::reset()
 
   if( index != "" )
     {
-    settingComboBox->setCurrentIndex(atoi(index.c_str() ) );
+    m_SettingComboBox->setCurrentIndex(atoi(index.c_str() ) );
     }
   if( interval != "" )
     {
-    timeSpinBox->setValue(atoi(interval.c_str() ) );
+    m_TimeSpinBox->setValue(atoi(interval.c_str() ) );
     }
-  enableActions(settingComboBox->currentIndex() );
+  this->EnableActions(m_SettingComboBox->currentIndex() );
 
   if( path == "" )
     {
@@ -112,20 +112,20 @@ void PreferencesUI::reset()
     path = dbLocation.path().toStdString();
     }
 
-  copyResourcesCheckBox->setChecked(m_UnifiedTree);
-  workingDirEdit->setText(path.c_str() );
+  m_CopyResourcesCheckbox->setChecked(m_UnifiedTree);
+  m_WorkingDirEdit->setText(path.c_str() );
 }
 
-void PreferencesUI::enableActions(int index)
+void PreferencesUI::EnableActions(int index)
 {
   bool val = index < 2;
 
-  refreshLabel1->setEnabled( val );
-  refreshLabel2->setEnabled( val );
-  timeSpinBox->setEnabled( val );
+  m_RefreshLabel1->setEnabled( val );
+  m_RefreshLabel2->setEnabled( val );
+  m_TimeSpinBox->setEnabled( val );
 }
 
-void PreferencesUI::selectWorkingDir()
+void PreferencesUI::SelectWorkingDir()
 {
   mds::DatabaseAPI db;
   std::string      path = db.GetSetting(mds::DatabaseAPI::ROOT_DIR);
@@ -138,17 +138,17 @@ void PreferencesUI::selectWorkingDir()
 
   QString dir = QFileDialog::getExistingDirectory(
       this, tr("Choose Root Directory"),
-      workingDirEdit->text(),
+      m_WorkingDirEdit->text(),
       QFileDialog::ShowDirsOnly);
   if( dir != "" )
     {
-    workingDirEdit->setText(dir);
+    m_WorkingDirEdit->setText(dir);
     }
 }
 
 int PreferencesUI::exec()
 {
-  this->reset();
+  this->Reset();
   return QDialog::exec();
 }
 
@@ -157,25 +157,25 @@ void PreferencesUI::accept()
   // Save the preferences
   mds::DatabaseAPI db;
 
-  db.SetSetting(mds::DatabaseAPI::AUTO_REFRESH_INTERVAL, timeSpinBox->value() );
-  db.SetSetting(mds::DatabaseAPI::AUTO_REFRESH_SETTING, settingComboBox->currentIndex() );
-  db.SetSetting(mds::DatabaseAPI::UNIFIED_TREE, copyResourcesCheckBox->isChecked() );
+  db.SetSetting(mds::DatabaseAPI::AUTO_REFRESH_INTERVAL, m_TimeSpinBox->value() );
+  db.SetSetting(mds::DatabaseAPI::AUTO_REFRESH_SETTING, m_SettingComboBox->currentIndex() );
+  db.SetSetting(mds::DatabaseAPI::UNIFIED_TREE, m_CopyResourcesCheckbox->isChecked() );
 
-  QFileInfo fileInfo(workingDirEdit->text() );
+  QFileInfo fileInfo(m_WorkingDirEdit->text() );
 
   if( fileInfo.isDir() )
     {
     db.SetSetting(mds::DatabaseAPI::ROOT_DIR, fileInfo.absoluteFilePath().toStdString() );
     }
 
-  emit intervalChanged();
-  emit settingChanged();
+  emit IntervalChanged();
+  emit SettingChanged();
 
   QDialog::accept();
 }
 
-void PreferencesUI::unifyTreeDone()
+void PreferencesUI::UnifyTreeDone()
 {
-  emit treeUnified();
+  emit TreeUnified();
 }
 

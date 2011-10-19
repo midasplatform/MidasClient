@@ -14,7 +14,7 @@
    <string>Delete Local Resource</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MIDASDesktopIcons.qrc">
+   <iconset>
     <normaloff>:/icons/MIDAS_Desktop_Icon.png</normaloff>:/icons/MIDAS_Desktop_Icon.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -41,12 +41,12 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../MIDASDesktopIcons.qrc">:/icons/delete_small.png</pixmap>
+          <pixmap>:/icons/delete_small.png</pixmap>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="deleteLabel">
+        <widget class="QLabel" name="m_DeleteLabel">
          <property name="text">
           <string>&lt;b&gt;Are you sure you want to delete the selected resource?&lt;/b&gt;</string>
          </property>
@@ -76,7 +76,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="deleteFileCheckBox">
+        <widget class="QCheckBox" name="m_DeleteFileCheckbox">
          <property name="text">
           <string>Also delete the file(s) on disk</string>
          </property>
@@ -102,7 +102,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>deleteFileCheckBox</tabstop>
+  <tabstop>m_DeleteFileCheckbox</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources>

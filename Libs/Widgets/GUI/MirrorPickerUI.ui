@@ -20,7 +20,7 @@
    <item>
     <layout class="QVBoxLayout" name="vlayout">
      <item>
-      <widget class="QLabel" name="infoLabel">
+      <widget class="QLabel" name="m_InfoLabel">
        <property name="text">
         <string>label</string>
        </property>
@@ -33,10 +33,10 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="mirrorListLayout"/>
+      <layout class="QVBoxLayout" name="m_MirrorListLayout"/>
      </item>
      <item>
-      <widget class="QCheckBox" name="applyToAllCheckbox">
+      <widget class="QCheckBox" name="m_ApplyToAllCheckbox">
        <property name="text">
         <string>Automatically choose this mirror if available</string>
        </property>

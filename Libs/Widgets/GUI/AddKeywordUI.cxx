@@ -21,19 +21,19 @@
 AddKeywordUI::AddKeywordUI(QWidget* parent)
   : ButtonEditUI(parent)
 {
-  setupUi(this);
+  this->setupUi(this);
 }
 
 void AddKeywordUI::exec()
 {
-  keywordEdit->setText("");
-  keywordEdit->setFocus(Qt::PopupFocusReason);
+  m_KeywordEdit->setText("");
+  m_KeywordEdit->setFocus(Qt::PopupFocusReason);
   QDialog::exec();
 }
 
 void AddKeywordUI::accept()
 {
-  QString keyword = keywordEdit->text().trimmed();
+  QString keyword = m_KeywordEdit->text().trimmed();
 
   if( keyword == "" )
     {

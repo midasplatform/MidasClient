@@ -34,7 +34,7 @@ public slots:
   mdo::Assetstore * HandleMirroredBitstream(mdo::Bitstream* bitstream);
 
 signals:
-  void prompt(mdo::Bitstream* bitstream);
+  void Prompt(mdo::Bitstream* bitstream);
 
 protected:
   MirrorPickerUI* m_MirrorDialog;

@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="pathLabel">
+    <widget class="QLabel" name="m_PathLabel">
      <property name="text">
       <string>&lt;b&gt;bitstream name here&lt;/b&gt;</string>
      </property>
@@ -47,14 +47,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="useExistingButton">
+      <widget class="QPushButton" name="m_UseExistingButton">
        <property name="text">
         <string>Use Exisiting File</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="overwriteButton">
+      <widget class="QPushButton" name="m_OverwriteButton">
        <property name="text">
         <string>Overwrite Existing File</string>
        </property>
@@ -63,7 +63,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="applyToAllCheckbox">
+    <widget class="QCheckBox" name="m_ApplyToAllCheckbox">
      <property name="text">
       <string>Do this for all conflicts</string>
      </property>
