@@ -34,18 +34,18 @@ public:
   PushUI(QWidget* parent, midasSynchronizer* synch);
   ~PushUI();
 
-  void setObject(mdo::Object* object);
+  void SetObject(mdo::Object* object);
 
-  void setDelete(bool val);
+  void SetDelete(bool val);
 
-  void init();
+  void Init();
 
-  SynchronizerThread * getSynchronizerThread();
+  SynchronizerThread* GetSynchronizerThread();
 
 signals:
-  void pushedResources(int rc);
+  void PushedResources(int rc);
 
-  void enableActions(bool);
+  void EnableActions(bool);
 
 public slots:
 
@@ -55,11 +55,11 @@ public slots:
 
   void reject();
 
-  void radioButtonChanged();
+  void RadioButtonChanged();
 
-  void resetState();
+  void ResetState();
 
-  void deleteObject();
+  void DeleteObject();
 
 private:
 

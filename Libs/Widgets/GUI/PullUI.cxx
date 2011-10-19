@@ -23,14 +23,14 @@
 PullUI::PullUI(QWidget* parent, midasSynchronizer* synch)
   : QDialog(parent), m_Synch(synch)
 {
-  setupUi(this);
-  resetState();
+  this->setupUi(this);
+  this->ResetState();
 
   m_SynchronizerThread = NULL;
   m_TypeName = "Resource";
 
-  connect(cloneRadioButton, SIGNAL(released() ), this, SLOT(radioButtonChanged() ) );
-  connect(pullRadioButton, SIGNAL(released() ), this, SLOT(radioButtonChanged() ) );
+  connect(m_CloneRadioButton, SIGNAL(released() ), this, SLOT(RadioButtonChanged() ) );
+  connect(m_PullRadioButton, SIGNAL(released() ), this, SLOT(RadioButtonChanged() ) );
 }
 
 PullUI::~PullUI()
@@ -43,74 +43,74 @@ PullUI::~PullUI()
   delete m_SynchronizerThread;
 }
 
-SynchronizerThread * PullUI::getSynchronizerThread()
+SynchronizerThread * PullUI::GetSynchronizerThread()
 {
   return m_SynchronizerThread;
 }
 
-void PullUI::resetState()
+void PullUI::ResetState()
 {
-  this->m_PullId = 0;
-  this->m_ResourceType = midasResourceType::NONE;
-  this->cloneRadioButton->setChecked(true);
-  this->radioButtonChanged();
+  m_PullId = 0;
+  m_ResourceType = midasResourceType::NONE;
+  m_CloneRadioButton->setChecked(true);
+  this->RadioButtonChanged();
 }
 
-void PullUI::setClone()
+void PullUI::SetClone()
 {
-  cloneRadioButton->setChecked(true);
-  pullRadioButton->setChecked(false);
+  m_CloneRadioButton->setChecked(true);
+  m_PullRadioButton->setChecked(false);
 }
 
-void PullUI::setPull()
+void PullUI::SetPull()
 {
-  cloneRadioButton->setChecked(false);
-  pullRadioButton->setChecked(true);
+  m_CloneRadioButton->setChecked(false);
+  m_PullRadioButton->setChecked(true);
 }
 
-void PullUI::setRecursive(bool value)
+void PullUI::SetRecursive(bool value)
 {
-  recursiveCheckBox->setChecked(value);
+  m_RecursiveCheckbox->setChecked(value);
 }
 
-void PullUI::radioButtonChanged()
+void PullUI::RadioButtonChanged()
 {
-  bool val = pullRadioButton->isChecked();
+  bool val = m_PullRadioButton->isChecked();
 
-  recursiveCheckBox->setEnabled(val);
+  m_RecursiveCheckbox->setEnabled(val);
 }
 
-void PullUI::setPullId(int id)
+void PullUI::SetPullId(int id)
 {
   m_PullId = id;
 }
 
-void PullUI::setResourceType(int type)
+void PullUI::SetResourceType(int type)
 {
   m_ResourceType = type;
 }
 
-void PullUI::setResourceName(std::string name)
+void PullUI::SetResourceName(const std::string& name)
 {
   m_Name = name;
 }
 
-void PullUI::init()
+void PullUI::Init()
 {
   if( m_PullId )
     {
-    pullRadioButton->setChecked(true);
+    m_PullRadioButton->setChecked(true);
     }
   else
     {
-    cloneRadioButton->setChecked(true);
+    m_CloneRadioButton->setChecked(true);
     }
-  this->radioButtonChanged();
+  this->RadioButtonChanged();
 }
 
 int PullUI::exec()
 {
-  this->init();
+  this->Init();
   return QDialog::exec();
 }
 
@@ -125,14 +125,14 @@ void PullUI::accept()
   m_SynchronizerThread = new SynchronizerThread;
   m_SynchronizerThread->SetSynchronizer(m_Synch);
 
-  if( cloneRadioButton->isChecked() )
+  if( m_CloneRadioButton->isChecked() )
     {
     m_Synch->SetOperation(midasSynchronizer::OPERATION_CLONE);
     m_Synch->SetRecursive(true);
     m_Synch->GetLog()->Message("Cloning the server repository");
     m_Synch->GetLog()->Status("Cloning the server repository");
 
-    connect(m_SynchronizerThread, SIGNAL(performReturned(int) ), this, SLOT(cloned(int) ) );
+    connect(m_SynchronizerThread, SIGNAL(performReturned(int) ), this, SLOT(Cloned(int) ) );
     }
   else // pull
     {
@@ -188,17 +188,17 @@ void PullUI::accept()
     idStr << m_PullId;
     m_Synch->SetServerHandle(idStr.str() );
     m_Synch->SetOperation(midasSynchronizer::OPERATION_PULL);
-    m_Synch->SetRecursive(recursiveCheckBox->isChecked() );
-    connect(m_SynchronizerThread, SIGNAL(enableActions(bool) ), this, SIGNAL(enableActions(bool) ) );
+    m_Synch->SetRecursive(m_RecursiveCheckbox->isChecked() );
+    connect(m_SynchronizerThread, SIGNAL(enableActions(bool) ), this, SIGNAL(EnableActions(bool) ) );
     }
 
-  emit startingSynchronizer();
+  emit StartingSynchronizer();
   m_SynchronizerThread->start();
 
   QDialog::accept();
 }
 
-void PullUI::pulled(int rc)
+void PullUI::Pulled(int rc)
 {
   std::stringstream text;
 
@@ -217,7 +217,7 @@ void PullUI::pulled(int rc)
     text << "Failed to pull " << m_TypeName << ": " << m_Name;
     m_Synch->GetLog()->Error(text.str() );
     }
-  emit pulledResources();
+  emit PulledResources();
 
   m_Synch->GetLog()->Status(text.str() );
   if( m_Synch->GetProgressReporter() )
@@ -226,7 +226,7 @@ void PullUI::pulled(int rc)
     }
 }
 
-void PullUI::cloned(int rc)
+void PullUI::Cloned(int rc)
 {
   std::string text;
 
@@ -245,7 +245,7 @@ void PullUI::cloned(int rc)
     text = "Failed to clone the MIDAS repository.";
     m_Synch->GetLog()->Error(text);
     }
-  emit pulledResources();
+  emit PulledResources();
 
   m_Synch->GetLog()->Status(text);
   if( m_Synch->GetProgressReporter() )

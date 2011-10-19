@@ -17,14 +17,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="keywordLabel">
+      <widget class="QLabel" name="m_KeywordLabel">
        <property name="text">
         <string>Keyword:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="keywordEdit"/>
+      <widget class="QLineEdit" name="m_KeywordEdit"/>
      </item>
     </layout>
    </item>

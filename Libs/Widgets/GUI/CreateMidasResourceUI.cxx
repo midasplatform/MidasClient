@@ -42,7 +42,7 @@
 CreateMidasResourceUI::CreateMidasResourceUI(QWidget* parent, midasSynchronizer* synch)
   : QDialog(parent), m_Synch(synch), m_ParentResource(NULL)
 {
-  setupUi(this); // this sets up GUI
+  this->setupUi(this); // this sets up GUI
 }
 
 CreateMidasResourceUI::~CreateMidasResourceUI()
@@ -51,7 +51,7 @@ CreateMidasResourceUI::~CreateMidasResourceUI()
 
 void CreateMidasResourceUI::SetType(Types type)
 {
-  this->m_Type = type;
+  m_Type = type;
 
   switch( type )
     {
@@ -82,8 +82,8 @@ void CreateMidasResourceUI::SetParentResource3(const Midas3TreeItem* parent)
 
 void CreateMidasResourceUI::reset()
 {
-  this->nameEdit->clear();
-  this->nameEdit->setFocus();
+  m_NameEdit->clear();
+  m_NameEdit->setFocus();
 }
 
 int CreateMidasResourceUI::exec()
@@ -94,7 +94,7 @@ int CreateMidasResourceUI::exec()
 
 void CreateMidasResourceUI::accept()
 {
-  this->nameEdit->setText(this->nameEdit->text().trimmed() );
+  m_NameEdit->setText(m_NameEdit->text().trimmed() );
 
   if( !this->ValidateName() )
     {
@@ -173,7 +173,7 @@ void CreateMidasResourceUI::accept()
 
 bool CreateMidasResourceUI::ValidateName() const
 {
-  std::string name = this->nameEdit->text().toStdString();
+  std::string name = m_NameEdit->text().toStdString();
 
   if( name == "" )
     {
@@ -204,9 +204,9 @@ void CreateMidasResourceUI::AddCommunity(std::string path)
 {
   QDir dir(path.c_str() );
 
-  dir.mkpath(nameEdit->text() );
+  dir.mkpath(m_NameEdit->text() );
 
-  path += "/" + nameEdit->text().toStdString();
+  path += "/" + m_NameEdit->text().toStdString();
 
   m_Synch->SetResourceType(midasResourceType::COMMUNITY);
   m_Synch->SetClientHandle(path);
@@ -243,9 +243,9 @@ void CreateMidasResourceUI::AddCollection()
   mds::DatabaseAPI db;
   std::string      path = db.GetRecordByUuid(parentComm->GetUuid() ).Path;
   QDir             dir(path.c_str() );
-  dir.mkpath(nameEdit->text() );
+  dir.mkpath(m_NameEdit->text() );
 
-  path += "/" + nameEdit->text().toStdString();
+  path += "/" + m_NameEdit->text().toStdString();
 
   m_Synch->SetResourceType(midasResourceType::COLLECTION);
   m_Synch->SetClientHandle(path);
@@ -266,9 +266,9 @@ void CreateMidasResourceUI::AddItem()
   std::string      path = db.GetRecordByUuid(parentColl->GetUuid() ).Path;
 
   QDir dir(path.c_str() );
-  dir.mkpath(nameEdit->text().trimmed() );
+  dir.mkpath(m_NameEdit->text().trimmed() );
 
-  path += "/" + nameEdit->text().trimmed().toStdString();
+  path += "/" + m_NameEdit->text().trimmed().toStdString();
 
   m_Synch->SetResourceType(midasResourceType::ITEM);
   m_Synch->SetClientHandle(path);
@@ -278,9 +278,9 @@ void CreateMidasResourceUI::AddCommunity3(std::string path)
 {
   QDir dir(path.c_str() );
 
-  dir.mkpath(nameEdit->text() );
+  dir.mkpath(m_NameEdit->text() );
 
-  path += "/" + nameEdit->text().toStdString();
+  path += "/" + m_NameEdit->text().toStdString();
 
   m_Synch->SetObject(NULL);
   m_Synch->SetResourceType3(midas3ResourceType::COMMUNITY);
@@ -291,9 +291,9 @@ void CreateMidasResourceUI::AddFolder(std::string path)
 {
   QDir dir(path.c_str() );
 
-  dir.mkpath(nameEdit->text() );
+  dir.mkpath(m_NameEdit->text() );
 
-  path += "/" + nameEdit->text().toStdString();
+  path += "/" + m_NameEdit->text().toStdString();
 
   m_Synch->SetObject(NULL);
   m_Synch->SetResourceType3(midas3ResourceType::FOLDER);
@@ -313,9 +313,9 @@ void CreateMidasResourceUI::AddSubFolder()
 
   std::string path = parentFolder->GetFolder()->GetPath();
   QDir        dir(path.c_str() );
-  dir.mkpath(nameEdit->text() );
+  dir.mkpath(m_NameEdit->text() );
 
-  path += "/" + nameEdit->text().toStdString();
+  path += "/" + m_NameEdit->text().toStdString();
 
   m_Synch->SetObject(parentFolder->GetFolder() );
   m_Synch->SetResourceType3(midas3ResourceType::FOLDER);
@@ -335,9 +335,9 @@ void CreateMidasResourceUI::AddItem3()
 
   std::string path = parentFolder->GetFolder()->GetPath();
   QDir        dir(path.c_str() );
-  dir.mkpath(nameEdit->text().trimmed() );
+  dir.mkpath(m_NameEdit->text().trimmed() );
 
-  path += "/" + nameEdit->text().trimmed().toStdString();
+  path += "/" + m_NameEdit->text().trimmed().toStdString();
 
   m_Synch->SetObject(parentFolder->GetFolder() );
   m_Synch->SetResourceType3(midas3ResourceType::ITEM);

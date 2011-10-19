@@ -30,14 +30,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="nameLabel">
+      <widget class="QLabel" name="m_NameLabel">
        <property name="text">
         <string>Name:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="nameEdit"/>
+      <widget class="QLineEdit" name="m_NameEdit"/>
      </item>
     </layout>
    </item>

@@ -41,7 +41,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="profileComboBox">
+      <widget class="QComboBox" name="m_ProfileComboBox">
        <property name="minimumSize">
         <size>
          <width>80</width>
@@ -51,7 +51,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteButton">
+      <widget class="QPushButton" name="m_DeleteButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -86,7 +86,7 @@
       </widget>
      </item>
      <item row="1" column="2" colspan="4">
-      <widget class="QLineEdit" name="emailEdit"/>
+      <widget class="QLineEdit" name="m_EmailEdit"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_6">
@@ -114,7 +114,7 @@
       </widget>
      </item>
      <item row="2" column="2" colspan="4">
-      <widget class="QLineEdit" name="passwordEdit">
+      <widget class="QLineEdit" name="m_PasswordEdit">
        <property name="echoMode">
         <enum>QLineEdit::Password</enum>
        </property>
@@ -128,7 +128,7 @@
       </widget>
      </item>
      <item row="3" column="2" colspan="4">
-      <widget class="QLineEdit" name="serverURLEdit"/>
+      <widget class="QLineEdit" name="m_ServerUrlEdit"/>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_8">
@@ -163,7 +163,7 @@
       </widget>
      </item>
      <item row="0" column="2" colspan="3">
-      <widget class="QLineEdit" name="profileNameEdit">
+      <widget class="QLineEdit" name="m_ProfileNameEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -190,7 +190,7 @@
       </widget>
      </item>
      <item row="4" column="2" colspan="3">
-      <widget class="QLineEdit" name="rootDirEdit">
+      <widget class="QLineEdit" name="m_RootDirEdit">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -203,7 +203,7 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QCheckBox" name="rootDirCheckbox">
+      <widget class="QCheckBox" name="m_RootDirCheckbox">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -223,7 +223,7 @@
       </widget>
      </item>
      <item row="4" column="5">
-      <widget class="QPushButton" name="browseButton">
+      <widget class="QPushButton" name="m_BrowseButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -251,7 +251,7 @@
       </widget>
      </item>
      <item row="0" column="5">
-      <widget class="QCheckBox" name="anonymousCheckBox">
+      <widget class="QCheckBox" name="m_AnonymousCheckbox">
        <property name="toolTip">
         <string>Anonymous access</string>
        </property>
@@ -278,16 +278,16 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>profileComboBox</tabstop>
-  <tabstop>deleteButton</tabstop>
-  <tabstop>profileNameEdit</tabstop>
-  <tabstop>anonymousCheckBox</tabstop>
-  <tabstop>emailEdit</tabstop>
-  <tabstop>passwordEdit</tabstop>
-  <tabstop>serverURLEdit</tabstop>
-  <tabstop>rootDirCheckbox</tabstop>
-  <tabstop>rootDirEdit</tabstop>
-  <tabstop>browseButton</tabstop>
+  <tabstop>m_ProfileComboBox</tabstop>
+  <tabstop>m_DeleteButton</tabstop>
+  <tabstop>m_ProfileNameEdit</tabstop>
+  <tabstop>m_AnonymousCheckbox</tabstop>
+  <tabstop>m_EmailEdit</tabstop>
+  <tabstop>m_PasswordEdit</tabstop>
+  <tabstop>m_ServerUrlEdit</tabstop>
+  <tabstop>m_RootDirCheckbox</tabstop>
+  <tabstop>m_RootDirEdit</tabstop>
+  <tabstop>m_BrowseButton</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources>

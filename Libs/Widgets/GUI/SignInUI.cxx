@@ -23,13 +23,12 @@
 
 #include <QMessageBox>
 
-/** Constructor */
 SignInUI::SignInUI(QWidget* parent, midasSynchronizer* synch)
   : QDialog(parent), m_Synch(synch)
 {
-  setupUi(this);
+  this->setupUi(this);
   m_SignInThread = NULL;
-  connect( createProfileButton, SIGNAL( released() ), this, SLOT( showCreateProfileDialog() ) );
+  connect( m_CreateProfileButton, SIGNAL( released() ), this, SLOT( ShowCreateProfileDialog() ) );
 }
 
 SignInUI::~SignInUI()
@@ -37,25 +36,23 @@ SignInUI::~SignInUI()
   delete m_SignInThread;
 }
 
-/** */
-void SignInUI::init()
+void SignInUI::Init()
 {
-  profileComboBox->clear();
+  m_ProfileComboBox->clear();
 
   mds::DatabaseAPI         db;
   std::vector<std::string> profiles = db.GetAuthProfiles();
   for( std::vector<std::string>::iterator i = profiles.begin(); i != profiles.end(); ++i )
     {
-    profileComboBox->addItem(i->c_str() );
+    m_ProfileComboBox->addItem(i->c_str() );
     }
 }
 
-/** */
 int SignInUI::exec()
 {
   if( mds::DatabaseInfo::Instance()->GetPath() != "" )
     {
-    this->init();
+    this->Init();
     return QDialog::exec();
     }
   else
@@ -65,10 +62,9 @@ int SignInUI::exec()
     }
 }
 
-/** */
 void SignInUI::accept()
 {
-  if( this->profileComboBox->currentText().toStdString() == "" )
+  if( m_ProfileComboBox->currentText().toStdString() == "" )
     {
     QMessageBox::critical(this, "Error", "Please select a profile or create a new one");
     return;
@@ -80,35 +76,35 @@ void SignInUI::accept()
     }
   delete m_SignInThread;
   m_SignInThread = new SignInThread(m_Synch);
-  m_SignInThread->SetProfile(profileComboBox->currentText() );
+  m_SignInThread->SetProfile(m_ProfileComboBox->currentText() );
 
-  connect(m_SignInThread, SIGNAL( initialized(bool) ), this, SLOT( signIn(bool) ) );
+  connect(m_SignInThread, SIGNAL( initialized(bool) ), this, SLOT( SignIn(bool) ) );
 
-  emit signingIn();
+  emit SigningIn();
 
   m_SignInThread->start();
   QDialog::accept();
 }
 
-void SignInUI::signIn(bool ok)
+void SignInUI::SignIn(bool ok)
 {
-  emit signedIn(ok);
+  emit SignedIn(ok);
 }
 
-void SignInUI::profileCreated(std::string name)
+void SignInUI::ProfileCreated(const std::string& name)
 {
-  init();
-  profileComboBox->setCurrentIndex(profileComboBox->findText(name.c_str() ) );
+  this->Init();
+  m_ProfileComboBox->setCurrentIndex(m_ProfileComboBox->findText(name.c_str() ) );
 }
 
-void SignInUI::showCreateProfileDialog()
+void SignInUI::ShowCreateProfileDialog()
 {
-  emit createProfileRequest();
+  emit CreateProfileRequest();
 }
 
-void SignInUI::removeProfile(std::string name)
+void SignInUI::RemoveProfile(const std::string& name)
 {
   (void)name;
-  init();
+  this->Init();
 }
 

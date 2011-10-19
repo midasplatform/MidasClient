@@ -20,9 +20,9 @@
 MirrorPickerUI::MirrorPickerUI(QWidget* parent)
   : QDialog(parent)
 {
-  setupUi(this);
+  this->setupUi(this);
   this->setModal(true);
-  mirrorListLayout->setAlignment(Qt::AlignTop);
+  m_MirrorListLayout->setAlignment(Qt::AlignTop);
 }
 
 MirrorPickerUI::~MirrorPickerUI()
@@ -68,10 +68,10 @@ int MirrorPickerUI::exec(mdo::Bitstream* bitstream)
 
     QRadioButton* button = new QRadioButton;
     button->setText(text.str().c_str() );
-    this->mirrorListLayout->addWidget(button);
-    this->m_Mirrors[*i] = button;
+    m_MirrorListLayout->addWidget(button);
+    m_Mirrors[*i] = button;
     }
-  this->infoLabel->setText(infoText.str().c_str() );
+  m_InfoLabel->setText(infoText.str().c_str() );
   return QDialog::exec();
 }
 
@@ -98,6 +98,6 @@ mdo::Assetstore * MirrorPickerUI::GetSelectedLocation()
 
 bool MirrorPickerUI::ApplyToAll()
 {
-  return this->applyToAllCheckbox->isChecked();
+  return m_ApplyToAllCheckbox->isChecked();
 }
 

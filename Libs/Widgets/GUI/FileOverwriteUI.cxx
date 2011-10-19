@@ -19,11 +19,11 @@
 FileOverwriteUI::FileOverwriteUI(QWidget* parent)
   : QDialog(parent), m_Overwrite(true)
 {
-  setupUi(this);
+  this->setupUi(this);
   this->setModal(true);
 
-  connect(overwriteButton, SIGNAL( released() ), this, SLOT( overwrite() ) );
-  connect(useExistingButton, SIGNAL( released() ), this, SLOT( useExisting() ) );
+  connect(m_OverwriteButton, SIGNAL( released() ), this, SLOT( Overwrite() ) );
+  connect(m_UseExistingButton, SIGNAL( released() ), this, SLOT( UseExisting() ) );
 }
 
 FileOverwriteUI::~FileOverwriteUI()
@@ -37,21 +37,21 @@ bool FileOverwriteUI::ShouldOverwrite()
 
 bool FileOverwriteUI::ShouldApplyToAll()
 {
-  return this->applyToAllCheckbox->isChecked();
+  return m_ApplyToAllCheckbox->isChecked();
 }
 
-void FileOverwriteUI::setPath(const std::string& path)
+void FileOverwriteUI::SetPath(const std::string& path)
 {
   m_Path = path;
 }
 
-void FileOverwriteUI::overwrite()
+void FileOverwriteUI::Overwrite()
 {
   m_Overwrite = true;
   QDialog::accept();
 }
 
-void FileOverwriteUI::useExisting()
+void FileOverwriteUI::UseExisting()
 {
   m_Overwrite = false;
   QDialog::accept();
@@ -60,10 +60,10 @@ void FileOverwriteUI::useExisting()
 void FileOverwriteUI::exec()
 {
   QString text = "<b>";
-
   text.append(m_Path.c_str() );
   text.append("</b>");
-  pathLabel->setText(text);
+  m_PathLabel->setText(text);
+
   QDialog::exec();
 }
 

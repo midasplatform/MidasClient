@@ -29,14 +29,14 @@ public:
   SignInUI(QWidget* parent, midasSynchronizer* synch);
   ~SignInUI();
 
-  void init();
+  void Init();
 
 signals:
-  void createProfileRequest();
+  void CreateProfileRequest();
 
-  void signingIn();
+  void SigningIn();
 
-  void signedIn(bool);
+  void SignedIn(bool);
 
 public slots:
 
@@ -44,13 +44,13 @@ public slots:
 
   virtual void accept();
 
-  void showCreateProfileDialog();
+  void ShowCreateProfileDialog();
 
-  void profileCreated(std::string name);
+  void ProfileCreated(const std::string& name);
 
-  void removeProfile(std::string name);
+  void RemoveProfile(const std::string& name);
 
-  void signIn(bool ok);
+  void SignIn(bool ok);
 
 private:
   SignInThread*      m_SignInThread;

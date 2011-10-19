@@ -19,7 +19,7 @@
 GUIFileOverwriteHandler::GUIFileOverwriteHandler(FileOverwriteUI* dialog)
   : m_Dialog(dialog), m_ApplyToAll(false)
 {
-  connect(this, SIGNAL( displayDialog() ),
+  connect(this, SIGNAL( DisplayDialog() ),
           dialog, SLOT( exec() ),
           Qt::BlockingQueuedConnection);
 }
@@ -33,8 +33,8 @@ midasFileOverwriteHandler::Action GUIFileOverwriteHandler::HandleConflict(
 {
   if( !m_ApplyToAll )
     {
-    m_Dialog->setPath(path);
-    emit displayDialog(); // modal dialog, blocking connection
+    m_Dialog->SetPath(path);
+    emit DisplayDialog(); // modal dialog, blocking connection
     m_ApplyToAll = m_Dialog->ShouldApplyToAll();
     }
   return m_Dialog->ShouldOverwrite() ? Overwrite : UseExisting;

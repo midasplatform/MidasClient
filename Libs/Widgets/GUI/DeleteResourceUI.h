@@ -26,10 +26,10 @@ public:
   DeleteResourceUI(QWidget* parent, bool server);
   ~DeleteResourceUI();
 
-  void init();
+  void Init();
 
 signals:
-  void deleteResource(bool deleteFile);
+  void DeleteResource(bool deleteFile);
 
 public slots:
 

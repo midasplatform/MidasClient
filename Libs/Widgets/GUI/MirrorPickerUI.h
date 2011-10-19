@@ -38,7 +38,7 @@ public:
   MirrorPickerUI(QWidget* parent);
   ~MirrorPickerUI();
 
-  mdo::Assetstore * GetSelectedLocation();
+  mdo::Assetstore* GetSelectedLocation();
 
   bool ApplyToAll();
 

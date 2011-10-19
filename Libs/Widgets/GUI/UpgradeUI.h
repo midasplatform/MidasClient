@@ -36,10 +36,6 @@ public slots:
 
   int exec();
 
-signals:
-
-  void errorMessage(const QString &);
-
 protected:
   std::string m_ProductVersion;
   std::string m_DbVersion;

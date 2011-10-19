@@ -17,20 +17,20 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="1">
-      <widget class="QLineEdit" name="firstNameEdit"/>
+      <widget class="QLineEdit" name="m_FirstNameEdit"/>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lastNameEdit"/>
+      <widget class="QLineEdit" name="m_LastNameEdit"/>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="firstNameLabel">
+      <widget class="QLabel" name="m_FirstNameLabel">
        <property name="text">
         <string>First Name:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="lastNameLabel">
+      <widget class="QLabel" name="m_LastNameLabel">
        <property name="text">
         <string>Last Name:</string>
        </property>

@@ -17,7 +17,7 @@
    <string>Sign in</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MIDASDesktopIcons.qrc">
+   <iconset>
     <normaloff>:/icons/MIDAS_Desktop_Icon.png</normaloff>:/icons/MIDAS_Desktop_Icon.png</iconset>
   </property>
   <property name="modal">
@@ -44,7 +44,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../MIDASDesktopIcons.qrc">:/icons/dude3.png</pixmap>
+        <pixmap>:/icons/dude3.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -62,10 +62,10 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QComboBox" name="profileComboBox"/>
+      <widget class="QComboBox" name="m_ProfileComboBox"/>
      </item>
      <item row="0" column="3">
-      <widget class="QPushButton" name="createProfileButton">
+      <widget class="QPushButton" name="m_CreateProfileButton">
        <property name="maximumSize">
         <size>
          <width>34</width>
@@ -79,7 +79,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../MIDASDesktopIcons.qrc">
+        <iconset>
          <normaloff>:/icons/add2.png</normaloff>:/icons/add2.png</iconset>
        </property>
       </widget>
@@ -96,11 +96,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>profileComboBox</tabstop>
-  <tabstop>createProfileButton</tabstop>
+  <tabstop>m_ProfileComboBox</tabstop>
+  <tabstop>m_CreateProfileButton</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources>
+  <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>
