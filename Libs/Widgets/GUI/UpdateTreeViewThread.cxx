@@ -27,8 +27,8 @@ UpdateTreeViewThread::~UpdateTreeViewThread()
 
 void UpdateTreeViewThread::run()
 {
-  emit enableActions(false);
+  emit EnableActions(false);
 
   m_TreeView->Update();
-  emit enableActions(true);
+  emit EnableActions(true);
 }

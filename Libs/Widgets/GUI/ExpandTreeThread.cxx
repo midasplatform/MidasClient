@@ -48,7 +48,7 @@ ExpandTreeThread::~ExpandTreeThread()
 
 void ExpandTreeThread::run()
 {
-  emit enableActions(false);
+  emit EnableActions(false);
 
   if( m_Version == 3 )
     {
@@ -64,7 +64,7 @@ void ExpandTreeThread::run()
       QModelIndex index = m_ParentModel->GetIndexByUuid(*i);
       m_ParentModel->fetchMore(index);
 
-      emit expand(index);
+      emit Expand(index);
       }
 
     if( m_Select )
@@ -72,10 +72,10 @@ void ExpandTreeThread::run()
       QModelIndex index = m_ParentModel->GetIndexByUuid(m_Uuid);
       if( index.isValid() )
         {
-        emit select(index);
+        emit Select(index);
         }
       }
     }
-  emit enableActions(true);
+  emit EnableActions(true);
 }
 

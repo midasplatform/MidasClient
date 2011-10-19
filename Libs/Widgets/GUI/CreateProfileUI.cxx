@@ -163,7 +163,7 @@ void CreateProfileUI::accept()
 
   QDialog::accept();
 
-  emit CreatedProfile(profileName, email, "Default", password, rootDir, serverURL);
+  emit CreatedProfile(profileName, email, std::string("Default"), password, rootDir, serverURL);
 }
 
 void CreateProfileUI::DeleteProfile()

@@ -74,9 +74,9 @@ void PreferencesUI::UnifyTree()
   delete m_UnifyTreeThread;
 
   m_UnifyTreeThread = new UnifyTreeThread;
-  m_UnifyTreeThread->setCopy(copy);
+  m_UnifyTreeThread->SetCopy(copy);
 
-  connect(m_UnifyTreeThread, SIGNAL( finished() ), this, SLOT(unifyTreeDone() ) );
+  connect(m_UnifyTreeThread, SIGNAL( finished() ), this, SLOT(UnifyTreeDone() ) );
 
   emit UnifyingTree();
 

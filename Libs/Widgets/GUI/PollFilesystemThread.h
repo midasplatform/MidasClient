@@ -46,9 +46,9 @@ public slots:
   void Terminate();
 
 signals:
-  void needToRefresh();
+  void NeedToRefresh();
 
-  void paused();
+  void Paused();
 
 private:
   bool m_Run;

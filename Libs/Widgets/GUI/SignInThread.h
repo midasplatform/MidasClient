@@ -33,7 +33,7 @@ public:
   virtual void run();
 
 signals:
-  void initialized(bool ok);
+  void Initialized(bool ok);
 
 private:
   midasSynchronizer* m_Synch;

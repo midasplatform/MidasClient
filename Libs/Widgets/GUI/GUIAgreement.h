@@ -34,14 +34,14 @@ public:
   bool HandleAgreement(midasSynchronizer* synch);
 
 signals:
-  void displayDialog();
+  void DisplayDialog();
 
-  void checkingAgreement();
+  void CheckingAgreement();
 
-  void errorMessage(const QString &);
+  void ErrorMessage(const QString &);
 
 protected:
-  bool checkUserHasAgreed(midasSynchronizer* synch);
+  bool CheckUserHasAgreed(midasSynchronizer* synch);
 
 private:
   AgreementUI* m_Dialog;

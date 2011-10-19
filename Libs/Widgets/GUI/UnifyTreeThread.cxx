@@ -26,12 +26,12 @@ UnifyTreeThread::~UnifyTreeThread()
 {
 }
 
-void UnifyTreeThread::setCopy(bool val)
+void UnifyTreeThread::SetCopy(bool val)
 {
   m_Copy = val;
 }
 
-bool UnifyTreeThread::isCopy()
+bool UnifyTreeThread::IsCopy()
 {
   return m_Copy;
 }

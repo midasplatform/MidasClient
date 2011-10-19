@@ -61,7 +61,7 @@ bool MidasApplication::notify(QObject* receiver, QEvent* event)
     text << "Caught exception during notify to object "
          << receiver->objectName().toStdString();
     text << ". Message: " << e.what();
-    this->MIDASDesktop->GetLog()->Error(text.str() );
+    //this->MIDASDesktop->GetLog()->Error(text.str() );
     }
   return false;
 }

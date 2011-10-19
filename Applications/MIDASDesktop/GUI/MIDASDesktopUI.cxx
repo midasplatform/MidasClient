@@ -739,7 +739,7 @@ void MIDASDesktopUI::UpdateClientTreeView()
   m_ReadDatabaseThread = new UpdateTreeViewThread(m_TreeViewClient);
 
   connect(m_ReadDatabaseThread, SIGNAL(finished() ), this, SLOT(ResetStatus() ) );
-  connect(m_ReadDatabaseThread, SIGNAL(enableActions(bool) ), this, SLOT(EnableClientActions(bool) ) );
+  connect(m_ReadDatabaseThread, SIGNAL(EnableActions(bool) ), this, SLOT(EnableClientActions(bool) ) );
 
   this->DisplayStatus("Reading local database...");
   this->SetProgressIndeterminate();
@@ -757,9 +757,9 @@ void MIDASDesktopUI::UpdateServerTreeView()
 
   m_RefreshThread = new UpdateTreeViewThread(m_TreeViewServer);
 
-  connect(m_RefreshThread, SIGNAL(finished() ), this, SLOT(resetStatus() ) );
-  connect(m_RefreshThread, SIGNAL(finished() ), this, SLOT(clearInfoPanel() ) );
-  connect(m_RefreshThread, SIGNAL(enableActions(bool) ), this, SLOT(enableActions(bool) ) );
+  connect(m_RefreshThread, SIGNAL(finished() ), this, SLOT(ResetStatus() ) );
+  connect(m_RefreshThread, SIGNAL(finished() ), this, SLOT(ClearInfoPanel() ) );
+  connect(m_RefreshThread, SIGNAL(EnableActions(bool) ), this, SLOT(EnableActions(bool) ) );
 
   this->DisplayStatus("Refreshing server tree...");
   this->SetProgressIndeterminate();
@@ -1851,11 +1851,11 @@ bool MIDASDesktopUI::AddBitstreamsCommon(const QStringList& files)
   connect(m_AddBitstreamsThread, SIGNAL(finished() ),
           m_PollFilesystemThread, SLOT(Resume() ) );
   connect(m_AddBitstreamsThread, SIGNAL(finished() ),
-          this, SLOT(resetStatus() ) );
-  connect(m_AddBitstreamsThread, SIGNAL(enableActions(bool) ),
-          this, SLOT(enableClientActions(bool) ) );
-  connect(m_AddBitstreamsThread, SIGNAL(progress(int, int, const QString &) ),
-          this, SLOT(addBitstreamsProgress(int, int, const QString &) ) );
+          this, SLOT(ResetStatus() ) );
+  connect(m_AddBitstreamsThread, SIGNAL(EnableActions(bool) ),
+          this, SLOT(EnableClientActions(bool) ) );
+  connect(m_AddBitstreamsThread, SIGNAL(Progress(int, int, const QString &) ),
+          this, SLOT(AddBitstreamsProgress(int, int, const QString &) ) );
   m_Progress->ResetProgress();
   m_Progress->ResetOverall();
   m_Progress->SetUnit(" files");
@@ -2119,7 +2119,7 @@ void MIDASDesktopUI::SignIn(bool ok)
     connect(m_TreeViewServer, SIGNAL(StartedExpandingTree() ), this, SLOT(StartedExpandingTree() ) );
     connect(m_TreeViewServer, SIGNAL(FinishedExpandingTree() ), this, SLOT(FinishedExpandingTree() ) );
 
-    connect(m_TreeViewServer, SIGNAL(EnableActions(bool) ), this, SLOT(enableActions(bool) ) );
+    connect(m_TreeViewServer, SIGNAL(EnableActions(bool) ), this, SLOT(EnableActions(bool) ) );
     m_TreeViewServer->Initialize();
     }
   else
@@ -2274,7 +2274,7 @@ void MIDASDesktopUI::SetLocalDatabase(std::string file)
     // start the filesystem monitoring thread
     m_PollFilesystemThread = new PollFilesystemThread;
 
-    connect(m_PollFilesystemThread, SIGNAL(needToRefresh() ), this, SLOT(
+    connect(m_PollFilesystemThread, SIGNAL(NeedToRefresh() ), this, SLOT(
               UpdateClientTreeView() ), Qt::BlockingQueuedConnection);
     connect(m_PullUI, SIGNAL(StartingSynchronizer() ), m_PollFilesystemThread, SLOT(Pause() ) );
     connect(m_PullUI, SIGNAL(PulledResources() ), m_PollFilesystemThread, SLOT(Resume() ) );
@@ -2290,9 +2290,9 @@ void MIDASDesktopUI::SetLocalDatabase(std::string file)
     }
 }
 
-void MIDASDesktopUI::CreateProfile(const std::string& name, const std::string& email,
-                                   const std::string& apiName, const std::string& password,
-                                   const std::string& rootDir, const std::string& url)
+void MIDASDesktopUI::CreateProfile(std::string name, std::string email,
+                                   std::string apiName, std::string password,
+                                   std::string rootDir, std::string url)
 {
   if( mds::DatabaseInfo::Instance()->GetPath() == "" )
     {
@@ -2540,7 +2540,7 @@ void MIDASDesktopUI::DeleteLocalResource(bool deleteFiles)
   m_DeleteThread = new DeleteThread;
   m_DeleteThread->SetDeleteOnDisk(deleteFiles);
 
-  connect(m_DeleteThread, SIGNAL(enableActions(bool) ), this, SLOT(EnableClientActions(bool) ) );
+  connect(m_DeleteThread, SIGNAL(EnableActions(bool) ), this, SLOT(EnableClientActions(bool) ) );
   connect(m_DeleteThread, SIGNAL(finished() ), this, SLOT(ResetStatus() ) );
   connect(m_DeleteThread, SIGNAL(finished() ), this, SLOT(UpdateClientTreeView() ) );
 
