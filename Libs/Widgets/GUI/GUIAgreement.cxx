@@ -22,7 +22,7 @@
 GUIAgreement::GUIAgreement(AgreementUI* dialog)
   : m_Dialog(dialog)
 {
-  connect(this, SIGNAL(displayDialog() ),
+  connect(this, SIGNAL(DisplayDialog() ),
           m_Dialog, SLOT(exec() ),
           Qt::BlockingQueuedConnection);
 }
@@ -31,7 +31,7 @@ GUIAgreement::~GUIAgreement()
 {
 }
 
-bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
+bool GUIAgreement::HandleAgreement(midasSynchronizer* synch)
 {
   // first make sure user isn't anonymous
   if( synch->GetAuthenticator()->IsAnonymous() )
@@ -40,7 +40,7 @@ bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
     text << "Error: Anonymous users cannot pull this resource "
          << "because it has a license agreement. Please create a user "
          << "via the web interface and make a profile for that user.";
-    emit errorMessage(text.str().c_str() );
+    emit ErrorMessage(text.str().c_str() );
     return false;
     }
 
@@ -61,11 +61,11 @@ bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
   // they are verified as a member of the agreed group
   while( true )
     {
-    if( this->checkUserHasAgreed(synch) )
+    if( this->CheckUserHasAgreed(synch) )
       {
       return true;
       }
-    emit displayDialog(); // blocking signal, await return from modal dialog
+    emit DisplayDialog(); // blocking signal, await return from modal dialog
     if( m_Dialog->WasCanceled() )
       {
       return false;
@@ -73,16 +73,16 @@ bool GUIAgreement::HandleAgreement(midasSynchronizer *synch)
     }
 }
 
-bool GUIAgreement::checkUserHasAgreed(midasSynchronizer* synch)
+bool GUIAgreement::CheckUserHasAgreed(midasSynchronizer* synch)
 {
-  emit        checkingAgreement();
+  emit        CheckingAgreement();
   std::string hasAgreed;
 
   if( !mws::WebAPI::Instance()->CheckUserAgreement(
         synch->GetResourceType(), atoi(synch->GetServerHandle().c_str() ),
         hasAgreed) )
     {
-    emit errorMessage("Failed when querying server for user agreement validation");
+    emit ErrorMessage("Failed when querying server for user agreement validation");
     return true;
     }
   return hasAgreed == "1";

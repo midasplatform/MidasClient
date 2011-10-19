@@ -204,9 +204,9 @@ public slots:
 
   void SignOut();
 
-  void CreateProfile(const std::string& name, const std::string& email, const std::string& apiName,
-                     const std::string& password, const std::string& rootDir,
-                     const std::string& url);
+  void CreateProfile(std::string name, std::string email, std::string apiName,
+                     std::string password, std::string rootDir,
+                     std::string url);
 
   void ChooseLocalDatabase();
 

@@ -34,7 +34,7 @@ public:
   virtual void run();
 
 signals:
-  void enableActions(bool val);
+  void EnableActions(bool val);
 
 protected:
   MidasTreeViewBase* m_TreeView;

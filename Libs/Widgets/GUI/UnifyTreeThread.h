@@ -28,9 +28,9 @@ public:
 
   virtual void run();
 
-  bool isCopy();
+  bool IsCopy();
 
-  void setCopy(bool val);
+  void SetCopy(bool val);
 
 private:
   bool m_Copy;

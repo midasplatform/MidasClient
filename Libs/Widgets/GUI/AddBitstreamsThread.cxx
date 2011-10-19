@@ -56,7 +56,7 @@ void AddBitstreamsThread::SetParentItem(Midas3ItemTreeItem* parentItem)
 
 void AddBitstreamsThread::run()
 {
-  emit         enableActions(false);
+  emit         EnableActions(false);
   unsigned int millis = midasUtils::CurrentTime();
 
   srand(millis); // seed RNG (must be done in each thread)
@@ -114,7 +114,7 @@ void AddBitstreamsThread::run()
       }
 
     current++;
-    emit progress(current, total, name.c_str() );
+    emit Progress(current, total, name.c_str() );
     }
-  emit enableActions(true);
+  emit EnableActions(true);
 }

@@ -28,12 +28,12 @@ SearchThread::~SearchThread()
 
 void SearchThread::SetWords(std::vector<std::string> words)
 {
-  this->m_Words = words;
+  m_Words = words;
 }
 
 void SearchThread::SetResults(std::vector<mdo::Object *>* results)
 {
-  this->m_Results = results;
+  m_Results = results;
 }
 
 void SearchThread::run()

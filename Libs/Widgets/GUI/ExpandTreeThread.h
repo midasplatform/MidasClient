@@ -38,11 +38,11 @@ public:
   virtual void run();
 
 signals:
-  void expand(const QModelIndex& index);
+  void Expand(const QModelIndex& index);
 
-  void select(const QModelIndex& index);
+  void Select(const QModelIndex& index);
 
-  void enableActions(bool val);
+  void EnableActions(bool val);
 
 private:
   MidasTreeViewServer*   m_ParentUI;

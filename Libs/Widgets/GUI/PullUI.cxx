@@ -132,7 +132,7 @@ void PullUI::accept()
     m_Synch->GetLog()->Message("Cloning the server repository");
     m_Synch->GetLog()->Status("Cloning the server repository");
 
-    connect(m_SynchronizerThread, SIGNAL(performReturned(int) ), this, SLOT(Cloned(int) ) );
+    connect(m_SynchronizerThread, SIGNAL(PerformReturned(int) ), this, SLOT(Cloned(int) ) );
     }
   else // pull
     {
@@ -189,7 +189,7 @@ void PullUI::accept()
     m_Synch->SetServerHandle(idStr.str() );
     m_Synch->SetOperation(midasSynchronizer::OPERATION_PULL);
     m_Synch->SetRecursive(m_RecursiveCheckbox->isChecked() );
-    connect(m_SynchronizerThread, SIGNAL(enableActions(bool) ), this, SIGNAL(EnableActions(bool) ) );
+    connect(m_SynchronizerThread, SIGNAL(EnableActions(bool) ), this, SIGNAL(EnableActions(bool) ) );
     }
 
   emit StartingSynchronizer();

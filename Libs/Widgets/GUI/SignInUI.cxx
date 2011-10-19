@@ -78,7 +78,7 @@ void SignInUI::accept()
   m_SignInThread = new SignInThread(m_Synch);
   m_SignInThread->SetProfile(m_ProfileComboBox->currentText() );
 
-  connect(m_SignInThread, SIGNAL( initialized(bool) ), this, SLOT( SignIn(bool) ) );
+  connect(m_SignInThread, SIGNAL( Initialized(bool) ), this, SLOT( SignIn(bool) ) );
 
   emit SigningIn();
 

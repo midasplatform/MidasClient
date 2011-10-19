@@ -34,7 +34,7 @@ void PollFilesystemThread::Pause()
     {
     }
 
-  emit paused();
+  emit Paused();
 }
 
 void PollFilesystemThread::Resume()
@@ -57,7 +57,7 @@ void PollFilesystemThread::run()
       mds::DatabaseAPI db;
       if( m_Run && db.CheckModifiedBitstreams() )
         {
-        emit needToRefresh();
+        emit NeedToRefresh();
         }
       m_DatabaseLocked = false;
       }

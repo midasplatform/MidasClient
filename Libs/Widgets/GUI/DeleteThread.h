@@ -46,11 +46,11 @@ public:
   virtual void run();
 
 signals:
-  void deletedResource(mdo::Object *);
+  void DeletedResource(mdo::Object *);
 
-  void enableActions(bool);
+  void EnableActions(bool);
 
-  void errorMessage(const QString &);
+  void ErrorMessage(const QString &);
 
 private:
   MidasTreeItem*  m_Resource;

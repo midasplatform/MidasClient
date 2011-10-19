@@ -106,9 +106,9 @@ void PushUI::accept()
     m_Synch->SetResourceType3(midas3ResourceType::NONE);
     }
 
-  connect(m_SynchThread, SIGNAL( performReturned(int) ),
+  connect(m_SynchThread, SIGNAL( PerformReturned(int) ),
           this, SIGNAL( PushedResources(int) ) );
-  connect(m_SynchThread, SIGNAL( enableActions(bool) ),
+  connect(m_SynchThread, SIGNAL( EnableActions(bool) ),
           this, SIGNAL( EnableActions(bool) ) );
 
   if( m_Delete )

@@ -31,7 +31,7 @@ SignInThread::~SignInThread()
 
 void SignInThread::SetProfile(QString profile)
 {
-  this->m_Profile = profile;
+  m_Profile = profile;
 }
 
 void SignInThread::run()
@@ -47,15 +47,15 @@ void SignInThread::run()
 
     if( !m_Synch->GetAuthenticator()->Login() )
       {
-      emit initialized(false);
+      emit Initialized(false);
       return;
       }
 
-    emit initialized(true);
+    emit Initialized(true);
     }
   else
     {
-    emit initialized(false);
+    emit Initialized(false);
     }
 }
 

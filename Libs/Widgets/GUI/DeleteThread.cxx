@@ -53,14 +53,14 @@ void DeleteThread::SetDeleteOnDisk(bool val)
 
 void DeleteThread::run()
 {
-  emit enableActions(false);
+  emit EnableActions(false);
 
   if( m_Resource )
     {
     mds::DatabaseAPI db;
     if( !db.DeleteResource(m_Resource->GetUuid(), m_DeleteOnDisk) )
       {
-      emit errorMessage("Error deleting resource " + m_Resource->GetData(0).toString() );
+      emit ErrorMessage("Error deleting resource " + m_Resource->GetData(0).toString() );
       }
     }
   else if( m_Resource3 )
@@ -74,7 +74,7 @@ void DeleteThread::run()
       folder.SetObject(folderTreeItem->GetFolder() );
       if( !folder.Delete(m_DeleteOnDisk) )
         {
-        emit errorMessage("Error deleting folder " + QString(folderTreeItem->GetFolder()->GetName().c_str() ) );
+        emit ErrorMessage("Error deleting folder " + QString(folderTreeItem->GetFolder()->GetName().c_str() ) );
         }
       }
     else if( (itemTreeItem = dynamic_cast<Midas3ItemTreeItem *>(m_Resource3) ) != NULL )
@@ -83,10 +83,10 @@ void DeleteThread::run()
       item.SetObject(itemTreeItem->GetItem() );
       if( !item.Delete(m_DeleteOnDisk) )
         {
-        emit errorMessage("Error deleting item " + QString(itemTreeItem->GetItem()->GetName().c_str() ) );
+        emit ErrorMessage("Error deleting item " + QString(itemTreeItem->GetItem()->GetName().c_str() ) );
         }
       }
     }
-  emit enableActions(true);
+  emit EnableActions(true);
 }
 

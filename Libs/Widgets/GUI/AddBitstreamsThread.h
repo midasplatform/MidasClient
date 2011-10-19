@@ -40,9 +40,9 @@ public:
   virtual void run();
 
 signals:
-  void enableActions(bool);
+  void EnableActions(bool);
 
-  void progress(int, int, const QString &);
+  void Progress(int, int, const QString &);
 
 private:
   MidasItemTreeItem*  m_ParentItem;

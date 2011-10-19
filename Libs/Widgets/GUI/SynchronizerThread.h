@@ -44,8 +44,8 @@ public:
 
   virtual void run()
   {
-    emit enableActions(false);
-    emit performReturned(m_Synchronizer->Perform() );
+    emit EnableActions(false);
+    emit PerformReturned(m_Synchronizer->Perform() );
 
     if( m_Delete )
       {
@@ -53,7 +53,7 @@ public:
       m_Synchronizer->SetAuthenticator(NULL, false);
       delete m_Synchronizer;
       }
-    emit enableActions(true);
+    emit EnableActions(true);
   }
 
   void Cancel()
@@ -61,9 +61,9 @@ public:
     m_Synchronizer->Cancel();
   }
 signals:
-  void enableActions(bool val);
+  void EnableActions(bool val);
 
-  void performReturned(int rc);
+  void PerformReturned(int rc);
 
 private:
   midasSynchronizer* m_Synchronizer;
