@@ -118,15 +118,15 @@ class UserFoldersResponseParser : public CommunityListResponseParser
 
 /** Custom Response parser for midas.folder.children and
   midas.community.children */
-class FolderResponseParser : public mws::RestResponseParser
+class FolderChildrenResponseParser : public mws::RestResponseParser
 {
 public:
-  FolderResponseParser()
+  FolderChildrenResponseParser()
   {
     m_Folder = NULL;
   }
 
-  ~FolderResponseParser()
+  ~FolderChildrenResponseParser()
   {
   }
 
@@ -190,6 +190,76 @@ public:
 protected:
   m3do::Folder* m_Folder;
 };
+
+/** Custom Response parser for midas.folder.get */
+class FolderGetResponseParser : public mws::RestResponseParser
+{
+public:
+
+  FolderGetResponseParser()
+  {
+    m_Folder = NULL;
+  }
+
+  virtual ~FolderGetResponseParser()
+  {
+  }
+
+  virtual bool Parse(const QString& response)
+  {
+    if( !RestResponseParser::Parse(response) )
+      {
+      return false;
+      }
+
+    QScriptEngine engine;
+    QScriptValue  data = engine.evaluate(response).property("data");
+    if(data.property("parent").property("parent_id").isUndefined())
+      {
+      m_Folder->SetParentId(data.property("parent_id").toInt32());
+      }
+    else
+      {
+      int ppid = data.property("parent").property("parent_id").toInt32();
+      if(ppid == -2) //parent is a community
+        {
+        bool correctId;
+        QString pname = data.property("parent").property("name").toString();
+        int id = pname.remove("community_").toInt(&correctId);
+
+        if(!correctId)
+          {
+          return false;
+          }
+
+        m3do::Community* comm = new m3do::Community();
+        comm->SetId(id);
+
+        m_Folder->SetParentId(id);
+        m_Folder->SetParentFolder(comm);
+        }
+      else if(ppid == -1) //this is a top level user folder
+        {
+        m_Folder->SetParentId(0);
+        m_Folder->SetParentFolder(NULL);
+        }
+      else
+        {
+        m_Folder->SetParentId(data.property("parent_id").toInt32());
+        }
+      }
+    return true;
+  }
+
+  /** Set the Folder object */
+  void SetFolder(m3do::Folder* folder)
+  {
+    m_Folder = folder;
+  }
+
+protected:
+  m3do::Folder* m_Folder;
+};
 // ------------------------------------------------------------------
 
 /** Constructor */
@@ -229,7 +299,8 @@ bool Folder::Fetch()
     return false;
     }
 
-  mws::RestResponseParser parser;
+  FolderGetResponseParser parser;
+  parser.SetFolder(m_Folder);
   m_Folder->Clear();
   parser.AddTag("name", m_Folder->GetName() );
   parser.AddTag("description", m_Folder->GetDescription() );
@@ -248,14 +319,13 @@ bool Folder::Fetch()
     }
   else
     {
-    parser.AddTag("parent_id", m_Folder->GetParentStr() );
     url << "midas.folder.get&id=" << m_Folder->GetId();
-    if( !mws::WebAPI::Instance()->Execute(url.str().c_str(), &parser) )
-      {
-      return false;
-      }
     }
 
+  if( !mws::WebAPI::Instance()->Execute(url.str().c_str(), &parser) )
+    {
+    return false;
+    }
   m_Folder->SetFetched(true);
   return true;
 }
@@ -284,7 +354,7 @@ bool Folder::FetchTree()
     }
   else
     {
-    FolderResponseParser parser;
+    FolderChildrenResponseParser parser;
     parser.SetFolder(m_Folder);
     std::stringstream url;
     url << "midas." << m_Folder->GetTypeName() << ".children&id="
