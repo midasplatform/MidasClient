@@ -8,7 +8,7 @@ if(BUILD_TESTING)
 
     # Setup a mock tree we can add
   configure_file(
-    "${MIDASClient_SOURCE_DIR}/Copyright.txt"
+    "${MIDASClient_SOURCE_DIR}/LICENSE.txt"
     "${MIDASClient_BINARY_DIR}/Testing/${dashboard_top_level_community_name}/Subcomm/Collection/Item/bitstream.txt"
     COPYONLY
   )

@@ -1,0 +1,1299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MIDASDesktopWindow</class>
+ <widget class="QMainWindow" name="MIDASDesktopWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>970</width>
+    <height>667</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Midas Desktop</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../MIDASDesktopIcons.qrc">
+    <normaloff>:/icons/MIDAS_Desktop_LargeIcon.png</normaloff>:/icons/MIDAS_Desktop_LargeIcon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <item row="2" column="0">
+     <widget class="QFrame" name="frame">
+      <layout class="QGridLayout" name="gridLayout_4">
+       <property name="margin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QSplitter" name="treesSplitter">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QGridLayout" name="gridLayout_x">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="treesLayout">
+             <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <property name="spacing">
+                <number>3</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>&lt;b&gt;Server&lt;/b&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_RefreshButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Refresh List</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/refresh.png</normaloff>:/icons/refresh.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_ShowNewResourcesButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Show new resources</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/document_add.png</normaloff>:/icons/document_add.png</iconset>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="2">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>3</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>&lt;b&gt;Client&lt;/b&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_RefreshClientButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Refresh List</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/refresh.png</normaloff>:/icons/refresh.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_ClientExpandAllButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Expand All</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_ClientCollapseAllButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Collapse All</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="1">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="spacing">
+                <number>3</number>
+               </property>
+               <item>
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_PullButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Pull Resources</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/nav_right_green.png</normaloff>:/icons/nav_right_green.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_PushButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Push Resources</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../MIDASDesktopIcons.qrc">
+                   <normaloff>:/icons/nav_left_green.png</normaloff>:/icons/nav_left_green.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0" rowspan="2">
+              <widget class="QWidget" name="m_ServerTreeViewContainer" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_3">
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QTreeView" name="m_TreeViewServerPlaceholder">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="acceptDrops">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="2" rowspan="2">
+              <widget class="QWidget" name="m_ClientTreeViewContainer" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QTreeView" name="m_TreeViewClientPlaceholder">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="acceptDrops">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QSplitter" name="rightSplitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="QGroupBox" name="m_MidasTreeItemInfoGroupBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="title">
+            <string> Description </string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="m_EditInfoButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="text">
+                 <string>Edit</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0">
+             <widget class="MidasResourceDescTable" name="m_MidasTreeItemInfoTable">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Community, Collection or Item detailed information.</string>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAsNeeded</enum>
+              </property>
+              <property name="tabKeyNavigation">
+               <bool>false</bool>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideNone</enum>
+              </property>
+              <property name="verticalScrollMode">
+               <enum>QAbstractItemView::ScrollPerPixel</enum>
+              </property>
+              <property name="horizontalScrollMode">
+               <enum>QAbstractItemView::ScrollPerPixel</enum>
+              </property>
+              <property name="gridStyle">
+               <enum>Qt::NoPen</enum>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+              <property name="cornerButtonEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="columnCount">
+               <number>2</number>
+              </property>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderCascadingSectionResizes">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <column/>
+              <column/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QTabWidget" name="m_LogAndSearchTabContainer">
+           <property name="tabPosition">
+            <enum>QTabWidget::South</enum>
+           </property>
+           <property name="tabShape">
+            <enum>QTabWidget::Rounded</enum>
+           </property>
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="m_SearchTab">
+            <attribute name="title">
+             <string>Search</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="../MIDASDesktopIcons.qrc">:/icons/find.png</pixmap>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="m_SearchQueryEdit">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="m_SearchButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="MidasSearchResultList" name="m_SearchItemsListWidget">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>List of items retrieved using the provided search query</string>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="m_ProgressTab">
+            <attribute name="title">
+             <string>Progress</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="m_ProgressTabTitle">
+               <property name="text">
+                <string>&lt;b&gt;Progress&lt;/b&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_FileCountLabel">
+               <property name="text">
+                <string>File Count:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_OverallProgressLabel">
+               <property name="text">
+                <string>Overall Progress:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="m_ProgressBarOverall">
+               <property name="value">
+                <number>0</number>
+               </property>
+               <property name="format">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_CurrentFilenameLabel">
+               <property name="text">
+                <string>Current File:</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_CurrentProgressLabel">
+               <property name="text">
+                <string>Progress:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="m_ProgressBarCurrent">
+               <property name="value">
+                <number>0</number>
+               </property>
+               <property name="format">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_SpeedLabel">
+               <property name="text">
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="m_EstimatedTimeLabel">
+               <property name="text">
+                <string>Estimated Time Remaining:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="m_LogTab">
+            <attribute name="title">
+             <string>Log</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_8">
+             <item row="0" column="0" colspan="2">
+              <widget class="QTextEdit" name="m_Log">
+               <property name="toolTip">
+                <string/>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="1">
+              <widget class="QPushButton" name="m_ClearLogButton">
+               <property name="text">
+                <string>Clear Log</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../MIDASDesktopIcons.qrc">
+                 <normaloff>:/icons/delete.png</normaloff>:/icons/delete.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="m_IncompleteTransfersTab">
+            <attribute name="title">
+             <string>Incomplete Transfers</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2"/>
+           </widget>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>970</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="m_ActionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="m_ActionSignIn"/>
+    <addaction name="separator"/>
+    <addaction name="m_ActionQuit"/>
+   </widget>
+   <widget class="QMenu" name="m_MenuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="m_ActionNewLocalDatabase"/>
+    <addaction name="m_ActionChooseLocalDatabase"/>
+    <addaction name="m_ActionCreateProfile"/>
+    <addaction name="m_ActionPreferences"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuServer">
+     <property name="title">
+      <string>Server</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../MIDASDesktopIcons.qrc">
+       <normaloff>:/icons/earth_network.png</normaloff>:/icons/earth_network.png</iconset>
+     </property>
+     <addaction name="m_ActionPullResource"/>
+     <addaction name="m_ActionOpenUrl"/>
+     <addaction name="m_ActionDeleteServer"/>
+     <addaction name="separator"/>
+     <addaction name="m_ActionDownloadKeyFilesZip"/>
+     <addaction name="m_ActionDownloadKeyFilesTgz"/>
+     <addaction name="separator"/>
+     <addaction name="m_ActionDownloadKeyFile"/>
+    </widget>
+    <widget class="QMenu" name="m_MenuClient">
+     <property name="title">
+      <string>Client</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../MIDASDesktopIcons.qrc">
+       <normaloff>:/icons/workstation_network.png</normaloff>:/icons/workstation_network.png</iconset>
+     </property>
+     <widget class="QMenu" name="m_MenuMIDAS2">
+      <property name="title">
+       <string>MIDAS 2</string>
+      </property>
+      <addaction name="m_ActionAddCommunity"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionAddSubcommunity"/>
+      <addaction name="m_ActionAddCollection"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionAddItem"/>
+      <addaction name="m_ActionAddBitstream"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionSwapWithMD5Reference"/>
+     </widget>
+     <widget class="QMenu" name="m_MenuMIDAS3">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="title">
+       <string>MIDAS 3</string>
+      </property>
+      <addaction name="m_ActionAddCommunity3"/>
+      <addaction name="m_ActionAddTopLevelFolder"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionAddSubfolder"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionAddItem3"/>
+      <addaction name="separator"/>
+      <addaction name="m_ActionAddBitstream3"/>
+     </widget>
+     <addaction name="m_MenuMIDAS2"/>
+     <addaction name="m_MenuMIDAS3"/>
+     <addaction name="separator"/>
+     <addaction name="m_ActionPushResource"/>
+     <addaction name="m_ActionDeleteResource"/>
+     <addaction name="separator"/>
+     <addaction name="m_ActionViewDirectory"/>
+    </widget>
+    <addaction name="m_MenuClient"/>
+    <addaction name="menuServer"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="m_MenuSettings"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="m_StatusBar"/>
+  <action name="m_ActionSignIn">
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/earth_connection.png</normaloff>:/icons/earth_connection.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sign In...</string>
+   </property>
+   <property name="statusTip">
+    <string>Connect to database.</string>
+   </property>
+  </action>
+  <action name="m_ActionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="statusTip">
+    <string>Quit MidasDesktop</string>
+   </property>
+  </action>
+  <action name="actionEdit_search_settings">
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/find.png</normaloff>:/icons/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search...</string>
+   </property>
+   <property name="statusTip">
+    <string>Set search parameters.</string>
+   </property>
+  </action>
+  <action name="m_ActionAbout">
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/MIDAS_Desktop_Icon.png</normaloff>:/icons/MIDAS_Desktop_Icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>About MIDASDesktop</string>
+   </property>
+   <property name="statusTip">
+    <string>About MIDASDesktop.</string>
+   </property>
+  </action>
+  <action name="m_ActionCreateProfile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/dude3.png</normaloff>:/icons/dude3.png</iconset>
+   </property>
+   <property name="text">
+    <string>Profile...</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a user profile</string>
+   </property>
+  </action>
+  <action name="m_ActionChooseLocalDatabase">
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/workstation_network.png</normaloff>:/icons/workstation_network.png</iconset>
+   </property>
+   <property name="text">
+    <string>Choose Local Database...</string>
+   </property>
+   <property name="statusTip">
+    <string>Select the location of the sqlite database</string>
+   </property>
+  </action>
+  <action name="m_ActionAddCommunity">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/gpl_folder_add.png</normaloff>:/icons/gpl_folder_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add community</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a new community</string>
+   </property>
+  </action>
+  <action name="m_ActionAddSubcommunity">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/gpl_folder_add.png</normaloff>:/icons/gpl_folder_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add subcommunity</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a new community under the selected one</string>
+   </property>
+  </action>
+  <action name="m_ActionAddCollection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/folder_add.png</normaloff>:/icons/folder_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add collection</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a new collection under the selected community</string>
+   </property>
+  </action>
+  <action name="m_ActionAddItem">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/document_add.png</normaloff>:/icons/document_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add item</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a new item under the selected collection</string>
+   </property>
+  </action>
+  <action name="m_ActionAddBitstream">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/gpl_document_add.png</normaloff>:/icons/gpl_document_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add bitstream</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a new bitstream under the current item</string>
+   </property>
+  </action>
+  <action name="m_ActionPushResource">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/nav_left_green.png</normaloff>:/icons/nav_left_green.png</iconset>
+   </property>
+   <property name="text">
+    <string>Push Resource...</string>
+   </property>
+   <property name="statusTip">
+    <string>Push resource(s) to the server</string>
+   </property>
+  </action>
+  <action name="m_ActionPullResource">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/nav_right_green.png</normaloff>:/icons/nav_right_green.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pull Resource...</string>
+   </property>
+  </action>
+  <action name="m_ActionOpenUrl">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/earth_connection.png</normaloff>:/icons/earth_connection.png</iconset>
+   </property>
+   <property name="text">
+    <string>View In Browser</string>
+   </property>
+  </action>
+  <action name="m_ActionPreferences">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/edit.png</normaloff>:/icons/edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+   <property name="statusTip">
+    <string>Change auto-refresh settings</string>
+   </property>
+  </action>
+  <action name="m_ActionDeleteResource">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/delete2.png</normaloff>:/icons/delete2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Resource</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete resource from the local database</string>
+   </property>
+  </action>
+  <action name="actionCreate_New_Local_Database">
+   <property name="text">
+    <string>Create New Local Database...</string>
+   </property>
+   <property name="statusTip">
+    <string>Generate a new empty SQLite database</string>
+   </property>
+  </action>
+  <action name="m_ActionViewDirectory">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/find.png</normaloff>:/icons/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>View In Filesystem Browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the directory in the system directory browser</string>
+   </property>
+  </action>
+  <action name="actionOpen_Bitstream">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open Bitstream</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the corresponding file</string>
+   </property>
+  </action>
+  <action name="actionClient_Settings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+  </action>
+  <action name="m_ActionDeleteServer">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/delete2.png</normaloff>:/icons/delete2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Resource</string>
+   </property>
+  </action>
+  <action name="m_ActionNewLocalDatabase">
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/document_add.png</normaloff>:/icons/document_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Local Database...</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new empty SQLite database file</string>
+   </property>
+  </action>
+  <action name="m_ActionSwapWithMD5Reference">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Swap with MD5 reference</string>
+   </property>
+  </action>
+  <action name="m_ActionDownloadKeyFilesZip">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/zip-icon.gif</normaloff>:/icons/zip-icon.gif</iconset>
+   </property>
+   <property name="text">
+    <string>Download key files (zip)</string>
+   </property>
+  </action>
+  <action name="m_ActionDownloadKeyFilesTgz">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/zip-icon.gif</normaloff>:/icons/zip-icon.gif</iconset>
+   </property>
+   <property name="text">
+    <string>Download key files (tgz)</string>
+   </property>
+  </action>
+  <action name="m_ActionDownloadKeyFile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
+   </property>
+   <property name="text">
+    <string>Download key file</string>
+   </property>
+  </action>
+  <action name="actionUpgrade_Database">
+   <property name="text">
+    <string>Upgrade Database</string>
+   </property>
+  </action>
+  <action name="m_ActionAddCommunity3">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/user_group.png</normaloff>:/icons/user_group.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Community</string>
+   </property>
+  </action>
+  <action name="m_ActionAddTopLevelFolder">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/gpl_folder_add.png</normaloff>:/icons/gpl_folder_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Top Level Folder</string>
+   </property>
+  </action>
+  <action name="m_ActionAddSubfolder">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/gpl_folder_add.png</normaloff>:/icons/gpl_folder_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Subfolder</string>
+   </property>
+  </action>
+  <action name="m_ActionAddItem3">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/document_add.png</normaloff>:/icons/document_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Item</string>
+   </property>
+  </action>
+  <action name="m_ActionAddBitstream3">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../MIDASDesktopIcons.qrc">
+     <normaloff>:/icons/page.png</normaloff>:/icons/page.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Bitstreams</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MidasSearchResultList</class>
+   <extends>QListWidget</extends>
+   <header>MidasSearchResultList.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MidasResourceDescTable</class>
+   <extends>QTableWidget</extends>
+   <header>MidasResourceDescTable.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>m_RefreshButton</tabstop>
+  <tabstop>m_PullButton</tabstop>
+  <tabstop>m_PushButton</tabstop>
+  <tabstop>m_RefreshClientButton</tabstop>
+  <tabstop>m_ClientExpandAllButton</tabstop>
+  <tabstop>m_ClientCollapseAllButton</tabstop>
+  <tabstop>m_MidasTreeItemInfoTable</tabstop>
+  <tabstop>m_EditInfoButton</tabstop>
+  <tabstop>m_LogAndSearchTabContainer</tabstop>
+  <tabstop>m_SearchQueryEdit</tabstop>
+  <tabstop>m_SearchButton</tabstop>
+  <tabstop>m_SearchItemsListWidget</tabstop>
+  <tabstop>m_ClearLogButton</tabstop>
+  <tabstop>m_Log</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+  <include location="../MIDASDesktopIcons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>m_ClearLogButton</sender>
+   <signal>clicked()</signal>
+   <receiver>m_Log</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>950</x>
+     <y>754</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>909</x>
+     <y>603</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_SearchQueryEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>m_SearchButton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>793</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>874</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>testDataBaseModel()</slot>
+ </slots>
+</ui>

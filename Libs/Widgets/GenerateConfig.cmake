@@ -1,0 +1,21 @@
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/UseMIDASClientWidgets.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/UseMIDASClientWidgets.cmake COPYONLY)
+
+# Library directory
+SET(MIDASClientWidgets_LIBRARY_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+# Include directories
+SET(MIDASClientWidgets_INCLUDE_DIRS_CONFIG 
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/GUI
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+# Use file
+SET(MIDASClientWidgets_USE_FILE_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/UseMIDASClientWidgets.cmake)
+
+# Configure config file
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/MIDASClientWidgetsConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/MIDASClientWidgetsConfig.cmake @ONLY)
