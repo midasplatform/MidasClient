@@ -1,5 +1,5 @@
 if(BUILD_TESTING)
-  set(midascli_command "${MIDASClient_BINARY_DIR}/Application/MIDAScli/MIDAScli")
+  set(midascli_command "${MIDASClient_BINARY_DIR}/Applications/MIDAScli/MIDAScli")
   set(sqlite3_command "${MIDASClient_BINARY_DIR}/../CTK-build/sqlite-build/sqlite3")
   site_name(dashboard_top_level_community_name)
 
@@ -70,7 +70,7 @@ if(BUILD_TESTING)
     --email ${dashboard_midas_email}
     --app-name ${dashboard_midas_app_name}
     --api-key ${dashboard_midas_api_key}
-    upload "${MIDASClient_SOURCE_DIR}/Application/MIDASDesktop/icons/add2.png" "${dashboard_top_level_community_name}/Subcomm/Collection/Item"
+    upload "${MIDASClient_SOURCE_DIR}/Applications/MIDASDesktop/icons/add2.png" "${dashboard_top_level_community_name}/Subcomm/Collection/Item"
     ${dashboard_midas_server_url})
 
   # "pull" command tests
