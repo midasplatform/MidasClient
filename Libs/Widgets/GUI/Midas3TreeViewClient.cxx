@@ -26,6 +26,7 @@
 #include "Midas3FolderTreeItem.h"
 #include "Midas3ItemTreeItem.h"
 #include "Midas3BitstreamTreeItem.h"
+#include "m3doCommunity.h"
 #include "m3dsFolder.h"
 #include "m3doFolder.h"
 #include "m3dsItem.h"
@@ -88,12 +89,17 @@ void Midas3TreeViewClient::dragMoveEvent(QDragMoveEvent* event)
 
   if( event->mimeData()->hasUrls() )
     {
-    Midas3ItemTreeItem* item = NULL;
     Midas3TreeItem*     node = const_cast<Midas3TreeItem *>(
         m_Model->GetMidasTreeItem(this->indexAt(event->pos() ) ) );
 
-    if( (item = dynamic_cast<Midas3ItemTreeItem *>(node) ) != NULL )
+    if( dynamic_cast<Midas3ItemTreeItem *>(node) )
       {
+      event->acceptProposedAction();
+      }
+    else if( dynamic_cast<Midas3FolderTreeItem *>(node) &&
+            !dynamic_cast<m3do::Community*>(node->GetObject() ) )
+      {
+      //TODO make sure it's not a community.
       event->acceptProposedAction();
       }
     else
