@@ -23,6 +23,7 @@
 
 class MidasItemTreeItem;
 class Midas3ItemTreeItem;
+class Midas3FolderTreeItem;
 
 class AddBitstreamsThread : public QThread
 {
@@ -37,6 +38,8 @@ public:
 
   void SetParentItem(Midas3ItemTreeItem* parentItem);
 
+  void SetParentFolder(Midas3FolderTreeItem* parentFolder);
+
   virtual void run();
 
 signals:
@@ -45,9 +48,10 @@ signals:
   void Progress(int, int, const QString &);
 
 private:
-  MidasItemTreeItem*  m_ParentItem;
-  Midas3ItemTreeItem* m_ParentItem3;
-  QStringList         m_Files;
+  MidasItemTreeItem*    m_ParentItem;
+  Midas3ItemTreeItem*   m_ParentItem3;
+  Midas3FolderTreeItem* m_ParentFolder;
+  QStringList           m_Files;
 };
 
 #endif

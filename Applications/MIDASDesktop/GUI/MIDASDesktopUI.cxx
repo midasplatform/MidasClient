@@ -1833,6 +1833,19 @@ void MIDASDesktopUI::AddBitstreams(const Midas3ItemTreeItem* parentItem,
   m_AddBitstreamsThread->start();
 }
 
+void MIDASDesktopUI::AddBitstreams(const Midas3FolderTreeItem* parentFolder,
+                                   const QStringList& files)
+{
+  if( !this->AddBitstreamsCommon(files) )
+    {
+    return;
+    }
+
+  m_AddBitstreamsThread->SetParentFolder(
+    const_cast<Midas3FolderTreeItem *>(parentFolder) );
+  m_AddBitstreamsThread->start();
+}
+
 /**
  * Extracted the common code between MIDAS 2 and MIDAS 3 for adding
  * bitstreams to the client tree into this helper method
@@ -2222,8 +2235,10 @@ void MIDASDesktopUI::SetLocalDatabase(std::string file)
               this, SLOT(UpdateInfoPanel(const Midas3BitstreamTreeItem *) ) );
       connect(m_TreeViewClient, SIGNAL(MidasTreeItemSelected(const Midas3TreeItem *) ),
               this, SLOT(UpdateActionStateClient(const Midas3TreeItem *) ) );
-      connect(m_TreeViewClient, SIGNAL(BitstreamsDropped(const Midas3ItemTreeItem *, const QStringList &) ),
+      connect(m_TreeViewClient, SIGNAL(BitstreamsDroppedIntoItem(const Midas3ItemTreeItem *, const QStringList &) ),
               this, SLOT(AddBitstreams(const Midas3ItemTreeItem *, const QStringList &) ) );
+      connect(m_TreeViewClient, SIGNAL(BitstreamsDroppedIntoFolder(const Midas3FolderTreeItem *, const QStringList &) ),
+              this, SLOT(AddBitstreams(const Midas3FolderTreeItem *, const QStringList &) ) );
       connect(m_TreeViewClient, SIGNAL(BitstreamOpenRequest() ), this, SLOT(OpenBitstream() ) );
       }
     else

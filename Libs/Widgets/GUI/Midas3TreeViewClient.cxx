@@ -26,6 +26,7 @@
 #include "Midas3FolderTreeItem.h"
 #include "Midas3ItemTreeItem.h"
 #include "Midas3BitstreamTreeItem.h"
+#include "m3doCommunity.h"
 #include "m3dsFolder.h"
 #include "m3doFolder.h"
 #include "m3dsItem.h"
@@ -88,11 +89,15 @@ void Midas3TreeViewClient::dragMoveEvent(QDragMoveEvent* event)
 
   if( event->mimeData()->hasUrls() )
     {
-    Midas3ItemTreeItem* item = NULL;
     Midas3TreeItem*     node = const_cast<Midas3TreeItem *>(
         m_Model->GetMidasTreeItem(this->indexAt(event->pos() ) ) );
 
-    if( (item = dynamic_cast<Midas3ItemTreeItem *>(node) ) != NULL )
+    if( dynamic_cast<Midas3ItemTreeItem *>(node) )
+      {
+      event->acceptProposedAction();
+      }
+    else if( dynamic_cast<Midas3FolderTreeItem *>(node) &&
+            !dynamic_cast<m3do::Community *>(node->GetObject() ) )
       {
       event->acceptProposedAction();
       }
@@ -117,13 +122,12 @@ void Midas3TreeViewClient::dropEvent(QDropEvent* event)
   const QMimeData* md = event->mimeData();
   if( md->hasUrls() )
     {
-    Midas3ItemTreeItem* item = NULL;
-    Midas3TreeItem*     node = const_cast<Midas3TreeItem *>(
+    Midas3ItemTreeItem*   item = NULL;
+    Midas3FolderTreeItem* folder = NULL;
+    Midas3TreeItem*       node = const_cast<Midas3TreeItem *>(
         m_Model->GetMidasTreeItem(this->indexAt(event->pos() ) ) );
 
-    if( (item = dynamic_cast<Midas3ItemTreeItem *>(node) ) != NULL )
-      {
-      QStringList files;
+    QStringList files;
       foreach(QUrl url, md->urls() )
         {
         QFileInfo info(url.toLocalFile() );
@@ -133,7 +137,16 @@ void Midas3TreeViewClient::dropEvent(QDropEvent* event)
           files << url.toLocalFile();
           }
         }
-      emit BitstreamsDropped(item, files);
+
+    if( (item = dynamic_cast<Midas3ItemTreeItem *>(node) ))
+      {
+      emit BitstreamsDroppedIntoItem(item, files);
+      event->acceptProposedAction();
+      }
+    else if( (folder = dynamic_cast<Midas3FolderTreeItem *>(node) ) &&
+            !dynamic_cast<m3do::Community *>(node->GetObject() ) )
+      {
+      emit BitstreamsDroppedIntoFolder(folder, files);
       event->acceptProposedAction();
       }
     }

@@ -39,7 +39,8 @@ public slots:
   void DeleteResource(mdo::Object *);
 
 signals:
-  void BitstreamsDropped(const Midas3ItemTreeItem* parentItem, const QStringList& files);
+  void BitstreamsDroppedIntoItem(const Midas3ItemTreeItem* parentItem, const QStringList& files);
+  void BitstreamsDroppedIntoFolder(const Midas3FolderTreeItem* parentFolder, const QStringList& files);
 
   void BitstreamOpenRequest();
 
