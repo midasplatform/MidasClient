@@ -320,6 +320,8 @@ public slots:
 
   void AddBitstreams(const Midas3ItemTreeItem* parentItem, const QStringList& files);
 
+  void AddBitstreams(const Midas3FolderTreeItem* parentFolder, const QStringList& files);
+
   void AddBitstreamsProgress(int current, int total, const QString& message);
 
   void PullRecursive(int type, int id);
