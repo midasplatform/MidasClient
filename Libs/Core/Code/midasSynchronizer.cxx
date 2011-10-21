@@ -1230,8 +1230,12 @@ bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder)
   // Pull any parents we need
   if( !parentFolder && folder->GetParentId() > 0 )
     {
-    // TODO check if parent is a community or a folder,
-    // set resourcetype3 accordingly
+    int oldResourceType = this->ResourceType3;
+    if(folder->GetParentFolder() && 
+       dynamic_cast<m3do::Community*>(folder->GetParentFolder()))
+      {
+      this->ResourceType3 = midas3ResourceType::COMMUNITY;
+      }
     bool recurse = this->Recursive;
     this->Recursive = false;
     std::string handle = this->ServerHandle;
@@ -1239,11 +1243,14 @@ bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder)
 
     if( !this->PullFolder3(NULL) )
       {
+      delete folder->GetParentFolder();
       delete folder;
       return false;
       }
     QDir::setCurrent(this->LastDir.c_str() );
 
+    delete folder->GetParentFolder();
+    this->ResourceType3 = oldResourceType;
     this->ServerHandle = handle;
     this->Recursive = recurse;
     }
