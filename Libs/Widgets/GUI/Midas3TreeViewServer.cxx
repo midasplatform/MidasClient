@@ -47,7 +47,7 @@ Midas3TreeViewServer::Midas3TreeViewServer(QWidget* parent)
 {
   m_Model = new Midas3TreeModelServer;
   this->setModel(m_Model);
-
+  this->setAcceptDrops(true);
   this->setSelectionMode(QTreeView::SingleSelection);
 
   connect(this, SIGNAL(collapsed(const QModelIndex &) ),

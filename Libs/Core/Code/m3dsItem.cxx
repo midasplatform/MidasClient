@@ -401,7 +401,7 @@ bool Item::Create()
   db.Database->Close();
 
   mds::DatabaseInfo::Instance()->GetResourceUpdateHandler()
-  ->AddedResource(this->m_Item);
+    ->AddedResource(this->m_Item);
   return true;
 }
 

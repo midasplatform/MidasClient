@@ -23,16 +23,21 @@
 #include "m3doBitstream.h"
 #include "mdoItem.h"
 #include "m3doItem.h"
+#include "m3dsItem.h"
+#include "m3doFolder.h"
 #include "MidasItemTreeItem.h"
 #include "Midas3ItemTreeItem.h"
+#include "Midas3FolderTreeItem.h"
 
-#include <QFileInfo>
 #include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
 
 AddBitstreamsThread::AddBitstreamsThread()
 {
   m_ParentItem = NULL;
   m_ParentItem3 = NULL;
+  m_ParentFolder = NULL;
 }
 
 AddBitstreamsThread::~AddBitstreamsThread()
@@ -52,6 +57,11 @@ void AddBitstreamsThread::SetParentItem(MidasItemTreeItem* parentItem)
 void AddBitstreamsThread::SetParentItem(Midas3ItemTreeItem* parentItem)
 {
   m_ParentItem3 = parentItem;
+}
+
+void AddBitstreamsThread::SetParentFolder(Midas3FolderTreeItem* parentFolder)
+{
+  m_ParentFolder = parentFolder;
 }
 
 void AddBitstreamsThread::run()
@@ -91,6 +101,36 @@ void AddBitstreamsThread::run()
       mdsBitstream.SetObject(bitstream);
       // TODO? mdsBitstream.MarkAsDirty();
       mdsBitstream.Commit();
+      }
+    else if( m_ParentFolder )
+      {
+      std::string itemPath = m_ParentFolder->GetPath() + "/" + name;
+      QDir parentDir = m_ParentFolder->GetPath().c_str();
+      parentDir.mkpath(name.c_str());
+
+      m3do::Item* item = new m3do::Item;
+      item->SetName(name.c_str());
+      item->SetUuid(midasUtils::GenerateUUID().c_str());
+      item->SetPath(itemPath);
+      item->SetParentId(m_ParentFolder->GetFolder()->GetId() );
+      item->SetParentFolder(m_ParentFolder->GetFolder() );
+      m3ds::Item mdsItem;
+      mdsItem.SetObject(item);
+      if(mdsItem.Create())
+        {
+        m3do::Bitstream* bitstream = new m3do::Bitstream;
+        bitstream->SetName(name.c_str() );
+        bitstream->SetSize(size.str() );
+        bitstream->SetLastModified(QFileInfo(path.c_str() ).lastModified().toTime_t() );
+        bitstream->SetChecksum(midasUtils::ComputeFileChecksum(path) );
+        bitstream->SetPath(path);
+        bitstream->SetParentId(item->GetId() );
+        bitstream->SetParentItem(item);
+        m3ds::Bitstream mdsBitstream;
+        mdsBitstream.SetObject(bitstream);
+        // TODO? mdsBitstream.MarkAsDirty();
+        mdsBitstream.Commit();
+        }
       }
     else
       {
