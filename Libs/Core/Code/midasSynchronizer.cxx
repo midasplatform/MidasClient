@@ -1500,7 +1500,6 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
     mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
     this->Progress->SetMessage(bitstream->GetName() );
     this->Progress->UpdateOverallCount(this->CurrentBitstreams);
-    //this->Progress->UpdateProgress(0, 0);
     this->Progress->ResetProgress();
     }
 
@@ -1520,8 +1519,7 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
   if( local.AlreadyExistsInItem() )
     {
     // We've already got this bitstream in the client tree
-    double size = midasUtils::StringToDouble(bitstream->GetSize() );
-    this->Progress->UpdateProgress(size, size);
+    this->Progress->UpdateTotalProgress(midasUtils::StringToDouble(bitstream->GetSize() ) );
     delete bitstream;
     return true;
     }
@@ -1532,8 +1530,10 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
   // Skip download if we already have a bitstream with this checksum
   if( local.CopyContentIfExists() )
     {
-    double size = midasUtils::StringToDouble(bitstream->GetSize() );
-    this->Progress->UpdateProgress(size, size);
+    if(this->Progress)
+      {
+      this->Progress->UpdateTotalProgress(midasUtils::StringToDouble(bitstream->GetSize() ) );
+      }
     }
   else
     {
@@ -1547,6 +1547,7 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
       return false;
       }
     }
+
   QFileInfo fileInfo(this->LastDir.c_str() );
   bitstream->SetLastModified(fileInfo.lastModified().toTime_t() );
   bitstream->SetId(0); // create, not update

@@ -112,7 +112,6 @@ bool WebAPI::Execute(const char* url, RestResponseParser* parser,
     parser = new RestResponseParser;
     }
 
-  m_RestAPI->SetProgressReporter(NULL);
   std::stringstream fullUrl;
 
   fullUrl << url << "&format=json";
@@ -183,7 +182,6 @@ bool WebAPI::DownloadFile(const char* url, const char* filename, int64 offset)
     {
     fullUrl << "&offset=" << offset;
     }
-  m_RestAPI->SetProgressReporter(m_Progress);
 
   bool success = m_RestAPI->Download(filename, fullUrl.str(), offset);
 
@@ -225,7 +223,6 @@ bool WebAPI::UploadFile(const char* url, const char* filename, int64 offset)
   std::string        fullUrl = url;
 
   fullUrl += "&format=json";
-  m_RestAPI->SetProgressReporter(m_Progress);
 
   bool success = m_RestAPI->Upload(filename, fullUrl, &parser, offset);
   success &= std::string(parser.GetErrorMessage() ) == "";
