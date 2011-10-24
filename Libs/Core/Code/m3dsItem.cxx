@@ -286,9 +286,9 @@ bool Item::FetchParent()
   mds::DatabaseAPI  db;
   std::stringstream query;
   query << "SELECT folder_id, uuid, name, path, description "
-  "FROM folder WHERE folder_id IN "
-  "(SELECT folder_id FROM item2folder WHERE item_id='"
-  << m_Item->GetId() << "')";
+    "FROM folder WHERE folder_id IN "
+    "(SELECT folder_id FROM item2folder WHERE item_id='"
+    << m_Item->GetId() << "')";
   db.Open();
   db.Database->ExecuteQuery(query.str().c_str() );
 
@@ -319,7 +319,7 @@ void Item::ParentPathChanged(const std::string& parentPath)
   std::stringstream query;
 
   query << "UPDATE item SET path='" << newPath << "' WHERE "
-  "item_id='" << m_Item->GetId() << "'";
+    "item_id='" << m_Item->GetId() << "'";
 
   mds::DatabaseAPI db;
   db.Open();

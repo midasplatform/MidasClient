@@ -323,6 +323,21 @@ bool WebAPI::CountBitstreams(int type, int id, std::string& count,
 }
 
 // -------------------------------------------------------------------
+bool WebAPI::CountBitstreams(const std::string& uuid, std::string& count,
+                             std::string& size)
+{
+  RestResponseParser parser;
+
+  parser.AddTag("count", count);
+  parser.AddTag("size", size);
+
+  std::stringstream fields;
+  fields << "midas.bitstream.count&uuid=" << uuid;
+
+  return this->Execute(fields.str().c_str(), &parser);
+}
+
+// -------------------------------------------------------------------
 bool WebAPI::GetIdFromPath(const std::string& path, std::string& type,
                            std::string& id, std::string& uuid)
 {
@@ -400,7 +415,7 @@ bool WebAPI::GetDefaultAPIKey(const std::string& email,
                        postData.str().c_str(), false);
 }
 
-mdo::Version * WebAPI::GetServerVersion()
+mdo::Version* WebAPI::GetServerVersion()
 {
   return m_ServerVersion;
 }
