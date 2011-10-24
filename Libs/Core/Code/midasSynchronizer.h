@@ -219,7 +219,7 @@ protected:
 
   void CountBitstreams();
 
-  void CountBitstreams3(const std::string& uuid);
+  void CountBitstreams3(const std::string& uuid = "");
 
   void ChangeToRootDir();
 

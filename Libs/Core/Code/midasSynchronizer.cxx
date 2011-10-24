@@ -1638,6 +1638,8 @@ int midasSynchronizer::Push3()
   m3do::Item*      item = NULL;
   m3do::Bitstream* bitstream = NULL;
 
+  this->CountBitstreams3();
+
   switch( this->ResourceType3 )
     {
     case midas3ResourceType::COMMUNITY:
@@ -2265,6 +2267,12 @@ bool midasSynchronizer::Push(m3do::Bitstream* bitstream)
   // Create new item on server
   m3ws::Bitstream mwsBitstream;
   mwsBitstream.SetObject(bitstream);
+  this->CurrentBitstreams++;
+  mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
+  this->Progress->SetMessage(bitstream->GetName() );
+  this->Progress->UpdateOverallCount(this->CurrentBitstreams);
+  this->Progress->ResetProgress();
+
   if( mwsBitstream.Upload() )
     {
     // TODO Clear dirty flag on the resource
@@ -2823,6 +2831,8 @@ void midasSynchronizer::CountBitstreams3(const std::string& uuid)
     folder.SetId(atoi(this->ClientHandle.c_str() ) );
     m3ds::Folder mdsFolder;
     mdsFolder.SetObject(&folder);
+    mdsFolder.SetRecursive(true);
+    mdsFolder.FetchTree();
     mdsFolder.FetchSize();
 
     this->TotalBitstreams = folder.GetBitstreamCount();
@@ -2838,6 +2848,7 @@ void midasSynchronizer::CountBitstreams3(const std::string& uuid)
     item.SetId(atoi(this->ClientHandle.c_str() ) );
     m3ds::Item mdsItem;
     mdsItem.SetObject(&item);
+    mdsItem.FetchTree();
     mdsItem.FetchSize();
 
     this->TotalBitstreams = item.GetBitstreamCount();

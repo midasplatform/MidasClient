@@ -96,6 +96,7 @@ bool Folder::FetchSize()
     {
     return false;
     }
+
   double       total = 0;
   unsigned int count = 0;
   for( std::vector<m3do::Folder *>::const_iterator i = m_Folder->GetFolders().begin();
@@ -230,14 +231,6 @@ bool Folder::FetchTree()
     db.GetLog()->Error("Folder::FetchTree : FolderId not set\n");
     return false;
     }
-
-  if( m_Folder->GetUuid() == "" )
-    {
-    db.GetLog()->Error("Folder::FetchTree : Uuid not set\n");
-    return false;
-    }
-
-  // m_Folder->SetDirty(db.IsResourceDirty(m_Folder->GetUuid()));
 
   std::stringstream query;
   query << "SELECT folder_id, path, name, uuid, description FROM folder "
