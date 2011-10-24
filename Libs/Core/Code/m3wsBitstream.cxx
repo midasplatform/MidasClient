@@ -138,16 +138,10 @@ bool Bitstream::Commit()
 bool Bitstream::Download()
 {
   std::stringstream fields;
-
   fields << "midas.bitstream.download&id=" << m_Bitstream->GetId();
 
   return mws::WebAPI::Instance()->DownloadFile(fields.str().c_str(),
-                                               m_Bitstream->GetName().c_str(), 0); //
-                                                                                   // TODO
-                                                                                   // set
-                                                                                   // partial
-                                                                                   // download
-                                                                                   // offset
+                                               m_Bitstream->GetName().c_str(), 0);
 }
 
 bool Bitstream::Upload()

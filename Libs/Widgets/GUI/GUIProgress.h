@@ -68,12 +68,12 @@ signals:
   void EstimatedTime(double secondsLeft);
 
 protected:
-  QProgressBar* m_progressBar;
+  QProgressBar* m_ProgressBar;
 
-  bool   Done;
-  double LastAmount;
-  double StartTime;
-  double StartAmount;
+  bool   m_Done;
+  double m_LastAmount;
+  double m_StartTime;
+  double m_StartAmount;
 };
 
 #endif

@@ -17,8 +17,6 @@
 
 #include "midasSynchronizer.h"
 
-#include <QMutexLocker>
-
 #include "mdoVersion.h"
 #include "mwsWebAPI.h"
 #include "mdoCommunity.h"
@@ -54,8 +52,9 @@
 #include "mdsPartialUpload.h"
 #include "midasFileOverwriteHandler.h"
 
-#include <QDir>
 #include <QDateTime>
+#include <QDir>
+#include <QMutexLocker>
 
 #define NO_PARENT -1
 
@@ -87,7 +86,7 @@ midasSynchronizer::~midasSynchronizer()
   delete this->Authenticator;
 }
 
-midasFileOverwriteHandler * midasSynchronizer::GetOverwriteHandler()
+midasFileOverwriteHandler* midasSynchronizer::GetOverwriteHandler()
 {
   return this->OverwriteHandler;
 }
@@ -97,7 +96,7 @@ void midasSynchronizer::SetOverwriteHandler(midasFileOverwriteHandler* handler)
   this->OverwriteHandler = handler;
 }
 
-midasAuthenticator * midasSynchronizer::GetAuthenticator()
+midasAuthenticator* midasSynchronizer::GetAuthenticator()
 {
   return this->Authenticator;
 }
@@ -129,7 +128,7 @@ void midasSynchronizer::SetProgressReporter(midasProgressReporter* progress)
   this->Progress = progress;
 }
 
-midasProgressReporter * midasSynchronizer::GetProgressReporter()
+midasProgressReporter* midasSynchronizer::GetProgressReporter()
 {
   return this->Progress;
 }
@@ -199,7 +198,7 @@ void midasSynchronizer::SetObject(void* object)
   this->Object = object;
 }
 
-void * midasSynchronizer::GetObject()
+void* midasSynchronizer::GetObject()
 {
   return this->Object;
 }
@@ -417,7 +416,6 @@ int midasSynchronizer::Add(mdo::Bitstream* result)
       result->SetId(id);
       result->SetUuid(uuid.c_str() );
       }
-
     }
   db.MarkDirtyResource(uuid, midasDirtyAction::ADDED);
 
@@ -1186,18 +1184,18 @@ int midasSynchronizer::Pull3()
     {
     case midas3ResourceType::COMMUNITY:
     case midas3ResourceType::FOLDER:
-      return this->PullFolder3(NULL) ? MIDAS_OK : MIDAS_FAILURE;
+      return this->PullFolder3(NULL, true) ? MIDAS_OK : MIDAS_FAILURE;
     case midas3ResourceType::ITEM:
-      return this->PullItem3(NULL) ? MIDAS_OK : MIDAS_FAILURE;
+      return this->PullItem3(NULL, true) ? MIDAS_OK : MIDAS_FAILURE;
     case midas3ResourceType::BITSTREAM:
-      return this->PullBitstream3(NULL) ? MIDAS_OK : MIDAS_FAILURE;
+      return this->PullBitstream3(NULL, true) ? MIDAS_OK : MIDAS_FAILURE;
     default:
       return MIDAS_NO_RTYPE;
     }
 }
 
 // -------------------------------------------------------------------
-bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder)
+bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder, bool doCount)
 {
   if( this->ShouldCancel )
     {
@@ -1221,6 +1219,11 @@ bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder)
     Log->Error(text.str() );
     delete folder;
     return false;
+    }
+
+  if(doCount)
+    {
+    this->CountBitstreams3(folder->GetUuid());
     }
 
   std::stringstream status;
@@ -1326,7 +1329,7 @@ bool midasSynchronizer::PullFolder3(m3do::Folder* parentFolder)
 }
 
 // -------------------------------------------------------------------
-bool midasSynchronizer::PullItem3(m3do::Folder* parentFolder)
+bool midasSynchronizer::PullItem3(m3do::Folder* parentFolder, bool doCount)
 {
   if( this->ShouldCancel )
     {
@@ -1349,6 +1352,11 @@ bool midasSynchronizer::PullItem3(m3do::Folder* parentFolder)
     Log->Error(text.str() );
     delete item;
     return false;
+    }
+
+  if(doCount)
+    {
+    this->CountBitstreams3(item->GetUuid());
     }
 
   std::stringstream status;
@@ -1433,7 +1441,7 @@ bool midasSynchronizer::PullItem3(m3do::Folder* parentFolder)
 }
 
 // -------------------------------------------------------------------
-bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
+bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
 {
   if( this->ShouldCancel )
     {
@@ -1458,6 +1466,14 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
     return false;
     }
 
+  if(doCount)
+    {
+    this->TotalBitstreams = 1;
+    this->Progress->SetMaxCount(this->TotalBitstreams);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(bitstream->GetSize()));
+    this->Progress->UpdateOverallCount(0);
+    }
+
   // Pull any parents we need
   if( !parentItem )
     {
@@ -1480,10 +1496,10 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
 
   if( this->Progress )
     {
+    this->CurrentBitstreams++;
     mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
     this->Progress->SetMessage(bitstream->GetName() );
     this->Progress->UpdateOverallCount(this->CurrentBitstreams);
-    this->Progress->UpdateProgress(0, 0);
     this->Progress->ResetProgress();
     }
 
@@ -1503,6 +1519,7 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
   if( local.AlreadyExistsInItem() )
     {
     // We've already got this bitstream in the client tree
+    this->Progress->UpdateTotalProgress(midasUtils::StringToDouble(bitstream->GetSize() ) );
     delete bitstream;
     return true;
     }
@@ -1511,7 +1528,14 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
   bitstream->SetPath(this->LastDir);
 
   // Skip download if we already have a bitstream with this checksum
-  if( !local.CopyContentIfExists() )
+  if( local.CopyContentIfExists() )
+    {
+    if(this->Progress)
+      {
+      this->Progress->UpdateTotalProgress(midasUtils::StringToDouble(bitstream->GetSize() ) );
+      }
+    }
+  else
     {
     if( !remote.Download() )
       {
@@ -1523,6 +1547,7 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem)
       return false;
       }
     }
+
   QFileInfo fileInfo(this->LastDir.c_str() );
   bitstream->SetLastModified(fileInfo.lastModified().toTime_t() );
   bitstream->SetId(0); // create, not update
@@ -2603,7 +2628,8 @@ void midasSynchronizer::CountBitstreams()
 {
   if( DB_IS_MIDAS3 || SERVER_IS_MIDAS3 )
     {
-    return; // no count bitstreams behavior in midas 3 yet
+    // this will be handled once we have the uuid by CountBitstreams3()
+    return;
     }
 
   if( this->Operation == midasSynchronizer::OPERATION_PULL
@@ -2723,13 +2749,127 @@ void midasSynchronizer::CountBitstreams()
     this->Progress->UpdateOverallCount(0);
     this->Progress->SetMaxTotal(midasUtils::StringToDouble(item.GetSize() ) );
     }
+}
 
+void midasSynchronizer::CountBitstreams3(const std::string& uuid)
+{
+  if( this->Operation == midasSynchronizer::OPERATION_PULL
+      && this->Recursive )
+    {
+    std::string count;
+    std::string size;
+
+    this->Progress->SetIndeterminate();
+    this->Log->Status("Calculating overall size of pull...");
+    if( !mws::WebAPI::Instance()->CountBitstreams(uuid, count, size) )
+      {
+      std::stringstream text;
+      text << "Failed to count bitstreams under resourace " << uuid << std::endl;
+      this->Log->Error(text.str());
+      }
+    this->Progress->ResetProgress();
+    this->Log->Status("");
+
+    this->TotalBitstreams = atoi(count.c_str() );
+    this->Progress->SetMaxCount(this->TotalBitstreams);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(size) );
+    this->Progress->UpdateOverallCount(0);
+    }
+  /*else if( this->Operation == midasSynchronizer::OPERATION_PUSH
+           && this->ResourceType == midasResourceType::NONE )
+    {
+    int                      count = 0;
+    double                   totalSize = 0;
+    mds::DatabaseAPI         db;
+    std::vector<midasStatus> status = db.GetStatusEntries();
+    for( std::vector<midasStatus>::iterator i = status.begin();
+         i != status.end(); ++i )
+      {
+      if( i->GetType() == midasResourceType::BITSTREAM )
+        {
+        count++;
+        mdo::Bitstream bitstream;
+        bitstream.SetId(i->GetId() );
+        mds::Bitstream mdsBitstream;
+        mdsBitstream.SetObject(&bitstream);
+        mdsBitstream.Fetch();
+        totalSize += midasUtils::StringToDouble(bitstream.GetSize() );
+        }
+      }
+    this->TotalBitstreams = count;
+    this->Progress->SetMaxCount(count);
+    this->Progress->SetMaxTotal(totalSize);
+    this->Progress->UpdateOverallCount(0);
+    }
+  else if( this->Operation == midasSynchronizer::OPERATION_PUSH
+           && this->ResourceType3 == midas3ResourceType::BITSTREAM )
+    {
+    mdo::Bitstream bitstream;
+    bitstream.SetId(atoi(this->ClientHandle.c_str() ) );
+    mds::Bitstream mdsBitstream;
+    mdsBitstream.SetObject(&bitstream);
+    mdsBitstream.Fetch();
+
+    this->TotalBitstreams = 1;
+    this->Progress->SetMaxCount(1);
+    this->Progress->UpdateOverallCount(0);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(bitstream.GetSize() ) );
+    }
+  else if( this->Operation == midasSynchronizer::OPERATION_PUSH
+           && this->ResourceType == midasResourceType::COMMUNITY
+           && this->Recursive )
+    {
+    mdo::Community comm;
+    comm.SetId(atoi(this->ClientHandle.c_str() ) );
+    mds::Community mdsComm;
+    mdsComm.SetObject(&comm);
+    mdsComm.FetchTree();
+    mdsComm.FetchSize();
+
+    this->TotalBitstreams = comm.GetBitstreamCount();
+    this->Progress->SetMaxCount(this->TotalBitstreams);
+    this->Progress->UpdateOverallCount(0);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(comm.GetSize() ) );
+    }
+  else if( this->Operation == midasSynchronizer::OPERATION_PUSH
+           && this->ResourceType == midasResourceType::COLLECTION
+           && this->Recursive )
+    {
+    mdo::Collection coll;
+    coll.SetId(atoi(this->ClientHandle.c_str() ) );
+    mds::Collection mdsColl;
+    mdsColl.SetObject(&coll);
+    mdsColl.FetchTree();
+    mdsColl.FetchSize();
+
+    this->TotalBitstreams = coll.GetBitstreamCount();
+    this->Progress->SetMaxCount(this->TotalBitstreams);
+    this->Progress->UpdateOverallCount(0);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(coll.GetSize() ) );
+    }
+  else if( this->Operation == midasSynchronizer::OPERATION_PUSH
+           && this->ResourceType == midasResourceType::ITEM
+           && this->Recursive )
+    {
+    mdo::Item item;
+    item.SetId(atoi(this->ClientHandle.c_str() ) );
+    mds::Item mdsItem;
+    mdsItem.SetObject(&item);
+    mdsItem.FetchTree();
+    mdsItem.FetchSize();
+
+    this->TotalBitstreams = item.GetBitstreamCount();
+    this->Progress->SetMaxCount(this->TotalBitstreams);
+    this->Progress->UpdateOverallCount(0);
+    this->Progress->SetMaxTotal(midasUtils::StringToDouble(item.GetSize() ) );
+    }*/
 }
 
 void midasSynchronizer::SetPathMode(bool val)
 {
   this->PathMode = val;
 }
+
 bool midasSynchronizer::IsPathMode()
 {
   return this->PathMode;

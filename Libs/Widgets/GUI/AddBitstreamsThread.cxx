@@ -105,7 +105,7 @@ void AddBitstreamsThread::run()
     else if( m_ParentFolder )
       {
       std::string itemPath = m_ParentFolder->GetPath() + "/" + name;
-      QDir parentDir = m_ParentFolder->GetPath().c_str();
+      QDir parentDir(m_ParentFolder->GetPath().c_str());
       parentDir.mkpath(name.c_str());
 
       m3do::Item* item = new m3do::Item;
