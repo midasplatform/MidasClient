@@ -187,6 +187,7 @@ bool Item::FetchSize()
     {
     return false;
     }
+
   double total = 0;
   for( std::vector<m3do::Bitstream *>::const_iterator i = m_Item->GetBitstreams().begin();
        i != m_Item->GetBitstreams().end(); ++i )
