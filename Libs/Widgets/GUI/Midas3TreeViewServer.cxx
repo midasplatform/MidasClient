@@ -171,6 +171,7 @@ void Midas3TreeViewServer::dropEvent(QDropEvent* event)
 
     int  type = atoi( tokens[0].c_str() );
     int  id   = atoi( tokens[1].c_str() );
+
     emit ResourceDropped(type, id);
     event->acceptProposedAction();
     }

@@ -19,21 +19,21 @@
 
 GUIProgress::GUIProgress(QProgressBar* progressBar)
 {
-  this->m_progressBar = progressBar;
-  this->m_progressBar->setMinimum(0);
-  this->m_progressBar->setMaximum(100);
-  this->m_progressBar->setTextVisible(false);
+  m_ProgressBar = progressBar;
+  m_ProgressBar->setMinimum(0);
+  m_ProgressBar->setMaximum(100);
+  m_ProgressBar->setTextVisible(false);
   this->ResetProgress();
-  this->LastAmount = 0;
-  this->StartTime = 0;
-  this->StartAmount = 0;
+  m_LastAmount = 0;
+  m_StartTime = 0;
+  m_StartAmount = 0;
 
   connect(this, SIGNAL(UpdateProgressMin(int) ),
-          m_progressBar, SLOT( setMinimum(int) ) );
+          m_ProgressBar, SLOT( setMinimum(int) ) );
   connect(this, SIGNAL(UpdateProgressMax(int) ),
-          m_progressBar, SLOT( setMaximum(int) ) );
+          m_ProgressBar, SLOT( setMaximum(int) ) );
   connect(this, SIGNAL(UpdateProgressValue(int) ),
-          m_progressBar, SLOT( setValue(int) ) );
+          m_ProgressBar, SLOT( setValue(int) ) );
 }
 
 GUIProgress::~GUIProgress()
@@ -42,34 +42,34 @@ GUIProgress::~GUIProgress()
 
 void GUIProgress::UpdateProgress(double current, double max)
 {
-  m_Total += (current - this->LastAmount); // record difference
-  this->LastAmount = current;
+  m_Total += (current - m_LastAmount); // record difference
+  m_LastAmount = current;
   emit CurrentProgress(current, max);
   emit OverallProgressTotal(m_Total, m_MaxTotal);
 
   if( current == max )
     {
-    this->LastAmount = 0;
-    this->StartTime = 0;
-    this->StartAmount = 0;
+    m_LastAmount = 0;
+    m_StartTime = 0;
+    m_StartAmount = 0;
     }
 
   double currentTime = midasUtils::CurrentTime();
-  if( this->StartTime == 0 )
+  if( m_StartTime == 0 )
     {
-    this->StartTime = currentTime;
-    this->StartAmount = current;
+    m_StartTime = currentTime;
+    m_StartAmount = current;
     }
-  else if( currentTime - this->StartTime > SPEED_CALC_INTERVAL )
+  else if( currentTime - m_StartTime > SPEED_CALC_INTERVAL )
     {
-    double speed = (current - this->StartAmount) / (currentTime - this->StartTime);
+    double speed = (current - m_StartAmount) / (currentTime - m_StartTime);
     emit   Speed(speed);
 
     double estimatedTimeLeft = (m_MaxTotal - m_Total) / speed;
     emit   EstimatedTime(estimatedTimeLeft);
 
-    this->StartTime = currentTime;
-    this->StartAmount = current;
+    m_StartTime = currentTime;
+    m_StartAmount = current;
     }
 }
 
@@ -97,10 +97,10 @@ void GUIProgress::SetIndeterminate()
 
 void GUIProgress::ResetProgress()
 {
-  this->StartAmount = 0;
-  this->StartTime = 0;
-  this->LastAmount = 0;
-  this->Done = false;
+  m_StartAmount = 0;
+  m_StartTime = 0;
+  m_LastAmount = 0;
+  m_Done = false;
   emit UpdateProgressMax(100);
   emit UpdateProgressValue(0);
 }
