@@ -18,8 +18,11 @@
 #include "m3doBitstream.h"
 #include "m3doItem.h"
 #include "m3wsItem.h"
+#include "mdsPartialDownload.h"
 #include "mwsRestResponseParser.h"
 
+#include <QDir>
+#include <QFileInfo>
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 
@@ -137,11 +140,71 @@ bool Bitstream::Commit()
 
 bool Bitstream::Download()
 {
-  std::stringstream fields;
-  fields << "midas.bitstream.download&id=" << m_Bitstream->GetId();
+  qint64 offset = 0;
+  mds::PartialDownload* partial =
+    mds::PartialDownload::FetchByUuid(m_Bitstream->GetChecksum() );
+  QString path;
+  if( partial )
+    {
+    path = partial->GetPath().c_str();
+    QFileInfo fileInfo(path);
+    offset = fileInfo.exists() ? fileInfo.size() : 0;
+    }
+  else
+    {
+    path = m_Bitstream->GetPath().c_str();
+    }
 
-  return mws::WebAPI::Instance()->DownloadFile(fields.str().c_str(),
-                                               m_Bitstream->GetName().c_str(), 0);
+  mds::PartialDownload thisPartial;
+  thisPartial.SetPath(m_Bitstream->GetPath() );
+  thisPartial.SetUuid(m_Bitstream->GetChecksum() );
+  thisPartial.SetParentItem(m_Bitstream->GetParentItem()->GetId() );
+  if( !partial || (partial && partial->GetPath() != m_Bitstream->GetPath() ) )
+    {
+    thisPartial.Commit();
+    }
+
+  std::stringstream fields;
+
+  fields << "midas.bitstream.download";
+  if( m_Bitstream->GetChecksum() != "")
+    {
+    fields << "&checksum=" << m_Bitstream->GetChecksum();
+    }
+  else if( m_Bitstream->GetId() > 0 )
+    {
+    fields << "&id=" << m_Bitstream->GetId();
+    }
+  else
+    {
+    delete partial;
+    return false;
+    }
+  bool ok = mws::WebAPI::Instance()->DownloadFile(fields.str().c_str(),
+    path.toStdString().c_str(), offset);
+
+  if( partial && ok )
+    {
+    if( path.toStdString() != m_Bitstream->GetPath() )
+      {
+      if( !QFile::copy(path, m_Bitstream->GetPath().c_str() ) )
+        {
+        ok = false;
+        }
+      }
+    else
+      {
+      partial->Remove();
+      }
+    }
+  delete partial;
+
+  if( ok )
+    {
+    thisPartial.Remove();
+    }
+
+  return ok;
 }
 
 bool Bitstream::Upload()

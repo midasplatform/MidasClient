@@ -175,7 +175,11 @@ protected:
 
   bool ResumeDownload();
 
+  bool ResumeDownload3();
+
   bool ResumeUpload();
+
+  bool ResumeUpload3();
 
   bool PullBitstream(int parentId);
 

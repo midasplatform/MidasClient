@@ -19,11 +19,14 @@
 #include "Midas3TreeItem.h"
 #include "Midas3FolderTreeItem.h"
 #include "Midas3ItemTreeItem.h"
+#include "Midas3BitstreamTreeItem.h"
 
 #include "m3doFolder.h"
 #include "m3dsFolder.h"
 #include "m3doItem.h"
 #include "m3dsItem.h"
+#include "m3doBitstream.h"
+#include "m3dsBitstream.h"
 
 DeleteThread::DeleteThread()
 {
@@ -65,10 +68,11 @@ void DeleteThread::run()
     }
   else if( m_Resource3 )
     {
-    Midas3FolderTreeItem* folderTreeItem = NULL;
-    Midas3ItemTreeItem*   itemTreeItem = NULL;
+    Midas3FolderTreeItem*    folderTreeItem = dynamic_cast<Midas3FolderTreeItem *>(m_Resource3);
+    Midas3ItemTreeItem*      itemTreeItem = dynamic_cast<Midas3ItemTreeItem *>(m_Resource3);
+    Midas3BitstreamTreeItem* bitstreamTreeItem = dynamic_cast<Midas3BitstreamTreeItem *>(m_Resource3);
 
-    if( (folderTreeItem = dynamic_cast<Midas3FolderTreeItem *>(m_Resource3) ) != NULL )
+    if( folderTreeItem )
       {
       m3ds::Folder folder;
       folder.SetObject(folderTreeItem->GetFolder() );
@@ -77,13 +81,23 @@ void DeleteThread::run()
         emit ErrorMessage("Error deleting folder " + QString(folderTreeItem->GetFolder()->GetName().c_str() ) );
         }
       }
-    else if( (itemTreeItem = dynamic_cast<Midas3ItemTreeItem *>(m_Resource3) ) != NULL )
+    else if( itemTreeItem )
       {
       m3ds::Item item;
       item.SetObject(itemTreeItem->GetItem() );
       if( !item.Delete(m_DeleteOnDisk) )
         {
         emit ErrorMessage("Error deleting item " + QString(itemTreeItem->GetItem()->GetName().c_str() ) );
+        }
+      }
+    else if( bitstreamTreeItem )
+      {
+      m3ds::Bitstream bitstream;
+      bitstream.SetObject(bitstreamTreeItem->GetBitstream() );
+      if( !bitstream.Delete(m_DeleteOnDisk) )
+        {
+        emit ErrorMessage("Error deleting bitstream " +
+          QString(bitstreamTreeItem->GetBitstream()->GetName().c_str() ) );
         }
       }
     }
