@@ -38,6 +38,9 @@ public:
   // Return a list of all incomplete downloads
   static bool FetchAll(std::vector<mds::PartialDownload *>& list);
 
+  // Fetch a specific partial download
+  static mds::PartialDownload* FetchByUuid(const std::string& uuid);
+
   // Clear all incomplete downloads
   static bool RemoveAll();
 

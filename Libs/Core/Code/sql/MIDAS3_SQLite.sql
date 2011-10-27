@@ -75,22 +75,19 @@ CREATE TABLE bitstream (
 );
 CREATE INDEX bitstream_checksum_idx ON bitstream (checksum);
 
--- --------------------------------------------------------
-
 -- Uploads canceled/interrupted partway through
---CREATE TABLE partial_upload (
---  id integer PRIMARY KEY AUTOINCREMENT,
---  bitstream_id integer,
---  uploadtoken character varying(512),
---  user_id integer,
---  item_id integer
---);
+CREATE TABLE partial_upload (
+  id integer PRIMARY KEY AUTOINCREMENT,
+  bitstream_id integer,
+  uploadtoken character varying(512),
+  user_id integer,
+  item_id integer
+);
 
 -- Downloads canceled/interrupted partway through
---CREATE TABLE partial_download (
---  id integer PRIMARY KEY AUTOINCREMENT,
---  uuid character varying(60),
---  path character varying(512),
---  item_id integer
---);
-
+CREATE TABLE partial_download (
+  id integer PRIMARY KEY AUTOINCREMENT,
+  uuid character varying(60),
+  path character varying(512),
+  item_id integer
+);

@@ -123,6 +123,7 @@ bool RestAPI::Execute(const char* urlstr, RestResponseParser* parser,
 bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
                        int64 offset)
 {
+  m_Offset = offset;
   m_Cancel = false;
   std::string URL(urlstr);
   if( !m_ServerUrl.empty() )
@@ -255,6 +256,7 @@ bool RestAPI::ShouldCancel()
 // -------------------------------------------------------------------
 void RestAPI::TransferProgress(qint64 current, qint64 total)
 {
+  current += m_Offset;
   if( m_Progress && current > 0 && total > 0 )
     {
     m_Progress->UpdateProgress(

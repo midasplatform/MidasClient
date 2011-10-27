@@ -42,6 +42,7 @@ IncompleteTransferWidget::IncompleteTransferWidget(QWidget* parent, midasSynchro
   list << "Type" << "File" << "Resume";
   m_Table->setHorizontalHeaderLabels(list);
   m_Table->verticalHeader()->setVisible(false);
+  m_Table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   m_RemoveAllButton = new QPushButton();
   m_RemoveAllButton->setText("Remove All");
@@ -190,7 +191,7 @@ void IncompleteTransferWidget::ResumeDownloadPressed()
   m_SynchThread = new SynchronizerThread();
   m_SynchThread->SetSynchronizer(m_Synch);
 
-  connect(m_SynchThread, SIGNAL( performReturned(int) ),
+  connect(m_SynchThread, SIGNAL( PerformReturned(int) ),
           this, SLOT( ResumeDownloadCompleted(int) ) );
 
   m_SynchThread->start();

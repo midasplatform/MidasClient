@@ -2386,6 +2386,10 @@ int midasSynchronizer::Upload()
 // -------------------------------------------------------------------
 bool midasSynchronizer::ResumeDownload()
 {
+  if( DB_IS_MIDAS3 )
+    {
+    return this->ResumeDownload3();
+    }
   mds::PartialDownload* partial =
     reinterpret_cast<mds::PartialDownload *>(this->Object);
 
@@ -2460,6 +2464,66 @@ bool midasSynchronizer::ResumeDownload()
     return false;
     }
   partial->Remove();
+  return true;
+}
+
+// -------------------------------------------------------------------
+bool midasSynchronizer::ResumeDownload3()
+{
+  mds::PartialDownload* partial =
+    reinterpret_cast<mds::PartialDownload *>(this->Object);
+
+  QFileInfo info(partial->GetPath().c_str() );
+
+  info.setCaching(false);
+  if( this->Progress )
+    {
+    mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
+    this->Progress->SetMessage(info.fileName().toStdString() );
+    this->Progress->UpdateOverallCount(1);
+    this->Progress->UpdateProgress(0, 0);
+    this->Progress->ResetProgress();
+    }
+
+  m3do::Item parent;
+  parent.SetId(partial->GetParentItem() );
+
+  m3do::Bitstream resumeObj;
+  resumeObj.SetChecksum(partial->GetUuid() );
+  resumeObj.SetPath(partial->GetPath() );
+  resumeObj.SetParentItem(&parent);
+
+  m3ws::Bitstream mwsBitstream;
+  mwsBitstream.SetObject(&resumeObj);
+  if( !mwsBitstream.Download() ) //will keep or delete the partial record
+    {
+    std::stringstream text;
+    text << "Download of " << info.fileName().toStdString() << " failed."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+
+  std::stringstream stream;
+  stream << info.size();
+  m3do::Bitstream bitstream;
+  bitstream.SetName(info.fileName().toStdString().c_str() );
+  bitstream.SetParentItem(&parent);
+  bitstream.SetPath(partial->GetPath() );
+  bitstream.SetSize(stream.str() );
+  bitstream.SetLastModified(info.lastModified().toTime_t() );
+  bitstream.SetChecksum(partial->GetUuid() );
+
+  m3ds::Bitstream mdsBitstream;
+  mdsBitstream.SetObject(&bitstream);
+  if( !mdsBitstream.Commit() )
+    {
+    std::stringstream text;
+    text << "Failed to add bitstream " << bitstream.GetName()
+         << " to the database." << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
   return true;
 }
 
