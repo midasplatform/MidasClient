@@ -42,6 +42,7 @@ IncompleteTransferWidget::IncompleteTransferWidget(QWidget* parent, midasSynchro
   list << "Type" << "File" << "Resume";
   m_Table->setHorizontalHeaderLabels(list);
   m_Table->verticalHeader()->setVisible(false);
+  m_Table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   m_RemoveAllButton = new QPushButton();
   m_RemoveAllButton->setText("Remove All");
