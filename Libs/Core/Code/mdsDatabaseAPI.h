@@ -56,6 +56,7 @@ namespace m3ds
 class Folder;
 class Item;
 class Bitstream;
+class PartialUpload;
 }
 
 /**
@@ -117,6 +118,7 @@ class DatabaseAPI : public midasLogAware
   friend class m3ds::Folder;
   friend class m3ds::Item;
   friend class m3ds::Bitstream;
+  friend class m3ds::PartialUpload;
 public:
   DatabaseAPI(const std::string& path = "");
   ~DatabaseAPI();

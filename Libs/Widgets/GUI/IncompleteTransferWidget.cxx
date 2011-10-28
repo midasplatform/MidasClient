@@ -27,6 +27,9 @@
 #include "mdsPartialUpload.h"
 #include "mdsBitstream.h"
 #include "mdoBitstream.h"
+#include "mdoVersion.h"
+#include "m3doBitstream.h"
+#include "m3dsBitstream.h"
 #include "midasStandardIncludes.h"
 #include "midasSynchronizer.h"
 
@@ -115,19 +118,34 @@ void IncompleteTransferWidget::Populate()
     connect(resumeButton, SIGNAL( released() ),
             this, SLOT( ResumeUploadPressed() ) );
 
-    mdo::Bitstream bitstream;
-    bitstream.SetId( (*i)->GetBitstreamId() );
+    std::string fileName;
+    if( DB_IS_MIDAS3 )
+      {
+      m3do::Bitstream bitstream;
+      bitstream.SetId( (*i)->GetBitstreamId() );
 
-    mds::Bitstream mdsBitstream;
-    mdsBitstream.SetObject(&bitstream);
-    mdsBitstream.Fetch();
+      m3ds::Bitstream mdsBitstream;
+      mdsBitstream.SetObject(&bitstream);
+      mdsBitstream.Fetch();
 
-    QFileInfo fileInfo(bitstream.GetPath().c_str() );
+      fileName = bitstream.GetName();
+      }
+    else
+      {
+      mdo::Bitstream bitstream;
+      bitstream.SetId( (*i)->GetBitstreamId() );
+
+      mds::Bitstream mdsBitstream;
+      mdsBitstream.SetObject(&bitstream);
+      mdsBitstream.Fetch();
+
+      fileName = bitstream.GetName();
+      }
 
     QLabel* typeLabel = new QLabel(this);
     typeLabel->setPixmap(QPixmap(":icons/arrow_up.png") );
     m_Table->setCellWidget(row, 0, typeLabel);
-    m_Table->setCellWidget(row, 1, new QLabel(fileInfo.fileName(), this) );
+    m_Table->setCellWidget(row, 1, new QLabel(fileName.c_str(), this) );
     m_Table->setCellWidget(row, 2, resumeButton);
 
     row++;

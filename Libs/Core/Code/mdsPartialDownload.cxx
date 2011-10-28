@@ -122,10 +122,10 @@ PartialDownload* PartialDownload::FetchByUuid(const std::string& uuid)
   query << "SELECT id, path, item_id FROM partial_download WHERE uuid='"
     << uuid << "'";
 
-  if( !db.Database->ExecuteQuery(query.str().c_str()) )
+  if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
     db.Close();
-    return false;
+    return NULL;
     }
   while( db.Database->GetNextRow() )
     {

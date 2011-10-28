@@ -19,6 +19,7 @@
 #include "m3doItem.h"
 #include "m3wsItem.h"
 #include "mdsPartialDownload.h"
+#include "mdsPartialUpload.h"
 #include "mwsRestResponseParser.h"
 
 #include <QDir>
@@ -209,33 +210,52 @@ bool Bitstream::Download()
 
 bool Bitstream::Upload()
 {
-  std::string             uploadToken;
-  mws::RestResponseParser parser;
-
-  parser.AddTag("token", uploadToken);
-
+  qint64 offset = 0;
+  std::string uploadToken;
   std::stringstream fields;
-  fields << "midas.upload.generatetoken&itemid="
-         << m_Bitstream->GetParentId()
-         << "&checksum=" << m_Bitstream->GetChecksum()
-         << "&filename=" << m_Bitstream->GetName();
-  if( !mws::WebAPI::Instance()->Execute(fields.str().c_str(), &parser) )
-    {
-    return false;
-    }
-  if( uploadToken == "" ) // server already has this file, upload is not
-                          // necessary
-    {
-    return true;
-    }
 
-  /*mds::PartialUpload partial;
-  partial.SetToken(uploadToken);
-  partial.SetBitstreamId(m_Bitstream->GetId());
-  partial.SetUserId(atoi(userId.c_str()));
-  partial.SetParentItem(m_Bitstream->GetParentId());
-  partial.Commit();*/
+  mds::PartialUpload* partial =
+    mds::PartialUpload::FetchByBitstreamId(m_Bitstream->GetId() );
+  mds::PartialUpload thisPartial;
 
+  if( partial )
+    {
+    uploadToken = partial->GetToken();
+    std::string offsetStr;
+    mws::RestResponseParser parser;
+    parser.AddTag("offset", offsetStr);
+    fields << "midas.upload.getoffset&uploadtoken=" << uploadToken;
+    if( !mws::WebAPI::Instance()->Execute(fields.str().c_str(), &parser) )
+      {
+      return false;
+      }
+    QString qOffsetStr(offsetStr.c_str() );
+    offset = qOffsetStr.toLongLong();
+    }
+  else
+    {
+    mws::RestResponseParser parser;
+    parser.AddTag("token", uploadToken);
+    fields << "midas.upload.generatetoken&itemid="
+           << m_Bitstream->GetParentId()
+           << "&checksum=" << m_Bitstream->GetChecksum()
+           << "&filename=" << m_Bitstream->GetName();
+    if( !mws::WebAPI::Instance()->Execute(fields.str().c_str(), &parser) )
+      {
+      return false;
+      }
+    if( uploadToken == "" ) // server already has this file, no need to upload
+      {
+      return true;
+      }
+
+    thisPartial.SetToken(uploadToken);
+    thisPartial.SetBitstreamId(m_Bitstream->GetId() );
+    thisPartial.SetParentItem(m_Bitstream->GetParentId() );
+    thisPartial.Commit();
+    }
+  
+  // Perform the actual upload
   fields.str(std::string() );
   fields << "midas.upload.perform&mode=stream&revision=head"
   "&itemid=" << m_Bitstream->GetParentId()
@@ -244,12 +264,20 @@ bool Bitstream::Upload()
          << "&uploadtoken=" << uploadToken;
 
   if( !mws::WebAPI::Instance()->UploadFile(fields.str().c_str(),
-                                           m_Bitstream->GetPath().c_str() ) )
+                                           m_Bitstream->GetPath().c_str(),
+                                           offset) )
     {
     return false;
     }
 
-  // partial.Remove();
+  if( partial )
+    {
+    partial->Remove();
+    }
+  else
+    {
+    thisPartial.Remove();
+    }
   return true;
 }
 
