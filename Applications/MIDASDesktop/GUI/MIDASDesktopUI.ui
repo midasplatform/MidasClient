@@ -444,6 +444,15 @@
               <attribute name="verticalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderCascadingSectionResizes">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
               <column/>
               <column/>
              </widget>
@@ -695,7 +704,11 @@
             <attribute name="title">
              <string>Incomplete Transfers</string>
             </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_2"/>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="margin">
+              <number>0</number>
+             </property>
+            </layout>
            </widget>
           </widget>
          </widget>
@@ -1234,6 +1247,7 @@
   <tabstop>m_Log</tabstop>
  </tabstops>
  <resources>
+  <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>
   <include location="../MIDASDesktopIcons.qrc"/>

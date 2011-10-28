@@ -183,6 +183,7 @@ bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
 bool RestAPI::Upload(const std::string & filename, const std::string& urlstr,
                      RestResponseParser* parser, int64 offset)
 {
+  m_Offset = offset;
   m_Cancel = false;
   std::string URL(urlstr);
   if( !m_ServerUrl.empty() )

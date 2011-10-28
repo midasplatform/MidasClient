@@ -16,16 +16,17 @@
 #include "mdsPartialUpload.h"
 
 #include "mdsDatabaseAPI.h"
+#include "mdoVersion.h"
 
 namespace mds
 {
 
 PartialUpload::PartialUpload()
 {
-  this->Id = 0;
-  this->BitstreamId = 0;
-  this->UserId = 0;
-  this->ParentItem = 0;
+  m_Id = 0;
+  m_BitstreamId = 0;
+  m_UserId = 0;
+  m_ParentItem = 0;
 }
 
 PartialUpload::~PartialUpload()
@@ -34,20 +35,23 @@ PartialUpload::~PartialUpload()
 
 bool PartialUpload::Commit()
 {
-  if( this->BitstreamId <= 0 || this->Token == "" || this->UserId <= 0
-      || this->ParentItem <= 0 )
+  if( m_BitstreamId <= 0 || m_Token == "" || m_ParentItem <= 0 )
     {
     return false;
     }
-  mds::DatabaseAPI db;
+  if( !DB_IS_MIDAS3 && m_UserId <= 0 )
+    {
+    return false;
+    }
+  DatabaseAPI db;
   db.Open();
 
   std::stringstream query;
   query << "INSERT INTO partial_upload (bitstream_id, uploadtoken, user_id, "
-  "item_id) VALUES ('" << this->BitstreamId << "', '"
-        << this->Token << "', '"
-        << this->UserId << "', '"
-        << this->ParentItem << "')";
+  "item_id) VALUES ('" << m_BitstreamId << "', '"
+        << m_Token << "', '"
+        << m_UserId << "', '"
+        << m_ParentItem << "')";
 
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
@@ -60,16 +64,16 @@ bool PartialUpload::Commit()
 
 bool PartialUpload::Remove()
 {
-  if( this->BitstreamId <= 0 )
+  if( m_BitstreamId <= 0 )
     {
     return false;
     }
-  mds::DatabaseAPI db;
+  DatabaseAPI db;
   db.Open();
 
   std::stringstream query;
   query << "DELETE FROM partial_upload WHERE bitstream_id='"
-        << this->BitstreamId << "'";
+        << m_BitstreamId << "'";
 
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
@@ -80,10 +84,9 @@ bool PartialUpload::Remove()
   return true;
 }
 
-bool PartialUpload::FetchAll(std::vector<mds::PartialUpload *>& list)
+bool PartialUpload::FetchAll(std::vector<PartialUpload *>& list)
 {
-  mds::DatabaseAPI db;
-
+  DatabaseAPI db;
   db.Open();
 
   if( !db.Database->ExecuteQuery("SELECT id, uploadtoken, bitstream_id, "
@@ -94,7 +97,7 @@ bool PartialUpload::FetchAll(std::vector<mds::PartialUpload *>& list)
     }
   while( db.Database->GetNextRow() )
     {
-    mds::PartialUpload* ul = new mds::PartialUpload;
+    PartialUpload* ul = new PartialUpload;
     ul->SetId(db.Database->GetValueAsInt(0) );
     ul->SetToken(db.Database->GetValueAsString(1) );
     ul->SetBitstreamId(db.Database->GetValueAsInt(2) );
@@ -107,10 +110,39 @@ bool PartialUpload::FetchAll(std::vector<mds::PartialUpload *>& list)
   return true;
 }
 
+PartialUpload* PartialUpload::FetchByBitstreamId(int id)
+{
+  DatabaseAPI db;
+  db.Open();
+
+  std::stringstream query;
+  query << "SELECT id, uploadtoken, user_id, item_id "
+    "FROM partial_upload WHERE bitstream_id='" << id << "'";
+
+  if( !db.Database->ExecuteQuery(query.str().c_str() ) )
+    {
+    db.Close();
+    return NULL;
+    }
+  while( db.Database->GetNextRow() )
+    {
+    PartialUpload* ul = new PartialUpload;
+    ul->SetId(db.Database->GetValueAsInt(0) );
+    ul->SetToken(db.Database->GetValueAsString(1) );
+    ul->SetUserId(db.Database->GetValueAsInt(2) );
+    ul->SetParentItem(db.Database->GetValueAsInt(3) );
+    ul->SetBitstreamId(id);
+    db.Close();
+    return ul;
+    }
+
+  db.Close();
+  return NULL;
+}
+
 bool PartialUpload::RemoveAll()
 {
-  mds::DatabaseAPI db;
-
+  DatabaseAPI db;
   db.Open();
 
   if( !db.Database->ExecuteQuery("DELETE FROM partial_upload") )
@@ -125,52 +157,52 @@ bool PartialUpload::RemoveAll()
 
 void PartialUpload::SetId(int id)
 {
-  this->Id = id;
+  m_Id = id;
 }
 
 int PartialUpload::GetId()
 {
-  return this->Id;
+  return m_Id;
 }
 
 void PartialUpload::SetBitstreamId(int id)
 {
-  this->BitstreamId = id;
+  m_BitstreamId = id;
 }
 
 int PartialUpload::GetBitstreamId()
 {
-  return this->BitstreamId;
+  return m_BitstreamId;
 }
 
 void PartialUpload::SetToken(const std::string& token)
 {
-  this->Token = token;
+  m_Token = token;
 }
 
 std::string PartialUpload::GetToken()
 {
-  return this->Token;
+  return m_Token;
 }
 
 void PartialUpload::SetUserId(int id)
 {
-  this->UserId = id;
+  m_UserId = id;
 }
 
 int PartialUpload::GetUserId()
 {
-  return this->UserId;
+  return m_UserId;
 }
 
 void PartialUpload::SetParentItem(int id)
 {
-  this->ParentItem = id;
+  m_ParentItem = id;
 }
 
 int PartialUpload::GetParentItem()
 {
-  return this->ParentItem;
+  return m_ParentItem;
 }
 
 }
