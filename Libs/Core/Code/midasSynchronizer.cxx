@@ -2530,6 +2530,10 @@ bool midasSynchronizer::ResumeDownload3()
 // -------------------------------------------------------------------
 bool midasSynchronizer::ResumeUpload()
 {
+  if( SERVER_IS_MIDAS3 )
+    {
+    return this->ResumeUpload3();
+    }
   mds::PartialUpload* partial =
     reinterpret_cast<mds::PartialUpload *>(this->Object);
 
@@ -2591,6 +2595,56 @@ bool midasSynchronizer::ResumeUpload()
     Log->Message(text.str() );
 
     partial->Remove();
+    return true;
+    }
+}
+
+// -------------------------------------------------------------------
+bool midasSynchronizer::ResumeUpload3()
+{
+  mds::PartialUpload* partial =
+    reinterpret_cast<mds::PartialUpload *>(this->Object);
+
+  m3do::Bitstream bitstream;
+  bitstream.SetId(partial->GetBitstreamId() );
+
+  m3ds::Bitstream mdsBitstream;
+  mdsBitstream.SetObject(&bitstream);
+  if( !mdsBitstream.Fetch() )
+    {
+    std::stringstream text;
+    text << "The bitstream you were uploading no longer exists."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+
+  if( this->Progress )
+    {
+    mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
+    this->Progress->SetMessage(bitstream.GetName() );
+    this->Progress->UpdateOverallCount(1);
+    this->Progress->UpdateProgress(0, 0);
+    this->Progress->ResetProgress();
+    }
+
+  m3ws::Bitstream mwsBitstream;
+  mwsBitstream.SetObject(&bitstream);
+  if( !mwsBitstream.Upload() )
+    {
+    std::stringstream text;
+    text << "Upload of " << bitstream.GetName() << " failed."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+  else
+    {
+    //mds::DatabaseAPI db;
+    //TODO db.ClearDirtyResource(bitstream.GetUuid() );
+    std::stringstream text;
+    text << "Pushed bitstream " << bitstream.GetName() << std::endl;
+    Log->Message(text.str() );
     return true;
     }
 }
