@@ -242,7 +242,7 @@ void IncompleteTransferWidget::ResumeUploadPressed()
   m_SynchThread = new SynchronizerThread();
   m_SynchThread->SetSynchronizer(m_Synch);
 
-  connect(m_SynchThread, SIGNAL( performReturned(int) ),
+  connect(m_SynchThread, SIGNAL( PerformReturned(int) ),
           this, SLOT( ResumeUploadCompleted(int) ) );
 
   m_SynchThread->start();
