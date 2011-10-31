@@ -410,7 +410,7 @@ void Folder::ParentPathChanged(const std::string& parentPath)
   std::string       newPath = parentPath + "/" + m_Folder->GetName();
   std::stringstream query;
 
-  query << "UPDATE folder SET path='" << newPath << "' WHERE "
+  query << "UPDATE folder SET path='" << midasUtils::EscapeForSQL(newPath) << "' WHERE "
   "folder_id='" << m_Folder->GetId() << "'";
 
   db.Open();
@@ -481,7 +481,8 @@ bool Folder::Create()
   query << "INSERT INTO folder (name, description, uuid, path, parent_id) "
   "VALUES ('" << midasUtils::EscapeForSQL(m_Folder->GetName() ) << "', '"
         << midasUtils::EscapeForSQL(m_Folder->GetDescription() ) << "', '"
-        << m_Folder->GetUuid() << "', '" << path << "', '" << parentId << "')";
+        << m_Folder->GetUuid() << "', '" << midasUtils::EscapeForSQL(path)
+        << "', '" << parentId << "')";
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
     db.GetLog()->Error("Folder::Create : Insert folder record failed");
