@@ -135,7 +135,7 @@ bool Bitstream::Commit()
           << "date_update=current_timestamp"
           << "checksum='" << m_Bitstream->GetChecksum() << "', "
           << "uuid='" << m_Bitstream->GetUuid() << "', "
-          << "path='" << m_Bitstream->GetPath() << "', "
+          << "path='" << midasUtils::EscapeForSQL(m_Bitstream->GetPath() ) << "', "
           << "last_modified='" << m_Bitstream->GetLastModified()
           << "' WHERE bitstream_id='" << m_Bitstream->GetId() << "'";
     db.Open();
@@ -186,7 +186,7 @@ bool Bitstream::Commit()
           << m_Bitstream->GetSize() << "', '"
           << m_Bitstream->GetUuid() << "', '"
           << m_Bitstream->GetChecksum() << "', '"
-          << m_Bitstream->GetPath() << "', '"
+          << midasUtils::EscapeForSQL(m_Bitstream->GetPath() ) << "', '"
           << m_Bitstream->GetLastModified() << "')";
     if( !db.Database->ExecuteQuery(query.str().c_str() ) )
       {
