@@ -1540,9 +1540,18 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
     if( !remote.Download() )
       {
       std::stringstream text;
-      text << "Failed to download bitstream " << bitstream->GetName()
+      if( this->ShouldCancel )
+        {
+        text << "Pull canceled by user. To resume this download, "
+          "use the incomplete transfers tab." << std::endl;
+        this->Log->Message(text.str() );
+        }
+      else
+        {
+        text << "Failed to download bitstream " << bitstream->GetName()
            << std::endl;
-      this->Log->Error(text.str() );
+        this->Log->Error(text.str() );
+        }
       delete bitstream;
       return false;
       }
@@ -2487,6 +2496,9 @@ bool midasSynchronizer::ResumeDownload3()
 
   m3do::Item parent;
   parent.SetId(partial->GetParentItem() );
+  m3ds::Item mdsParent;
+  mdsParent.SetObject(&parent);
+  mdsParent.Fetch();
 
   m3do::Bitstream resumeObj;
   resumeObj.SetChecksum(partial->GetUuid() );
@@ -2618,6 +2630,7 @@ bool midasSynchronizer::ResumeUpload3()
     this->Log->Error(text.str() );
     return false;
     }
+  bitstream.SetParentId(partial->GetParentItem() );
 
   if( this->Progress )
     {
