@@ -2496,6 +2496,9 @@ bool midasSynchronizer::ResumeDownload3()
 
   m3do::Item parent;
   parent.SetId(partial->GetParentItem() );
+  m3ds::Item mdsParent;
+  mdsParent.SetObject(&parent);
+  mdsParent.Fetch();
 
   m3do::Bitstream resumeObj;
   resumeObj.SetChecksum(partial->GetUuid() );
