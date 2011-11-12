@@ -117,10 +117,10 @@ bool Item::Commit()
   db.Open();
   std::stringstream query;
   query << "UPDATE item SET name='" << midasUtils::EscapeForSQL(m_Item->GetName() )
-        << "', path='" << m_Item->GetPath()
-        << "', uuid='" << m_Item->GetUuid()
-        << "', description='" << midasUtils::EscapeForSQL(m_Item->GetDescription() )
-        << "' WHERE item_id='" << m_Item->GetId() << "'";
+    << "', path='" << midasUtils::EscapeForSQL(m_Item->GetPath() )
+    << "', uuid='" << m_Item->GetUuid()
+    << "', description='" << midasUtils::EscapeForSQL(m_Item->GetDescription() )
+    << "' WHERE item_id='" << m_Item->GetId() << "'";
   ok &= db.Database->ExecuteQuery(query.str().c_str() );
   db.Close();
 
@@ -319,7 +319,7 @@ void Item::ParentPathChanged(const std::string& parentPath)
   std::string       newPath = parentPath + "/" + m_Item->GetName();
   std::stringstream query;
 
-  query << "UPDATE item SET path='" << newPath << "' WHERE "
+  query << "UPDATE item SET path='" << midasUtils::EscapeForSQL(newPath) << "' WHERE "
     "item_id='" << m_Item->GetId() << "'";
 
   mds::DatabaseAPI db;
@@ -376,7 +376,7 @@ bool Item::Create()
   query << "INSERT INTO item (name, description, uuid, path) VALUES ('"
         << midasUtils::EscapeForSQL(m_Item->GetName() ) << "', '"
         << midasUtils::EscapeForSQL(m_Item->GetDescription() ) << "', '"
-        << m_Item->GetUuid() << "', '" << path << "')";
+        << m_Item->GetUuid() << "', '" << midasUtils::EscapeForSQL(path) << "')";
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
     db.GetLog()->Error("Item::Create : Insert item record failed");
