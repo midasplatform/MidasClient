@@ -1540,9 +1540,18 @@ bool midasSynchronizer::PullBitstream3(m3do::Item* parentItem, bool doCount)
     if( !remote.Download() )
       {
       std::stringstream text;
-      text << "Failed to download bitstream " << bitstream->GetName()
+      if( this->ShouldCancel )
+        {
+        text << "Pull canceled by user. To resume this download, "
+          "use the incomplete transfers tab." << std::endl;
+        this->Log->Message(text.str() );
+        }
+      else
+        {
+        text << "Failed to download bitstream " << bitstream->GetName()
            << std::endl;
-      this->Log->Error(text.str() );
+        this->Log->Error(text.str() );
+        }
       delete bitstream;
       return false;
       }
@@ -2386,6 +2395,10 @@ int midasSynchronizer::Upload()
 // -------------------------------------------------------------------
 bool midasSynchronizer::ResumeDownload()
 {
+  if( DB_IS_MIDAS3 )
+    {
+    return this->ResumeDownload3();
+    }
   mds::PartialDownload* partial =
     reinterpret_cast<mds::PartialDownload *>(this->Object);
 
@@ -2464,8 +2477,75 @@ bool midasSynchronizer::ResumeDownload()
 }
 
 // -------------------------------------------------------------------
+bool midasSynchronizer::ResumeDownload3()
+{
+  mds::PartialDownload* partial =
+    reinterpret_cast<mds::PartialDownload *>(this->Object);
+
+  QFileInfo info(partial->GetPath().c_str() );
+
+  info.setCaching(false);
+  if( this->Progress )
+    {
+    mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
+    this->Progress->SetMessage(info.fileName().toStdString() );
+    this->Progress->UpdateOverallCount(1);
+    this->Progress->UpdateProgress(0, 0);
+    this->Progress->ResetProgress();
+    }
+
+  m3do::Item parent;
+  parent.SetId(partial->GetParentItem() );
+  m3ds::Item mdsParent;
+  mdsParent.SetObject(&parent);
+  mdsParent.Fetch();
+
+  m3do::Bitstream resumeObj;
+  resumeObj.SetChecksum(partial->GetUuid() );
+  resumeObj.SetPath(partial->GetPath() );
+  resumeObj.SetParentItem(&parent);
+
+  m3ws::Bitstream mwsBitstream;
+  mwsBitstream.SetObject(&resumeObj);
+  if( !mwsBitstream.Download() ) //will keep or delete the partial record
+    {
+    std::stringstream text;
+    text << "Download of " << info.fileName().toStdString() << " failed."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+
+  std::stringstream stream;
+  stream << info.size();
+  m3do::Bitstream bitstream;
+  bitstream.SetName(info.fileName().toStdString().c_str() );
+  bitstream.SetParentItem(&parent);
+  bitstream.SetPath(partial->GetPath() );
+  bitstream.SetSize(stream.str() );
+  bitstream.SetLastModified(info.lastModified().toTime_t() );
+  bitstream.SetChecksum(partial->GetUuid() );
+
+  m3ds::Bitstream mdsBitstream;
+  mdsBitstream.SetObject(&bitstream);
+  if( !mdsBitstream.Commit() )
+    {
+    std::stringstream text;
+    text << "Failed to add bitstream " << bitstream.GetName()
+         << " to the database." << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+  return true;
+}
+
+// -------------------------------------------------------------------
 bool midasSynchronizer::ResumeUpload()
 {
+  if( SERVER_IS_MIDAS3 )
+    {
+    return this->ResumeUpload3();
+    }
   mds::PartialUpload* partial =
     reinterpret_cast<mds::PartialUpload *>(this->Object);
 
@@ -2527,6 +2607,57 @@ bool midasSynchronizer::ResumeUpload()
     Log->Message(text.str() );
 
     partial->Remove();
+    return true;
+    }
+}
+
+// -------------------------------------------------------------------
+bool midasSynchronizer::ResumeUpload3()
+{
+  mds::PartialUpload* partial =
+    reinterpret_cast<mds::PartialUpload *>(this->Object);
+
+  m3do::Bitstream bitstream;
+  bitstream.SetId(partial->GetBitstreamId() );
+
+  m3ds::Bitstream mdsBitstream;
+  mdsBitstream.SetObject(&bitstream);
+  if( !mdsBitstream.Fetch() )
+    {
+    std::stringstream text;
+    text << "The bitstream you were uploading no longer exists."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+  bitstream.SetParentId(partial->GetParentItem() );
+
+  if( this->Progress )
+    {
+    mws::WebAPI::Instance()->SetProgressReporter(this->Progress);
+    this->Progress->SetMessage(bitstream.GetName() );
+    this->Progress->UpdateOverallCount(1);
+    this->Progress->UpdateProgress(0, 0);
+    this->Progress->ResetProgress();
+    }
+
+  m3ws::Bitstream mwsBitstream;
+  mwsBitstream.SetObject(&bitstream);
+  if( !mwsBitstream.Upload() )
+    {
+    std::stringstream text;
+    text << "Upload of " << bitstream.GetName() << " failed."
+         << std::endl;
+    this->Log->Error(text.str() );
+    return false;
+    }
+  else
+    {
+    //mds::DatabaseAPI db;
+    //TODO db.ClearDirtyResource(bitstream.GetUuid() );
+    std::stringstream text;
+    text << "Pushed bitstream " << bitstream.GetName() << std::endl;
+    Log->Message(text.str() );
     return true;
     }
 }

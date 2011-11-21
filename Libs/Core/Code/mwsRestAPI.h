@@ -77,10 +77,12 @@ public slots:
 
 protected slots:
   void TransferProgress(qint64, qint64);
+  void UploadProgress(qint64, qint64);
 protected:
   bool                   m_Cancel;
   std::string            m_ServerUrl;
   midasProgressReporter* m_Progress;
+  qint64                 m_Offset;
 };
 
 } // end namespace

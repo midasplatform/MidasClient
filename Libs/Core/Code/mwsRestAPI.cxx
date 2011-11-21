@@ -34,6 +34,7 @@ RestAPI::RestAPI()
 {
   m_Progress = NULL;
   m_Cancel = false;
+  m_Offset = 0;
 }
 
 RestAPI::~RestAPI()
@@ -123,6 +124,7 @@ bool RestAPI::Execute(const char* urlstr, RestResponseParser* parser,
 bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
                        int64 offset)
 {
+  m_Offset = offset;
   m_Cancel = false;
   std::string URL(urlstr);
   if( !m_ServerUrl.empty() )
@@ -182,6 +184,7 @@ bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
 bool RestAPI::Upload(const std::string & filename, const std::string& urlstr,
                      RestResponseParser* parser, int64 offset)
 {
+  m_Offset = offset;
   m_Cancel = false;
   std::string URL(urlstr);
   if( !m_ServerUrl.empty() )
@@ -214,7 +217,7 @@ bool RestAPI::Upload(const std::string & filename, const std::string& urlstr,
   if( m_Progress )
     {
     connect(reply, SIGNAL(uploadProgress(qint64, qint64) ),
-            this, SLOT(TransferProgress(qint64, qint64) ) );
+            this, SLOT(UploadProgress(qint64, qint64) ) );
     }
 
   QString response("(");
@@ -255,11 +258,19 @@ bool RestAPI::ShouldCancel()
 // -------------------------------------------------------------------
 void RestAPI::TransferProgress(qint64 current, qint64 total)
 {
+  current += m_Offset;
   if( m_Progress && current > 0 && total > 0 )
     {
     m_Progress->UpdateProgress(
       static_cast<double>(current), static_cast<double>(total) );
     }
+}
+
+// -------------------------------------------------------------------
+void RestAPI::UploadProgress(qint64 current, qint64 total)
+{
+  total += m_Offset;
+  this->TransferProgress(current, total);
 }
 
 } // end namespace

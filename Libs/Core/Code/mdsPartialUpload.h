@@ -36,7 +36,9 @@ public:
   bool Remove();
 
   // Return a list of all incomplete Uploads
-  static bool FetchAll(std::vector<mds::PartialUpload *>& list);
+  static bool FetchAll(std::vector<PartialUpload *>& list);
+
+  static PartialUpload* FetchByBitstreamId(int id);
 
   // Clear all incomplete Uploads
   static bool RemoveAll();
@@ -62,11 +64,11 @@ public:
   int GetParentItem();
 
 protected:
-  int         Id;
-  int         BitstreamId;
-  int         ParentItem;
-  int         UserId;
-  std::string Token;
+  int         m_Id;
+  int         m_BitstreamId;
+  int         m_ParentItem;
+  int         m_UserId;
+  std::string m_Token;
 };
 
 } // end namespace mds

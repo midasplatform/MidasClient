@@ -113,6 +113,35 @@ bool PartialDownload::FetchAll(std::vector<mds::PartialDownload *>& list)
   return true;
 }
 
+PartialDownload* PartialDownload::FetchByUuid(const std::string& uuid)
+{
+  mds::DatabaseAPI db;
+
+  db.Open();
+  std::stringstream query;
+  query << "SELECT id, path, item_id FROM partial_download WHERE uuid='"
+    << uuid << "'";
+
+  if( !db.Database->ExecuteQuery(query.str().c_str() ) )
+    {
+    db.Close();
+    return NULL;
+    }
+  while( db.Database->GetNextRow() )
+    {
+    mds::PartialDownload* dl = new mds::PartialDownload;
+    dl->SetId(db.Database->GetValueAsInt(0) );
+    dl->SetPath(db.Database->GetValueAsString(1) );
+    dl->SetParentItem(db.Database->GetValueAsInt(2) );
+    dl->SetUuid(uuid);
+    db.Close();
+    return dl;
+    }
+
+  db.Close();
+  return NULL;
+}
+
 bool PartialDownload::RemoveAll()
 {
   mds::DatabaseAPI db;
