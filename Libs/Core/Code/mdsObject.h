@@ -37,6 +37,10 @@ public:
 
   void MarkAsDirty();
 
+  virtual bool Fetch() = 0;
+
+  virtual void SetObject(mdo::Object* object) = 0;
+
 protected:
   bool m_MarkDirty;
 

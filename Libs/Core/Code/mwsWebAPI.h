@@ -73,7 +73,11 @@ public:
 
   bool GetIdByUuid(const std::string& uuid, std::string& id);
 
-  bool CountBitstreams(int type, int id, std::string& count, std::string& size);
+  bool CountBitstreams(int type, int id,
+                       std::string& count, std::string& size);
+
+  bool CountBitstreams(const std::string& uuid,
+                       std::string& count, std::string& size);
 
   bool GetIdFromPath(const std::string& path, std::string& type,
                      std::string& id, std::string& uuid);
@@ -90,12 +94,12 @@ public:
   // Set the REST API URL
   void SetServerUrl(const char* baseurl);
 
-  const char * GetServerUrl();
+  const char* GetServerUrl();
 
   // Set the mirror handler
   void SetMirrorHandler(MirrorHandler* handler);
 
-  MirrorHandler * GetMirrorHandler();
+  MirrorHandler* GetMirrorHandler();
 
   // Set the authenticator
   void SetAuthenticator(midasAuthenticator* auth);
@@ -115,7 +119,7 @@ public:
   // Check the connection to the MIDAS server
   bool CheckConnection();
 
-  mdo::Version * GetServerVersion();
+  mdo::Version* GetServerVersion();
 
   // Cancel the upload or download
   void Cancel();

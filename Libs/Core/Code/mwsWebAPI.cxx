@@ -112,7 +112,6 @@ bool WebAPI::Execute(const char* url, RestResponseParser* parser,
     parser = new RestResponseParser;
     }
 
-  m_RestAPI->SetProgressReporter(NULL);
   std::stringstream fullUrl;
 
   fullUrl << url << "&format=json";
@@ -183,7 +182,6 @@ bool WebAPI::DownloadFile(const char* url, const char* filename, int64 offset)
     {
     fullUrl << "&offset=" << offset;
     }
-  m_RestAPI->SetProgressReporter(m_Progress);
 
   bool success = m_RestAPI->Download(filename, fullUrl.str(), offset);
 
@@ -225,7 +223,6 @@ bool WebAPI::UploadFile(const char* url, const char* filename, int64 offset)
   std::string        fullUrl = url;
 
   fullUrl += "&format=json";
-  m_RestAPI->SetProgressReporter(m_Progress);
 
   bool success = m_RestAPI->Upload(filename, fullUrl, &parser, offset);
   success &= std::string(parser.GetErrorMessage() ) == "";
@@ -323,6 +320,21 @@ bool WebAPI::CountBitstreams(int type, int id, std::string& count,
 }
 
 // -------------------------------------------------------------------
+bool WebAPI::CountBitstreams(const std::string& uuid, std::string& count,
+                             std::string& size)
+{
+  RestResponseParser parser;
+
+  parser.AddTag("count", count);
+  parser.AddTag("size", size);
+
+  std::stringstream fields;
+  fields << "midas.bitstream.count&uuid=" << uuid;
+
+  return this->Execute(fields.str().c_str(), &parser);
+}
+
+// -------------------------------------------------------------------
 bool WebAPI::GetIdFromPath(const std::string& path, std::string& type,
                            std::string& id, std::string& uuid)
 {
@@ -400,7 +412,7 @@ bool WebAPI::GetDefaultAPIKey(const std::string& email,
                        postData.str().c_str(), false);
 }
 
-mdo::Version * WebAPI::GetServerVersion()
+mdo::Version* WebAPI::GetServerVersion()
 {
   return m_ServerVersion;
 }

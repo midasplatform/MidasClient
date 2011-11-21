@@ -96,6 +96,7 @@ bool Folder::FetchSize()
     {
     return false;
     }
+
   double       total = 0;
   unsigned int count = 0;
   for( std::vector<m3do::Folder *>::const_iterator i = m_Folder->GetFolders().begin();
@@ -230,14 +231,6 @@ bool Folder::FetchTree()
     db.GetLog()->Error("Folder::FetchTree : FolderId not set\n");
     return false;
     }
-
-  if( m_Folder->GetUuid() == "" )
-    {
-    db.GetLog()->Error("Folder::FetchTree : Uuid not set\n");
-    return false;
-    }
-
-  // m_Folder->SetDirty(db.IsResourceDirty(m_Folder->GetUuid()));
 
   std::stringstream query;
   query << "SELECT folder_id, path, name, uuid, description FROM folder "
@@ -417,7 +410,7 @@ void Folder::ParentPathChanged(const std::string& parentPath)
   std::string       newPath = parentPath + "/" + m_Folder->GetName();
   std::stringstream query;
 
-  query << "UPDATE folder SET path='" << newPath << "' WHERE "
+  query << "UPDATE folder SET path='" << midasUtils::EscapeForSQL(newPath) << "' WHERE "
   "folder_id='" << m_Folder->GetId() << "'";
 
   db.Open();
@@ -488,7 +481,8 @@ bool Folder::Create()
   query << "INSERT INTO folder (name, description, uuid, path, parent_id) "
   "VALUES ('" << midasUtils::EscapeForSQL(m_Folder->GetName() ) << "', '"
         << midasUtils::EscapeForSQL(m_Folder->GetDescription() ) << "', '"
-        << m_Folder->GetUuid() << "', '" << path << "', '" << parentId << "')";
+        << m_Folder->GetUuid() << "', '" << midasUtils::EscapeForSQL(path)
+        << "', '" << parentId << "')";
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
     db.GetLog()->Error("Folder::Create : Insert folder record failed");

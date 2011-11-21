@@ -44,9 +44,13 @@
 #include "mdsCommunity.h"
 #include "mdsCollection.h"
 #include "mdsItem.h"
+#include "m3doCommunity.h"
 #include "m3doFolder.h"
+#include "m3dsFolder.h"
 #include "m3doItem.h"
+#include "m3dsItem.h"
 #include "m3doBitstream.h"
+#include "m3dsBitstream.h"
 #include "mdsDatabaseAPI.h"
 #include "midasAuthenticator.h"
 #include "midasLog.h"
@@ -2647,39 +2651,63 @@ void MIDASDesktopUI::PullRecursive(int type, int id)
 
 void MIDASDesktopUI::DragNDropPush(int type, int id)
 {
-  mdo::Community*  comm = NULL;
-  mdo::Collection* coll = NULL;
-  mdo::Item*       item = NULL;
-  mdo::Bitstream*  bitstream = NULL;
   mdo::Object*     obj = NULL;
 
-  mds::DatabaseAPI db;
-  std::string      uuid = db.GetUuid(type, id);
-
-  switch( type )
+  if(SERVER_IS_MIDAS3)
     {
-    case midasResourceType::COMMUNITY:
-      comm = new mdo::Community;
-      obj = comm;
-      break;
-    case midasResourceType::COLLECTION:
-      coll = new mdo::Collection;
-      obj = coll;
-      break;
-    case midasResourceType::ITEM:
-      item = new mdo::Item;
-      obj = item;
-      break;
-    case midasResourceType::BITSTREAM:
-      bitstream = new mdo::Bitstream;
-      obj = bitstream;
-      break;
-    default:
-      return;
-    }
-  obj->SetId(id);
-  obj->SetUuid(uuid.c_str() );
+    mds::Object* mdsObj = NULL;
+    switch( type )
+      {
+      case midas3ResourceType::COMMUNITY:
+        obj = new m3do::Community;
+        mdsObj = new m3ds::Folder;
+        break;
+      case midas3ResourceType::FOLDER:
+        obj = new m3do::Folder;
+        mdsObj = new m3ds::Folder;
+        break;
+      case midas3ResourceType::ITEM:
+        obj = new m3do::Item;
+        mdsObj = new m3ds::Item;
+        break;
+      case midas3ResourceType::BITSTREAM:
+        obj = new m3do::Bitstream;
+        mdsObj = new m3ds::Bitstream;
+        break;
+      default:
+        return;
+      }
 
+    obj->SetId(id);
+    mdsObj->SetObject(obj);
+    mdsObj->Fetch(); //must fetch the uuid
+    delete mdsObj;
+    }
+  else
+    {
+    mds::DatabaseAPI db;
+    std::string      uuid = db.GetUuid(type, id);
+
+    switch( type )
+      {
+      case midasResourceType::COMMUNITY:
+        obj = new mdo::Community;
+        break;
+      case midasResourceType::COLLECTION:
+        obj = new mdo::Collection;
+        break;
+      case midasResourceType::ITEM:
+        obj = new mdo::Item;
+        break;
+      case midasResourceType::BITSTREAM:
+        obj = new mdo::Bitstream;
+        break;
+      default:
+        return;
+      }
+    obj->SetId(id);
+    obj->SetUuid(uuid.c_str() );
+    }
   m_PushUI->SetObject(obj);
   m_PushUI->SetDelete(true); // will delete obj when done
   m_PushUI->exec();

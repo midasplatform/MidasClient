@@ -185,11 +185,11 @@ protected:
 
   bool PullItem(int parentId);
 
-  bool PullFolder3(m3do::Folder* parent);
+  bool PullFolder3(m3do::Folder* parent, bool doCount = false);
 
-  bool PullItem3(m3do::Folder* parent);
+  bool PullItem3(m3do::Folder* parent, bool doCount = false);
 
-  bool PullBitstream3(m3do::Item* parent);
+  bool PullBitstream3(m3do::Item* parent, bool doCount = false);
 
   /* Helper function to convert client side parent ID to server side one */
   int GetServerParentId(midasResourceType::ResourceType type, int parentId);
@@ -218,6 +218,8 @@ protected:
   void Reset();
 
   void CountBitstreams();
+
+  void CountBitstreams3(const std::string& uuid = "");
 
   void ChangeToRootDir();
 

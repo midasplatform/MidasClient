@@ -117,10 +117,10 @@ bool Item::Commit()
   db.Open();
   std::stringstream query;
   query << "UPDATE item SET name='" << midasUtils::EscapeForSQL(m_Item->GetName() )
-        << "', path='" << m_Item->GetPath()
-        << "', uuid='" << m_Item->GetUuid()
-        << "', description='" << midasUtils::EscapeForSQL(m_Item->GetDescription() )
-        << "' WHERE item_id='" << m_Item->GetId() << "'";
+    << "', path='" << midasUtils::EscapeForSQL(m_Item->GetPath() )
+    << "', uuid='" << m_Item->GetUuid()
+    << "', description='" << midasUtils::EscapeForSQL(m_Item->GetDescription() )
+    << "' WHERE item_id='" << m_Item->GetId() << "'";
   ok &= db.Database->ExecuteQuery(query.str().c_str() );
   db.Close();
 
@@ -187,6 +187,7 @@ bool Item::FetchSize()
     {
     return false;
     }
+
   double total = 0;
   for( std::vector<m3do::Bitstream *>::const_iterator i = m_Item->GetBitstreams().begin();
        i != m_Item->GetBitstreams().end(); ++i )
@@ -286,9 +287,9 @@ bool Item::FetchParent()
   mds::DatabaseAPI  db;
   std::stringstream query;
   query << "SELECT folder_id, uuid, name, path, description "
-  "FROM folder WHERE folder_id IN "
-  "(SELECT folder_id FROM item2folder WHERE item_id='"
-  << m_Item->GetId() << "')";
+    "FROM folder WHERE folder_id IN "
+    "(SELECT folder_id FROM item2folder WHERE item_id='"
+    << m_Item->GetId() << "')";
   db.Open();
   db.Database->ExecuteQuery(query.str().c_str() );
 
@@ -318,8 +319,8 @@ void Item::ParentPathChanged(const std::string& parentPath)
   std::string       newPath = parentPath + "/" + m_Item->GetName();
   std::stringstream query;
 
-  query << "UPDATE item SET path='" << newPath << "' WHERE "
-  "item_id='" << m_Item->GetId() << "'";
+  query << "UPDATE item SET path='" << midasUtils::EscapeForSQL(newPath) << "' WHERE "
+    "item_id='" << m_Item->GetId() << "'";
 
   mds::DatabaseAPI db;
   db.Open();
@@ -375,7 +376,7 @@ bool Item::Create()
   query << "INSERT INTO item (name, description, uuid, path) VALUES ('"
         << midasUtils::EscapeForSQL(m_Item->GetName() ) << "', '"
         << midasUtils::EscapeForSQL(m_Item->GetDescription() ) << "', '"
-        << m_Item->GetUuid() << "', '" << path << "')";
+        << m_Item->GetUuid() << "', '" << midasUtils::EscapeForSQL(path) << "')";
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
     db.GetLog()->Error("Item::Create : Insert item record failed");
