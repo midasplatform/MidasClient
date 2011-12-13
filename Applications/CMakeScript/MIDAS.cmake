@@ -14,6 +14,10 @@
 #   MIDAS_KEY_DIR          - Where the key files are located
 #                          - Defaults to PROJECT_SOURCE_DIR/MIDAS_Keys
 #   MIDAS_DOWNLOAD_TIMEOUT - Timeout for download stage (default 0)
+#  ---------------------- Authentication -------------------------
+# For authenticated access, you must also have the following variables set
+#   MIDAS_USER             - The email of the user to authenticate as
+#   MIDAS_DEFAULT_API_KEY  - The user's Default api key
 #
 # Then call the following macro:
 #  midas_add_test(<testName> <program> [args...])
@@ -170,7 +174,25 @@ macro(_process_keyfile keyFile testName extractTgz)
 # Start file content
 "message(STATUS \"Data is here: ${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\")
 if(NOT EXISTS \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
-  file(DOWNLOAD \"${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
+  set(tokenArg \"\")
+  if(NOT \"${MIDAS_USER}\" STREQUAL \"\" AND NOT \"${MIDAS_DEFAULT_API_KEY}\" STREQUAL \"\")
+    file(DOWNLOAD \"${MIDAS_REST_URL}/midas.login?email=${MIDAS_USER}&appname=Default&apikey=${MIDAS_DEFAULT_API_KEY}&format=json\" \"${MIDAS_DATA_DIR}/MIDAS_FetchScripts/MIDASToken.txt\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
+    list(GET status 0 exitCode)
+    list(GET status 1 errMsg)
+    if(NOT exitCode EQUAL 0)
+      message(FATAL_ERROR \"Error authenticating to MIDAS server: \${errMsg}\")
+    endif(NOT exitCode EQUAL 0)
+    file(READ \"${MIDAS_DATA_DIR}/MIDAS_FetchScripts/MIDASToken.txt\" resp)
+    file(REMOVE \"${MIDAS_DATA_DIR}/MIDAS_FetchScripts/MIDASToken.txt\")
+    string(REGEX REPLACE \".*token\\\":\\\"(.*)\\\".*\" \"\\\\1\" token \${resp})
+    string(LENGTH \${token} tokenlength)
+    if(tokenlength EQUAL 40)
+      set(tokenArg \"&token=\${token}\")
+    else()
+      message(FATAL_ERROR \"Invalid authentication token: \${token}\")
+    endif()
+  endif()
+  file(DOWNLOAD \"${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\${tokenArg}\" \"${MIDAS_DATA_DIR}/MIDAS_Hashes/\${midas_test_name}_${checksum}\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
   list(GET status 0 exitCode)
   list(GET status 1 errMsg)
   if(NOT exitCode EQUAL 0)
