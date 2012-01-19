@@ -222,6 +222,7 @@ target_link_libraries(MIDASClientWidgets
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTMAIN_LIBRARY}
+  ${QT_QTTEST_LIBRARY}
 )
 
 include(GenerateConfig.cmake)
