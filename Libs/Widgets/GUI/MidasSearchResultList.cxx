@@ -18,6 +18,7 @@
 #include "MidasItemTreeItem.h"
 #include "mdoObject.h"
 #include "mdoBitstream.h"
+#include "mwsWebAPI.h"
 #include <QPixmap>
 
 QListWidgetItemMidasItem::QListWidgetItemMidasItem(QListWidget * parent, mdo::Object* object) :
@@ -29,14 +30,32 @@ QListWidgetItemMidasItem::QListWidgetItemMidasItem(QListWidget * parent, mdo::Ob
   this->setStatusTip(statusTip.c_str() );
   this->setToolTip(statusTip.c_str() );
 
-  mdo::Bitstream* bs = NULL;
-  if( (bs = dynamic_cast<mdo::Bitstream *>(object) ) != NULL )
+  if( SERVER_IS_MIDAS3 )
     {
-    this->setIcon(QPixmap(":icons/gpl_document.png") );
+    if(object->GetTypeName().compare("Folder") == 0)
+	  {
+	  this->setIcon(QPixmap(":icons/gpl_folder.png") );
+	  }
+	else if (object->GetTypeName().compare("Community") == 0)
+	  {
+      this->setIcon(QPixmap(":icons/user_group.png") );
+	  }
+	else // type is Item
+	  {
+	  this->setIcon(QPixmap(":icons/gpl_document.png") );
+	  }
     }
   else
     {
-    this->setIcon(QPixmap(":icons/gpl_folder.png") );
+    mdo::Bitstream* bs = NULL;
+    if( (bs = dynamic_cast<mdo::Bitstream *>(object) ) != NULL )
+      {
+      this->setIcon(QPixmap(":icons/gpl_document.png") );
+      }
+    else
+      {
+      this->setIcon(QPixmap(":icons/gpl_folder.png") );
+      }
     }
 }
 
