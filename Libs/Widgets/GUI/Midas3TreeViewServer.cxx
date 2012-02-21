@@ -95,10 +95,10 @@ void Midas3TreeViewServer::SelectByUuid(std::string uuid, bool select)
 
   connect(m_ExpandTreeThread, SIGNAL(finished() ),
           this, SLOT(ExpansionDone() ) );
-  connect(m_ExpandTreeThread, SIGNAL(expand(const QModelIndex &) ),
+  connect(m_ExpandTreeThread, SIGNAL(Expand(const QModelIndex &) ),
           this, SLOT(expand(const QModelIndex &) ) );
-  connect(m_ExpandTreeThread, SIGNAL(select(const QModelIndex &) ),
-          this, SLOT(selectByIndex(const QModelIndex &) ) );
+  connect(m_ExpandTreeThread, SIGNAL(Select(const QModelIndex &) ),
+          this, SLOT(SelectByIndex(const QModelIndex &) ) );
 
   m_ExpandTreeThread->start();
   emit StartedExpandingTree();

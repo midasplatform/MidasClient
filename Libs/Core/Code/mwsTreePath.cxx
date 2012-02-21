@@ -51,16 +51,36 @@ public:
 
     QScriptEngine engine;
     QScriptValue  data = engine.evaluate(response).property("data");
-
-    if( data.isArray() )
-      {
-      QScriptValueIterator node(data);
-      while( node.hasNext() )
+    
+	if( SERVER_IS_MIDAS3 )
+	  {
+      if( data.isArray() )
         {
-        node.next();
-        m_Results->push_back(node.value().toString().toStdString() );
+        QScriptValueIterator node(data);
+        while( node.hasNext() )
+          {
+          node.next();
+		  // User's root folder information is not stored
+		  if( !node.value().property("parent_id").toString().toStdString().empty() 
+			  && node.value().property("parent_id").toInt32() != -1 ) 
+		    {
+            m_Results->push_back(node.value().property("uuid").toString().toStdString() );
+		    }
+          }
         }
-      }
+	  }
+	else
+	  {
+      if( data.isArray() )
+        {
+        QScriptValueIterator node(data);
+        while( node.hasNext() )
+          {
+          node.next();
+          m_Results->push_back(node.value().toString().toStdString() );
+          }
+        }
+	  }
     return true;
   }
 

@@ -16,6 +16,8 @@
 #include "ExpandTreeThread.h"
 #include "MidasTreeViewServer.h"
 #include "MidasTreeModelServer.h"
+#include "Midas3TreeViewServer.h"
+#include "Midas3TreeModelServer.h"
 #include "mwsTreePath.h"
 
 ExpandTreeThread::ExpandTreeThread(MidasTreeViewServer* view, MidasTreeModelServer* model, std::string uuid,
@@ -52,7 +54,25 @@ void ExpandTreeThread::run()
 
   if( m_Version == 3 )
     {
-    // TODO version 3 of this
+    std::vector<std::string> path =
+    mws::TreePath::PathFromRoot(m_Uuid);
+    for( std::vector<std::string>::iterator i = path.begin();
+         i != path.end(); ++i )
+      {
+      QModelIndex index = m_ParentModel3->GetIndexByUuid(*i);
+      m_ParentModel3->fetchMore(index);
+
+      emit Expand(index);
+      }
+
+    if( m_Select )
+      {
+      QModelIndex index = m_ParentModel3->GetIndexByUuid(m_Uuid);
+      if( index.isValid() )
+        {
+        emit Select(index);
+        }
+      }
     }
   else
     {
