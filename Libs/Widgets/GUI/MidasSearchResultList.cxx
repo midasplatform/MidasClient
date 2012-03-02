@@ -33,17 +33,17 @@ QListWidgetItemMidasItem::QListWidgetItemMidasItem(QListWidget * parent, mdo::Ob
   if( SERVER_IS_MIDAS3 )
     {
     if(object->GetTypeName().compare("Folder") == 0)
-	  {
-	  this->setIcon(QPixmap(":icons/gpl_folder.png") );
-	  }
-	else if (object->GetTypeName().compare("Community") == 0)
-	  {
+      {
+      this->setIcon(QPixmap(":icons/gpl_folder.png") );
+      }
+    else if (object->GetTypeName().compare("Community") == 0)
+      {
       this->setIcon(QPixmap(":icons/user_group.png") );
-	  }
-	else // type is Item
-	  {
-	  this->setIcon(QPixmap(":icons/gpl_document.png") );
-	  }
+      }
+    else // type is Item
+      {
+      this->setIcon(QPixmap(":icons/gpl_document.png") );
+      }
     }
   else
     {

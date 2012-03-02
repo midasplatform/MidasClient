@@ -2442,7 +2442,7 @@ void MIDASDesktopUI::SearchItemClicked(QListWidgetItemMidasItem* listItem)
 {
   if( SERVER_IS_MIDAS3 )
     {
-	dynamic_cast<Midas3TreeViewServer *>(m_TreeViewServer)
+    dynamic_cast<Midas3TreeViewServer *>(m_TreeViewServer)
     ->SelectByUuid(listItem->getObject()->GetUuid(), true);
     }
   else

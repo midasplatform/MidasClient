@@ -61,45 +61,45 @@ public:
     QScriptEngine engine;
     QScriptValue  data = engine.evaluate(response).property("data");
     if( SERVER_IS_MIDAS3 )
-	  {
+      {
       if( data.property("results").isArray() )
         {
         QScriptValueIterator rslts(data.property("results") );
         while( rslts.hasNext() )
           {
           rslts.next();
-		  std::string rsltType = rslts.value().property("resultType").toString().toStdString();
-		  if( rsltType.compare("item") == 0 )
-		    {
-			m3do::Item* item = new m3do::Item();
+          std::string rsltType = rslts.value().property("resultType").toString().toStdString();
+          if( rsltType.compare("item") == 0 )
+            {
+            m3do::Item* item = new m3do::Item();
             item->SetId(rslts.value().property("item_id").toInt32() );
             item->SetUuid(rslts.value().property("uuid").toString().toStdString().c_str() );
             item->SetName(rslts.value().property("name").toString().toStdString().c_str() );
             m_Results->push_back(item);
-		    }
-		  else if( rsltType.compare("folder") == 0 )
-		    {
+            }
+          else if( rsltType.compare("folder") == 0 )
+            {
             m3do::Folder* fldr = new m3do::Folder();
-			fldr->SetId(rslts.value().property("folder_id").toInt32() );
+            fldr->SetId(rslts.value().property("folder_id").toInt32() );
             fldr->SetUuid(rslts.value().property("uuid").toString().toStdString().c_str() );
             fldr->SetName(rslts.value().property("name").toString().toStdString().c_str() );
             m_Results->push_back(fldr);
-		    }
-		  else if( rsltType.compare("community") == 0 )
-		    {
-		    m3do::Community* comm = new m3do::Community();
-			comm->SetFolderId(rslts.value().property("folder_id").toInt32() );
+            }
+          else if( rsltType.compare("community") == 0 )
+            {
+            m3do::Community* comm = new m3do::Community();
+            comm->SetFolderId(rslts.value().property("folder_id").toInt32() );
             comm->SetUuid(rslts.value().property("uuid").toString().toStdString().c_str() );
             comm->SetName(rslts.value().property("name").toString().toStdString().c_str() );
             m_Results->push_back(comm);
-		    }  
-		  // TODO:  else if( rsltType.compare("user") == 0 )
+            }
+          // TODO:  else if( rsltType.compare("user") == 0 )
           }
         }
-	  }
-	else
-	  {
-       if( data.property("communities").isArray() )
+      }
+    else
+      {
+      if( data.property("communities").isArray() )
         {
         QScriptValueIterator comms(data.property("communities") );
         while( comms.hasNext() )
@@ -151,17 +151,15 @@ public:
           m_Results->push_back(bitstream);
           }
         }
-	  }
-
-    
+      }
     return true;
   }
 
   /** Set the results object */
   void SetObject(std::vector<mdo::Object *>* results)
-  {
+    {
     m_Results = results;
-  }
+    }
 
 protected:
   std::vector<mdo::Object *>* m_Results;
