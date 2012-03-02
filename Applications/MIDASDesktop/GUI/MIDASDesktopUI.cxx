@@ -2440,9 +2440,16 @@ void MIDASDesktopUI::ShowSearchResults()
 
 void MIDASDesktopUI::SearchItemClicked(QListWidgetItemMidasItem* listItem)
 {
-  // TODO MIDAS3ify
-  dynamic_cast<MidasTreeViewServer *>(m_TreeViewServer)
-  ->SelectByUuid(listItem->getObject()->GetUuid(), true);
+  if( SERVER_IS_MIDAS3 )
+    {
+    dynamic_cast<Midas3TreeViewServer *>(m_TreeViewServer)
+    ->SelectByUuid(listItem->getObject()->GetUuid(), true);
+    }
+  else
+    {
+    dynamic_cast<MidasTreeViewServer *>(m_TreeViewServer)
+    ->SelectByUuid(listItem->getObject()->GetUuid(), true);
+    }
 }
 
 void MIDASDesktopUI::SearchItemContextMenu(QContextMenuEvent* e)
