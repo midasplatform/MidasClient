@@ -296,12 +296,17 @@ bool Folder::FetchTree()
     }
 
   db.Close();
-  /*for(std::vector<m3do::Item*>::const_iterator i =
+  for(std::vector<m3do::Item*>::const_iterator itr =
       m_Folder->GetItems().begin();
-      i != m_Folder->GetItems().end(); ++i)
+      itr != m_Folder->GetItems().end(); ++itr)
     {
-    (*i)->SetDirty(db.IsResourceDirty((*i)->GetUuid()));
-    }*/
+    m3ds::Item mdsItem;
+    mdsItem.SetObject(*itr);
+    if( !mdsItem.Fetch() )
+      {
+      return false;
+      }
+    }
 
   if( m_Recurse )
     {
