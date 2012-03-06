@@ -91,3 +91,11 @@ CREATE TABLE partial_download (
   path character varying(512),
   item_id integer
 );
+
+-- Additional fields to store as arbitrary item key/value pairs
+CREATE TABLE item_extrafields (
+  item_id integer NOT NULL,
+  field character varying(512),
+  value text
+);
+CREATE INDEX item_extrafields_idx ON item_extrafields(item_id);

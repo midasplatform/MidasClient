@@ -110,6 +110,11 @@ public:
   {
     return m_Path;
   }
+
+  void SetExtraField(const std::string& key, const std::string& value);
+  std::map<std::string, std::string>* GetExtraFields();
+  std::string GetExtraField(const std::string& key);
+
 protected:
 
   std::string  m_Name;
@@ -120,6 +125,7 @@ protected:
   Folder* m_ParentFolder;
 
   std::vector<Bitstream *> m_Bitstreams;
+  std::map<std::string, std::string> m_ExtraFields;
 };
 
 } // end namespace

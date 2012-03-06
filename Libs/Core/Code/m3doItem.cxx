@@ -114,4 +114,19 @@ void Item::AddBitstream(Bitstream* bitstream)
   m_Bitstreams.push_back(bitstream);
 }
 
+void Item::SetExtraField(const std::string& key, const std::string& value)
+{
+  m_ExtraFields[key] = value;
+}
+
+std::map<std::string, std::string>* Item::GetExtraFields()
+{
+  return &m_ExtraFields;
+}
+
+std::string Item::GetExtraField(const std::string& key)
+{
+  return m_ExtraFields[key];
+}
+
 } // end namespace

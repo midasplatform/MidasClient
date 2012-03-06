@@ -76,6 +76,25 @@ public:
           }
         }
       }
+    // Add all extra item fields reported by the server
+    QScriptValue extraFields = engine.evaluate(response).property("data").property("extraFields");
+    if( extraFields.isObject() )
+      {
+      QScriptValueIterator extraField(extraFields);
+      while( extraField.hasNext() )
+        {
+        extraField.next();
+        if( extraField.value().isNull() )
+          {
+          m_Item->SetExtraField(extraField.name().toStdString(), "");
+          }
+        else
+          {
+          m_Item->SetExtraField(extraField.name().toStdString(),
+                                extraField.value().toString().toStdString() );
+          }
+        }
+      }
     return true;
   }
 
@@ -205,6 +224,12 @@ bool Item::Commit()
            << "&parentid=" << m_Item->GetParentId()
            << "&name=" << m_Item->GetName()
            << "&description=" << m_Item->GetDescription();
+  // Pass in extra fields using the metadata notation (prepend with _)
+  for( std::map<std::string, std::string>::iterator itr = m_Item->GetExtraFields()->begin();
+       itr != m_Item->GetExtraFields()->end(); ++itr )
+    {
+    postData << "&_" << itr->first << "=" << itr->second;
+    }
 
   return mws::WebAPI::Instance()->Execute("midas.item.create", NULL,
                                           postData.str().c_str() );
