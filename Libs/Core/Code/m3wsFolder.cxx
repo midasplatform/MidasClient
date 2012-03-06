@@ -183,6 +183,10 @@ public:
           while( extraField.hasNext() )
             {
             extraField.next();
+            if( extraField.flags() & QScriptValue::SkipInEnumeration )
+              {
+              continue;
+              }
             if( extraField.value().isNull() )
               {
               item->SetExtraField(extraField.name().toStdString(), "");
