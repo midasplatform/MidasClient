@@ -75,6 +75,15 @@ bool Item::Fetch()
     m_Item->SetDescription(db.Database->GetValueAsString(3) );
     }
 
+  query.str(std::string() );
+  query << "SELECT field, value FROM item_extrafields WHERE item_id='"
+        << m_Item->GetId() << "'";
+  while( db.Database->GetNextRow() )
+    {
+    m_Item->SetExtraField(db.Database->GetValueAsString(0),
+                          db.Database->GetValueAsString(1) );
+    }
+
   db.Close();
   m_Item->SetFetched(true);
   return true;
@@ -115,6 +124,7 @@ bool Item::Commit()
     }
 
   db.Open();
+  db.Database->ExecuteQuery("BEGIN");
   std::stringstream query;
   query << "UPDATE item SET name='" << midasUtils::EscapeForSQL(m_Item->GetName() )
     << "', path='" << midasUtils::EscapeForSQL(m_Item->GetPath() )
@@ -122,8 +132,43 @@ bool Item::Commit()
     << "', description='" << midasUtils::EscapeForSQL(m_Item->GetDescription() )
     << "' WHERE item_id='" << m_Item->GetId() << "'";
   ok &= db.Database->ExecuteQuery(query.str().c_str() );
-  db.Close();
+  if( !ok )
+    {
+    db.GetLog()->Error("Item update query failed.\n");
+    db.Database->ExecuteQuery("ROLLBACK");
+    db.Close();
+    return false;
+    }
 
+  // Remove old extra fields for this item and replace them with current ones
+  query.str(std::string());
+  query << "DELETE FROM item_extrafields WHERE item_id='" << m_Item->GetId() << "'";
+  ok &= db.Database->ExecuteQuery(query.str().c_str() );
+  if( !ok )
+    {
+    db.GetLog()->Error("Remove old extra fields failed.\n");
+    db.Database->ExecuteQuery("ROLLBACK");
+    db.Close();
+    return false;
+    }
+  for( std::map<std::string, std::string>::iterator itr = m_Item->GetExtraFields()->begin();
+       itr != m_Item->GetExtraFields()->end(); ++itr)
+    {
+    query.str(std::string());
+    query << "INSERT INTO item_extrafields (item_id, field, value) VALUES('" << m_Item->GetId()
+          << "', '" << itr->first << "', '" << itr->second << "')";
+    ok &= db.Database->ExecuteQuery(query.str().c_str() );
+    if( !ok )
+      {
+      db.GetLog()->Error("Add new extra field query failed.\n");
+      db.Database->ExecuteQuery("ROLLBACK");
+      db.Close();
+      return false;
+      }
+    }
+
+  db.Database->ExecuteQuery("COMMIT");
+  db.Close();
   if( ok )
     {
     /* TODO dirty resources?
@@ -255,6 +300,15 @@ bool Item::Delete(bool deleteOnDisk)
     }
   query.str(std::string() );
   query << "DELETE FROM item2folder WHERE item_id='"
+        << m_Item->GetId() << "'";
+  if( !db.Database->ExecuteQuery(query.str().c_str() ) )
+    {
+    db.Database->ExecuteQuery("ROLLBACK");
+    db.Database->Close();
+    return false;
+    }
+  query.str(std::string() );
+  query << "DELETE FROM item_extrafields WHERE item_id='"
         << m_Item->GetId() << "'";
   if( !db.Database->ExecuteQuery(query.str().c_str() ) )
     {
@@ -397,6 +451,22 @@ bool Item::Create()
     db.Database->ExecuteQuery("ROLLBACK");
     db.Database->Close();
     return false;
+    }
+
+  // Insert extra fields into the database
+  for( std::map<std::string, std::string>::iterator itr = m_Item->GetExtraFields()->begin();
+       itr != m_Item->GetExtraFields()->end(); ++itr)
+    {
+    query.str(std::string());
+    query << "INSERT INTO item_extrafields (item_id, field, value) VALUES('" << m_Item->GetId()
+          << "', '" << itr->first << "', '" << itr->second << "')";
+    if( !db.Database->ExecuteQuery(query.str().c_str() ) )
+      {
+      db.GetLog()->Error("Add new extra field query failed.\n");
+      db.Database->ExecuteQuery("ROLLBACK");
+      db.Close();
+      return false;
+      }
     }
   db.Database->ExecuteQuery("COMMIT");
   db.Database->Close();
