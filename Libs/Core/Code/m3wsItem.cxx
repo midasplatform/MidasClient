@@ -84,6 +84,10 @@ public:
       while( extraField.hasNext() )
         {
         extraField.next();
+        if( extraField.flags() & QScriptValue::SkipInEnumeration )
+          {
+          continue;
+          }
         if( extraField.value().isNull() )
           {
           m_Item->SetExtraField(extraField.name().toStdString(), "");

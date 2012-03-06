@@ -938,6 +938,7 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3ItemTreeItem* itemTreeItem)
     {
     i++;
     }
+  i += item->GetExtraFields()->size();
 
   m_MidasTreeItemInfoTable->setRowCount(i);
   i = 0;
@@ -965,6 +966,16 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3ItemTreeItem* itemTreeItem)
     // m_TextMetadataEditor->setItem(itemTreeItem);
     // m_MidasTreeItemInfoTable->setItemDelegateForRow(i, m_TextMetadataEditor);
     m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  for( std::map<std::string, std::string>::iterator itr = item->GetExtraFields()->begin();
+       itr != item->GetExtraFields()->end(); ++itr )
+    {
+    m_MidasTreeItemInfoTable->setItem(i, 0,
+      new QTableWidgetDescriptionItem(itr->first.c_str(), QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+      new QTableWidgetMidas3ItemDescItem(item, itr->second.c_str(), ITEM3_DESCRIPTION, options) );
     i++;
     }
 

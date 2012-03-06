@@ -175,6 +175,29 @@ public:
         item->SetUuid(i.value().property("uuid").toString().toStdString().c_str() );
         item->SetName(i.value().property("name").toString().toStdString().c_str() );
         item->SetDescription(i.value().property("description").toString().toStdString().c_str() );
+        // Add all extra item fields reported by the server
+        QScriptValue extraFields = i.value().property("extraFields");
+        if( extraFields.isObject() )
+          {
+          QScriptValueIterator extraField(extraFields);
+          while( extraField.hasNext() )
+            {
+            extraField.next();
+            if( extraField.flags() & QScriptValue::SkipInEnumeration )
+              {
+              continue;
+              }
+            if( extraField.value().isNull() )
+              {
+              item->SetExtraField(extraField.name().toStdString(), "");
+              }
+            else
+              {
+              item->SetExtraField(extraField.name().toStdString(),
+                                  extraField.value().toString().toStdString() );
+              }
+            }
+          }
         m_Folder->AddItem(item);
         }
       }

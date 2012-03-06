@@ -78,6 +78,7 @@ bool Item::Fetch()
   query.str(std::string() );
   query << "SELECT field, value FROM item_extrafields WHERE item_id='"
         << m_Item->GetId() << "'";
+  db.Database->ExecuteQuery(query.str().c_str() );        
   while( db.Database->GetNextRow() )
     {
     m_Item->SetExtraField(db.Database->GetValueAsString(0),
