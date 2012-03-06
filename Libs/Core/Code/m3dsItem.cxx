@@ -402,8 +402,12 @@ bool Item::Create()
     {
     return false;
     }
-  std::string path = this->m_Item->GetParentFolder()->GetPath()
-    + "/" + m_Item->GetName();
+  std::string path = m_Item->GetPath();
+  if( path == "")
+    {
+    path = this->m_Item->GetParentFolder()->GetPath()
+      + "/" + m_Item->GetName();
+    }
 
   mds::DatabaseAPI db;
   db.Open();
