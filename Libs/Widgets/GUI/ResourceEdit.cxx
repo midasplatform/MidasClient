@@ -25,6 +25,11 @@
 #include "mdsItem.h"
 #include "mdoBitstream.h"
 #include "mdsBitstream.h"
+#include "mdoVersion.h"
+#include "m3doFolder.h"
+#include "m3dsFolder.h"
+#include "m3doItem.h"
+#include "m3dsItem.h"
 
 ResourceEdit::ResourceEdit()
 {
@@ -36,30 +41,48 @@ ResourceEdit::~ResourceEdit()
 
 void ResourceEdit::Save(QTableWidgetItem* row)
 {
-  QTableWidgetMidasCommunityDescItem*  commRow = NULL;
-  QTableWidgetMidasCollectionDescItem* collRow = NULL;
-  QTableWidgetMidasItemDescItem*       itemRow = NULL;
-  QTableWidgetMidasBitstreamDescItem*  bitstreamRow = NULL;
-
   std::string data = row->data(Qt::DisplayRole).toString().toStdString();
-
   midasUtils::StringTrim(data);
 
-  if( (commRow = dynamic_cast<QTableWidgetMidasCommunityDescItem *>(row) ) != NULL )
+  if( DB_IS_MIDAS3 )
     {
-    this->SaveCommunity(commRow->getModelData(), commRow->getField(), data);
+    QTableWidgetMidas3FolderDescItem* folderRow =
+      dynamic_cast<QTableWidgetMidas3FolderDescItem *>(row);
+    QTableWidgetMidas3ItemDescItem*   itemRow =
+      dynamic_cast<QTableWidgetMidas3ItemDescItem *>(row);
+
+    if( folderRow != NULL )
+      {
+      this->SaveFolder3(folderRow->getModelData(), folderRow->getField(), data);
+      }
+    else if( itemRow != NULL )
+      {
+      this->SaveItem3(itemRow->getModelData(), itemRow->getField(), data, itemRow->getFieldName());
+      }
     }
-  else if( (collRow = dynamic_cast<QTableWidgetMidasCollectionDescItem *>(row) ) != NULL )
+  else
     {
-    this->SaveCollection(collRow->getModelData(), collRow->getField(), data);
-    }
-  else if( (itemRow = dynamic_cast<QTableWidgetMidasItemDescItem *>(row) ) != NULL )
-    {
-    this->SaveItem(itemRow->getModelData(), itemRow->getField(), data);
-    }
-  else if( (bitstreamRow = dynamic_cast<QTableWidgetMidasBitstreamDescItem *>(row) ) != NULL )
-    {
-    this->SaveBitstream(bitstreamRow->getModelData(), itemRow->getField(), data);
+    QTableWidgetMidasCommunityDescItem*  commRow = NULL;
+    QTableWidgetMidasCollectionDescItem* collRow = NULL;
+    QTableWidgetMidasItemDescItem*       itemRow = NULL;
+    QTableWidgetMidasBitstreamDescItem*  bitstreamRow = NULL;
+
+    if( (commRow = dynamic_cast<QTableWidgetMidasCommunityDescItem *>(row) ) != NULL )
+      {
+      this->SaveCommunity(commRow->getModelData(), commRow->getField(), data);
+      }
+    else if( (collRow = dynamic_cast<QTableWidgetMidasCollectionDescItem *>(row) ) != NULL )
+      {
+      this->SaveCollection(collRow->getModelData(), collRow->getField(), data);
+      }
+    else if( (itemRow = dynamic_cast<QTableWidgetMidasItemDescItem *>(row) ) != NULL )
+      {
+      this->SaveItem(itemRow->getModelData(), itemRow->getField(), data);
+      }
+    else if( (bitstreamRow = dynamic_cast<QTableWidgetMidasBitstreamDescItem *>(row) ) != NULL )
+      {
+      this->SaveBitstream(bitstreamRow->getModelData(), itemRow->getField(), data);
+      }
     }
 }
 
@@ -241,5 +264,88 @@ void ResourceEdit::SaveBitstream(mdo::Bitstream* bitstream, MIDASFields field,
   (void)field;
   (void)data;
   // nothing to do at this time
+}
+
+void ResourceEdit::SaveFolder3(m3do::Folder * folder, MIDASFields field, const std::string &data)
+{
+  bool changed = false;
+  switch( field )
+    {
+    case FOLDER3_NAME:
+      if( folder->GetName() != data )
+        {
+        folder->SetName(data.c_str() );
+        changed = true;
+        }
+      break;
+    case FOLDER3_DESCRIPTION:
+      if( folder->GetDescription() != data )
+        {
+        folder->SetDescription(data.c_str() );
+        changed = true;
+        }
+      break;
+    default:
+      return;
+    }
+
+  if( changed )
+    {
+    m3ds::Folder mdsFolder;
+    mdsFolder.SetObject(folder);
+    mdsFolder.MarkAsDirty();
+    mdsFolder.Commit();
+
+    this->Log->Status("Folder saved successfully");
+    this->Log->Message("Folder saved successfully");
+
+    emit DataModified(folder->GetUuid() );
+    }
+}
+
+void ResourceEdit::SaveItem3(m3do::Item * item, MIDASFields field, const std::string &data,
+                             const std::string& fieldName)
+{
+  bool changed = false;
+
+  switch( field )
+    {
+    case ITEM3_NAME:
+      if( item->GetName() != data )
+        {
+        item->SetName(data.c_str() );
+        changed = true;
+        }
+      break;
+    case ITEM3_DESCRIPTION:
+      if( item->GetDescription() != data )
+        {
+        item->SetDescription(data.c_str() );
+        changed = true;
+        }
+      break;
+    case ITEM3_EXTRAFIELD:
+      if( fieldName != "" && item->GetExtraField(fieldName) != data )
+        {
+        item->SetExtraField(fieldName, data);
+        changed = true;
+        }
+      break;
+    default:
+      return;
+    }
+
+  if( changed )
+    {
+    m3ds::Item mdsItem;
+    mdsItem.SetObject(item);
+    mdsItem.MarkAsDirty();
+    mdsItem.Commit();
+
+    this->Log->Status("Item saved successfully");
+    this->Log->Message("Item saved successfully");
+
+    emit DataModified(item->GetUuid() );
+    }
 }
 

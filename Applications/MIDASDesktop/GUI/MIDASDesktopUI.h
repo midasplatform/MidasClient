@@ -383,6 +383,10 @@ private:
 
   void InfoPanel(MidasBitstreamTreeItem* node, bool editable);
 
+  void InfoPanel(Midas3FolderTreeItem* node, bool editable);
+
+  void InfoPanel(Midas3ItemTreeItem* node, bool editable);
+
   /** Common code for adding bitstreams to the client tree */
   bool AddBitstreamsCommon(const QStringList& files);
 

@@ -253,6 +253,7 @@ void Midas3TreeModelClient::FetchFolder(Midas3FolderTreeItem* parent)
     item->SetFolder(*i);
     item->SetDynamicFetch(true);
     item->SetFetchedChildren(false);
+    item->SetClientResource(parent->IsClientResource());
     if( (*i)->IsDirty() )
       {
       item->SetDecorationRole(Midas3TreeItem::Dirty);
@@ -272,6 +273,7 @@ void Midas3TreeModelClient::FetchFolder(Midas3FolderTreeItem* parent)
     item->SetItem(*i);
     item->SetDynamicFetch(true);
     item->SetFetchedChildren(false);
+    item->SetClientResource(parent->IsClientResource());
     if( (*i)->IsDirty() )
       {
       item->SetDecorationRole(Midas3TreeItem::Dirty);
@@ -309,6 +311,7 @@ void Midas3TreeModelClient::FetchItem(Midas3ItemTreeItem* parent)
     bitstream->SetBitstream(*i);
     bitstream->SetDynamicFetch(false);
     bitstream->SetFetchedChildren(true);
+    bitstream->SetClientResource(parent->IsClientResource());
     if( (*i)->IsDirty() )
       {
       bitstream->SetDecorationRole(Midas3TreeItem::Dirty);

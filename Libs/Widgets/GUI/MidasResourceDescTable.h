@@ -47,6 +47,7 @@ enum MIDASFields
   FOLDER3_DESCRIPTION,
   ITEM3_NAME,
   ITEM3_DESCRIPTION,
+  ITEM3_EXTRAFIELD,
   BITSTREAM3_NAME,
   BITSTREAM3_CHECKSUM,
   BITSTREAM3_SIZE,
@@ -217,10 +218,12 @@ class QTableWidgetMidas3ItemDescItem : public QTableWidgetDescriptionItem
 {
 public:
   QTableWidgetMidas3ItemDescItem(m3do::Item* modeldata, const char* text, MIDASFields field,
-                                 QTableWidgetDescriptionItem::Options options = Tooltip | Editable) :
+                                 QTableWidgetDescriptionItem::Options options = Tooltip | Editable,
+                                 const std::string& fieldName = "") :
     QTableWidgetDescriptionItem(text, options), modeldata(modeldata)
   {
     m_Field = field;
+    m_FieldName = fieldName;
   }
 
   m3do::Item * getModelData()
@@ -230,12 +233,19 @@ public:
 
   MIDASFields getField()
   {
-    return this->m_Field;
+    return m_Field;
+  }
+
+  // If this is a ITEM3_EXTRAFIELD, it will store a name for the field
+  std::string getFieldName()
+  {
+    return m_FieldName;
   }
 
 private:
   m3do::Item* modeldata;
   MIDASFields m_Field;
+  std::string m_FieldName;
 };
 
 class QTableWidgetMidas3BitstreamDescItem : public QTableWidgetDescriptionItem
