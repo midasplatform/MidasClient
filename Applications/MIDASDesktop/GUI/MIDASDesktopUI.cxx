@@ -857,138 +857,13 @@ void MIDASDesktopUI::UpdateInfoPanel(const MidasBitstreamTreeItem* bitstreamTree
 void MIDASDesktopUI::UpdateInfoPanel(const Midas3FolderTreeItem* folderTreeItem)
 {
   m_EditMode = false;
-  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
-    | QTableWidgetDescriptionItem::AlignLeft;
-  bool isComm = folderTreeItem->GetFolder()->GetResourceType() ==
-    midas3ResourceType::COMMUNITY;
-
-  this->EnableResourceEditing(folderTreeItem->IsClientResource() /*&& !edit*/);
-
-  m_MidasTreeItemInfoGroupBox->setTitle(isComm ? "Community information" : "Folder information");
-  m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
-  m_MidasTreeItemInfoTable->clearSelection();
-
-  m3do::Folder* folder = folderTreeItem->GetFolder();
-
-  int i = 0;
-
-  if( folder->GetName() != "" )
-    {
-    i++;
-    }
-  if( folder->GetDescription() != "" )
-    {
-    i++;
-    }
-
-  m_MidasTreeItemInfoTable->setRowCount(i);
-  i = 0;
-
-  if( folder->GetName() != "" )
-    {
-    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
-    m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
-    m_MidasTreeItemInfoTable->setItem(i, 1,
-                                      new QTableWidgetMidas3FolderDescItem(folder, folder->GetName().c_str(),
-                                                                         FOLDER3_NAME, options) );
-    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
-    i++;
-    }
-
-  if( folder->GetDescription() != "" )
-    {
-    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
-    m_MidasTreeItemInfoTable->setItem(i, 0,
-                                    new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold) );
-    m_MidasTreeItemInfoTable->setItem(i, 1,
-                                    new QTableWidgetMidas3FolderDescItem(folder, folder->GetDescription().c_str(),
-                                                                         FOLDER3_DESCRIPTION, options) );
-    // m_TextMetadataEditor->setField(FOLDER3_DESCRIPTION);
-    // m_TextMetadataEditor->setItem(folderTreeItem);
-    // m_MidasTreeItemInfoTable->setItemDelegateForRow(i, m_TextMetadataEditor);
-    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
-    i++;
-    }
-
-  m_MidasTreeItemInfoTable->resizeColumnsToContents();
-  int leftoverSpace = m_MidasTreeItemInfoTable->width() - m_MidasTreeItemInfoTable->columnWidth(0)
-    - m_MidasTreeItemInfoTable->columnWidth(1);
-  m_MidasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
-  m_MidasTreeItemInfoTable->resizeColumnsToContents();
-  m_MidasTreeItemInfoTable->resizeRowsToContents();
+  this->InfoPanel(const_cast<Midas3FolderTreeItem *>(folderTreeItem), false);
 }
 
 void MIDASDesktopUI::UpdateInfoPanel(const Midas3ItemTreeItem* itemTreeItem)
 {
   m_EditMode = false;
-  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
-    | QTableWidgetDescriptionItem::AlignLeft;
-
-  this->EnableResourceEditing(itemTreeItem->IsClientResource() /*&& !edit*/);
-
-  m_MidasTreeItemInfoGroupBox->setTitle("Item information");
-  m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
-  m_MidasTreeItemInfoTable->clearSelection();
-
-  m3do::Item* item = itemTreeItem->GetItem();
-
-  int i = 0;
-
-  if( item->GetName() != "" )
-    {
-    i++;
-    }
-  if( item->GetDescription() != "" )
-    {
-    i++;
-    }
-  i += item->GetExtraFields()->size();
-
-  m_MidasTreeItemInfoTable->setRowCount(i);
-  i = 0;
-
-  if( item->GetName() != "" )
-    {
-    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
-    m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
-    m_MidasTreeItemInfoTable->setItem(i, 1,
-                                    new QTableWidgetMidas3ItemDescItem(item, item->GetName().c_str(), ITEM3_NAME,
-                                                                       options) );
-    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
-    i++;
-    }
-
-  if( item->GetDescription() != "" )
-    {
-    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
-    m_MidasTreeItemInfoTable->setItem(i, 0,
-                                    new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold) );
-    m_MidasTreeItemInfoTable->setItem(i, 1,
-                                    new QTableWidgetMidas3ItemDescItem(item, item->GetDescription().c_str(),
-                                                                       ITEM3_DESCRIPTION, options) );
-    // m_TextMetadataEditor->setField(ITEM3_DESCRIPTION);
-    // m_TextMetadataEditor->setItem(itemTreeItem);
-    // m_MidasTreeItemInfoTable->setItemDelegateForRow(i, m_TextMetadataEditor);
-    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
-    i++;
-    }
-
-  for( std::map<std::string, std::string>::iterator itr = item->GetExtraFields()->begin();
-       itr != item->GetExtraFields()->end(); ++itr )
-    {
-    m_MidasTreeItemInfoTable->setItem(i, 0,
-      new QTableWidgetDescriptionItem(itr->first.c_str(), QTableWidgetDescriptionItem::Bold) );
-    m_MidasTreeItemInfoTable->setItem(i, 1,
-      new QTableWidgetMidas3ItemDescItem(item, itr->second.c_str(), ITEM3_DESCRIPTION, options) );
-    i++;
-    }
-
-  m_MidasTreeItemInfoTable->resizeColumnsToContents();
-  int leftoverSpace = m_MidasTreeItemInfoTable->width() - m_MidasTreeItemInfoTable->columnWidth(0)
-    - m_MidasTreeItemInfoTable->columnWidth(1);
-  m_MidasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
-  m_MidasTreeItemInfoTable->resizeColumnsToContents();
-  m_MidasTreeItemInfoTable->resizeRowsToContents();
+  this->InfoPanel(const_cast<Midas3ItemTreeItem *>(itemTreeItem), false);
 }
 
 void MIDASDesktopUI::UpdateInfoPanel(const Midas3BitstreamTreeItem* bitstreamTreeItem)
@@ -1069,6 +944,150 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3BitstreamTreeItem* bitstreamTre
                                     new QTableWidgetMidas3BitstreamDescItem(bitstream, bitstream->GetPath().c_str(),
                                                                             BITSTREAM3_PATH, options) );
     m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  m_MidasTreeItemInfoTable->resizeColumnsToContents();
+  int leftoverSpace = m_MidasTreeItemInfoTable->width() - m_MidasTreeItemInfoTable->columnWidth(0)
+    - m_MidasTreeItemInfoTable->columnWidth(1);
+  m_MidasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
+  m_MidasTreeItemInfoTable->resizeColumnsToContents();
+  m_MidasTreeItemInfoTable->resizeRowsToContents();
+}
+
+void MIDASDesktopUI::InfoPanel(Midas3FolderTreeItem* folderTreeItem, bool edit)
+{
+  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
+    | QTableWidgetDescriptionItem::AlignLeft;
+  if( edit )
+    {
+    options |= QTableWidgetDescriptionItem::Editable;
+    }
+  bool isComm = folderTreeItem->GetFolder()->GetResourceType() ==
+    midas3ResourceType::COMMUNITY;
+
+  this->EnableResourceEditing(folderTreeItem->IsClientResource() && !edit);
+
+  m_MidasTreeItemInfoGroupBox->setTitle(isComm ? "Community information" : "Folder information");
+  m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
+  m_MidasTreeItemInfoTable->clearSelection();
+
+  m3do::Folder* folder = folderTreeItem->GetFolder();
+
+  int i = 0;
+
+  if( folder->GetName() != "" )
+    {
+    i++;
+    }
+  if( folder->GetDescription() != "" )
+    {
+    i++;
+    }
+
+  m_MidasTreeItemInfoTable->setRowCount(i);
+  i = 0;
+
+  if( folder->GetName() != "" )
+    {
+    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+                                      new QTableWidgetMidas3FolderDescItem(folder, folder->GetName().c_str(),
+                                                                         FOLDER3_NAME, options) );
+    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  if( folder->GetDescription() != "" )
+    {
+    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    m_MidasTreeItemInfoTable->setItem(i, 0,
+                                    new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+                                    new QTableWidgetMidas3FolderDescItem(folder, folder->GetDescription().c_str(),
+                                                                         FOLDER3_DESCRIPTION, options) );
+    // m_TextMetadataEditor->setField(FOLDER3_DESCRIPTION);
+    // m_TextMetadataEditor->setItem(folderTreeItem);
+    // m_MidasTreeItemInfoTable->setItemDelegateForRow(i, m_TextMetadataEditor);
+    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  m_MidasTreeItemInfoTable->resizeColumnsToContents();
+  int leftoverSpace = m_MidasTreeItemInfoTable->width() - m_MidasTreeItemInfoTable->columnWidth(0)
+    - m_MidasTreeItemInfoTable->columnWidth(1);
+  m_MidasTreeItemInfoTable->horizontalHeader()->setStretchLastSection(leftoverSpace > 0);
+  m_MidasTreeItemInfoTable->resizeColumnsToContents();
+  m_MidasTreeItemInfoTable->resizeRowsToContents();
+}
+
+void MIDASDesktopUI::InfoPanel(Midas3ItemTreeItem* itemTreeItem, bool edit)
+{
+  QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
+    | QTableWidgetDescriptionItem::AlignLeft;
+  if( edit )
+    {
+    options |= QTableWidgetDescriptionItem::Editable;
+    }
+
+  this->EnableResourceEditing(itemTreeItem->IsClientResource() && !edit);
+
+  m_MidasTreeItemInfoGroupBox->setTitle("Item information");
+  m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
+  m_MidasTreeItemInfoTable->clearSelection();
+
+  m3do::Item* item = itemTreeItem->GetItem();
+
+  int i = 0;
+
+  if( item->GetName() != "" )
+    {
+    i++;
+    }
+  if( item->GetDescription() != "" )
+    {
+    i++;
+    }
+  i += item->GetExtraFields()->size();
+
+  m_MidasTreeItemInfoTable->setRowCount(i);
+  i = 0;
+
+  if( item->GetName() != "" )
+    {
+    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+                                    new QTableWidgetMidas3ItemDescItem(item, item->GetName().c_str(), ITEM3_NAME,
+                                                                       options) );
+    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  if( item->GetDescription() != "" )
+    {
+    m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
+    m_MidasTreeItemInfoTable->setItem(i, 0,
+                                    new QTableWidgetDescriptionItem("Description", QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+                                    new QTableWidgetMidas3ItemDescItem(item, item->GetDescription().c_str(),
+                                                                       ITEM3_DESCRIPTION, options) );
+    // m_TextMetadataEditor->setField(ITEM3_DESCRIPTION);
+    // m_TextMetadataEditor->setItem(itemTreeItem);
+    // m_MidasTreeItemInfoTable->setItemDelegateForRow(i, m_TextMetadataEditor);
+    m_MidasTreeItemInfoTable->setItemDelegateForRow(i, NULL);
+    i++;
+    }
+
+  for( std::map<std::string, std::string>::iterator itr = item->GetExtraFields()->begin();
+       itr != item->GetExtraFields()->end(); ++itr )
+    {
+    m_MidasTreeItemInfoTable->setItem(i, 0,
+      new QTableWidgetDescriptionItem(itr->first.c_str(), QTableWidgetDescriptionItem::Bold) );
+    m_MidasTreeItemInfoTable->setItem(i, 1,
+      new QTableWidgetMidas3ItemDescItem(item, itr->second.c_str(), ITEM3_EXTRAFIELD, options,
+                                         itr->first) );
     i++;
     }
 
@@ -2743,30 +2762,48 @@ void MIDASDesktopUI::EnableResourceEditing(bool val)
 
 void MIDASDesktopUI::EditInfo()
 {
-  //TODO Midas3ify
-  MidasTreeItem* node = const_cast<MidasTreeItem *>(
-      dynamic_cast<MidasTreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem() );
+  if( DB_IS_MIDAS3 )
+    {
+    Midas3TreeItem* node = const_cast<Midas3TreeItem *>(
+        dynamic_cast<Midas3TreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem() );
+    Midas3FolderTreeItem* folder = dynamic_cast<Midas3FolderTreeItem *>(node);
+    Midas3ItemTreeItem*   item = dynamic_cast<Midas3ItemTreeItem *>(node);
 
-  MidasCommunityTreeItem*  comm = NULL;
-  MidasCollectionTreeItem* coll = NULL;
-  MidasItemTreeItem*       item = NULL;
-  MidasBitstreamTreeItem*  bitstream = NULL;
+    if( folder != NULL )
+      {
+      this->InfoPanel(folder, true);
+      }
+    else if( item != NULL )
+      {
+      this->InfoPanel(item, true);
+      }
+    }
+  else
+    {
+    MidasTreeItem* node = const_cast<MidasTreeItem *>(
+        dynamic_cast<MidasTreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem() );
 
-  if( (comm = dynamic_cast<MidasCommunityTreeItem *>(node) ) != NULL )
-    {
-    this->InfoPanel(comm, true);
-    }
-  else if( (coll = dynamic_cast<MidasCollectionTreeItem *>(node) ) != NULL )
-    {
-    this->InfoPanel(coll, true);
-    }
-  else if( (item = dynamic_cast<MidasItemTreeItem *>(node) ) != NULL )
-    {
-    this->InfoPanel(item, true);
-    }
-  else if( (bitstream = dynamic_cast<MidasBitstreamTreeItem *>(node) ) != NULL )
-    {
-    this->InfoPanel(bitstream, true);
+    MidasCommunityTreeItem*  comm = NULL;
+    MidasCollectionTreeItem* coll = NULL;
+    MidasItemTreeItem*       item = NULL;
+    MidasBitstreamTreeItem*  bitstream = NULL;
+
+    if( (comm = dynamic_cast<MidasCommunityTreeItem *>(node) ) != NULL )
+      {
+      this->InfoPanel(comm, true);
+      }
+    else if( (coll = dynamic_cast<MidasCollectionTreeItem *>(node) ) != NULL )
+      {
+      this->InfoPanel(coll, true);
+      }
+    else if( (item = dynamic_cast<MidasItemTreeItem *>(node) ) != NULL )
+      {
+      this->InfoPanel(item, true);
+      }
+    else if( (bitstream = dynamic_cast<MidasBitstreamTreeItem *>(node) ) != NULL )
+      {
+      this->InfoPanel(bitstream, true);
+      }
     }
   m_EditMode = true;
 }
