@@ -862,6 +862,8 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3FolderTreeItem* folderTreeItem)
   bool isComm = folderTreeItem->GetFolder()->GetResourceType() ==
     midas3ResourceType::COMMUNITY;
 
+  this->EnableResourceEditing(folderTreeItem->IsClientResource() /*&& !edit*/);
+
   m_MidasTreeItemInfoGroupBox->setTitle(isComm ? "Community information" : "Folder information");
   m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
   m_MidasTreeItemInfoTable->clearSelection();
@@ -921,6 +923,8 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3ItemTreeItem* itemTreeItem)
   m_EditMode = false;
   QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
     | QTableWidgetDescriptionItem::AlignLeft;
+
+  this->EnableResourceEditing(itemTreeItem->IsClientResource() /*&& !edit*/);
 
   m_MidasTreeItemInfoGroupBox->setTitle("Item information");
   m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
@@ -992,6 +996,7 @@ void MIDASDesktopUI::UpdateInfoPanel(const Midas3BitstreamTreeItem* bitstreamTre
   m_EditMode = false;
   QTableWidgetDescriptionItem::Options options = QTableWidgetDescriptionItem::Tooltip
     | QTableWidgetDescriptionItem::AlignLeft;
+  this->EnableResourceEditing(false);
 
   m_MidasTreeItemInfoGroupBox->setTitle("Bitstream information");
   m_MidasTreeItemInfoTable->setGridStyle(Qt::NoPen);
@@ -2738,6 +2743,7 @@ void MIDASDesktopUI::EnableResourceEditing(bool val)
 
 void MIDASDesktopUI::EditInfo()
 {
+  //TODO Midas3ify
   MidasTreeItem* node = const_cast<MidasTreeItem *>(
       dynamic_cast<MidasTreeViewClient *>(m_TreeViewClient)->GetSelectedMidasTreeItem() );
 
