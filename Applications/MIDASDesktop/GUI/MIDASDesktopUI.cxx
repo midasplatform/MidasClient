@@ -976,11 +976,11 @@ void MIDASDesktopUI::InfoPanel(Midas3FolderTreeItem* folderTreeItem, bool edit)
 
   int i = 0;
 
-  if( folder->GetName() != "" )
+  if( folder->GetName() != "" || edit )
     {
     i++;
     }
-  if( folder->GetDescription() != "" )
+  if( folder->GetDescription() != "" || edit )
     {
     i++;
     }
@@ -988,7 +988,7 @@ void MIDASDesktopUI::InfoPanel(Midas3FolderTreeItem* folderTreeItem, bool edit)
   m_MidasTreeItemInfoTable->setRowCount(i);
   i = 0;
 
-  if( folder->GetName() != "" )
+  if( folder->GetName() != "" || edit )
     {
     m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
     m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
@@ -999,7 +999,7 @@ void MIDASDesktopUI::InfoPanel(Midas3FolderTreeItem* folderTreeItem, bool edit)
     i++;
     }
 
-  if( folder->GetDescription() != "" )
+  if( folder->GetDescription() != "" || edit )
     {
     m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
     m_MidasTreeItemInfoTable->setItem(i, 0,
@@ -1041,11 +1041,11 @@ void MIDASDesktopUI::InfoPanel(Midas3ItemTreeItem* itemTreeItem, bool edit)
 
   int i = 0;
 
-  if( item->GetName() != "" )
+  if( item->GetName() != "" || edit )
     {
     i++;
     }
-  if( item->GetDescription() != "" )
+  if( item->GetDescription() != "" || edit )
     {
     i++;
     }
@@ -1054,7 +1054,7 @@ void MIDASDesktopUI::InfoPanel(Midas3ItemTreeItem* itemTreeItem, bool edit)
   m_MidasTreeItemInfoTable->setRowCount(i);
   i = 0;
 
-  if( item->GetName() != "" )
+  if( item->GetName() != "" || edit )
     {
     m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
     m_MidasTreeItemInfoTable->setItem(i, 0, new QTableWidgetDescriptionItem("Name", QTableWidgetDescriptionItem::Bold) );
@@ -1065,7 +1065,7 @@ void MIDASDesktopUI::InfoPanel(Midas3ItemTreeItem* itemTreeItem, bool edit)
     i++;
     }
 
-  if( item->GetDescription() != "" )
+  if( item->GetDescription() != "" || edit )
     {
     m_MidasTreeItemInfoTable->setRowHeight(i, QTableWidgetDescriptionItem::rowHeight);
     m_MidasTreeItemInfoTable->setItem(i, 0,
