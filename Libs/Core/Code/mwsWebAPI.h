@@ -52,21 +52,8 @@ namespace mws
 class MirrorHandler;
 class RestResponseParser;
 
-#define MWS_CONTROLLER_CLASS friend class
-
 class WebAPI : public midasLogAware
 {
-  // All of the web api controllers need to call Execute/Upload/Download
-  MWS_CONTROLLER_CLASS Community;
-  MWS_CONTROLLER_CLASS Collection;
-  MWS_CONTROLLER_CLASS Item;
-  MWS_CONTROLLER_CLASS Bitstream;
-  MWS_CONTROLLER_CLASS Search;
-  MWS_CONTROLLER_CLASS TreePath;
-  MWS_CONTROLLER_CLASS NewResources;
-  MWS_CONTROLLER_CLASS m3ws::Folder;
-  MWS_CONTROLLER_CLASS m3ws::Item;
-  MWS_CONTROLLER_CLASS m3ws::Bitstream;
 public:
   // Singleton to be used in an application
   static WebAPI * Instance();
@@ -124,8 +111,7 @@ public:
   // Cancel the upload or download
   void Cancel();
 
-protected:
-  // Execute a web API command
+  // Execute an arbitrary web API command
   bool Execute(const char* url, RestResponseParser* parser = NULL, const char* postData = NULL, bool retry = true,
                bool ignoreError = false);
 
