@@ -21,7 +21,6 @@
 #include "midasProgressReporter.h"
 #include "midasUtils.h"
 
-#include <QUrl>
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -146,6 +145,7 @@ bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
   req.setUrl(url);
 
   QNetworkAccessManager network;
+  QUrl urlRedirectedTo;
   QNetworkReply*        reply = network.get(req);
 
   QEventLoop loop;
@@ -162,6 +162,26 @@ bool RestAPI::Download(const std::string& filename, const std::string& urlstr,
   while( reply->isRunning() )
     {
     loop.exec(); // wait for data from the reply
+    QVariant possibleRedirectUrl =
+    reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+
+    urlRedirectedTo = this->RedirectUrl(possibleRedirectUrl.toUrl(), urlRedirectedTo);
+
+    if( !urlRedirectedTo.isEmpty() )
+      {
+      urlRedirectedTo.setHost(url.host());
+      urlRedirectedTo.setScheme(url.scheme());
+      std::string str = urlRedirectedTo.toString().toStdString();
+      reply->deleteLater();
+      reply = network.get(QNetworkRequest(urlRedirectedTo) );
+      connect(reply, SIGNAL(readyRead() ), &loop, SLOT(quit() ) );
+      connect(reply, SIGNAL(finished() ), &loop, SLOT(quit() ) );
+      connect(this, SIGNAL(Canceled() ), &loop, SLOT(quit() ) );
+      }
+    else
+      {
+      urlRedirectedTo.clear();
+      }
 
     if( m_Cancel )
       {
@@ -271,6 +291,16 @@ void RestAPI::UploadProgress(qint64 current, qint64 total)
 {
   total += m_Offset;
   this->TransferProgress(current, total);
+}
+
+QUrl RestAPI::RedirectUrl(const QUrl& possibleRedirectUrl, const QUrl& oldRedirectUrl) const
+{
+  QUrl redirectUrl;
+  if( !possibleRedirectUrl.isEmpty() && possibleRedirectUrl != oldRedirectUrl )
+    {
+    redirectUrl = possibleRedirectUrl;
+    }
+  return redirectUrl;
 }
 
 } // end namespace
