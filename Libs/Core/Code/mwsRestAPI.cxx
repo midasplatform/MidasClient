@@ -98,6 +98,7 @@ bool RestAPI::Execute(const char* urlstr, RestResponseParser* parser,
     }
   else
     {
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/x-www-form-urlencoded");
     reply = network.post(req, QByteArray(post_data) );
     }
 
