@@ -30,6 +30,12 @@ class Item;
 class Bitstream;
 };
 
+namespace m3do
+{
+class Folder;
+class Item;
+}
+
 class ResourceEdit : public QObject, public midasLogAware
 {
   Q_OBJECT
@@ -49,6 +55,10 @@ protected:
   void SaveCollection(mdo::Collection *, MIDASFields, std::string data);
   void SaveItem(mdo::Item *, MIDASFields, std::string data);
   void SaveBitstream(mdo::Bitstream *, MIDASFields, std::string data);
+
+  void SaveFolder3(m3do::Folder *, MIDASFields, const std::string& data);
+  void SaveItem3(m3do::Item *, MIDASFields, const std::string& data,
+                 const std::string& fieldName);
 };
 
 #endif

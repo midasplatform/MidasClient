@@ -21,6 +21,7 @@
 #include "midasStandardIncludes.h"
 
 #include <QObject>
+#include <QUrl>
 
 // How long to wait for an execute before dying
 #define REST_EXECUTE_TIMEOUT 20
@@ -79,6 +80,8 @@ protected slots:
   void TransferProgress(qint64, qint64);
   void UploadProgress(qint64, qint64);
 protected:
+  QUrl RedirectUrl(const QUrl& possibleRedirectUrl, const QUrl& oldRedirectUrl) const;
+
   bool                   m_Cancel;
   std::string            m_ServerUrl;
   midasProgressReporter* m_Progress;
