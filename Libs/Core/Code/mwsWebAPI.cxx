@@ -286,6 +286,47 @@ bool WebAPI::Login(const char* appname,
 }
 
 // -------------------------------------------------------------------
+bool WebAPI::TfaLogin(const char* appname, const char* email,
+                      const char* apikey, const char* otp)
+{
+  m_APIToken = "";
+  std::string mfaTokenId;
+  RestResponseParser parser;
+  parser.AddTag("mfa_token_id", mfaTokenId);
+
+  std::stringstream url;
+  url << "midas.login&email=" << email;
+  url << "&apikey=" << apikey;
+  url << "&appname=" << appname;
+  if( !this->Execute(url.str().c_str(), &parser, NULL, false) )
+    {
+    return false;
+    }
+
+  if( mfaTokenId.size() == 0 )
+    {
+    return false;
+    }
+
+  RestResponseParser tfaParser;
+  tfaParser.AddTag("token", m_APIToken);
+
+  url.str(std::string() );
+  url << "midas.mfa.otp.login&mfaTokenId=" << mfaTokenId;
+  url << "&otp=" << otp;
+  if( !this->Execute(url.str().c_str(), &tfaParser, NULL, false) )
+    {
+    return false;
+    }
+
+  if( m_APIToken.size() < 40 )
+    {
+    return false;
+    }
+  return true;
+}
+
+// -------------------------------------------------------------------
 void WebAPI::Logout()
 {
   m_APIToken = "";

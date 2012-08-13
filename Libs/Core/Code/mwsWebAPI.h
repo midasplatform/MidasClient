@@ -100,6 +100,10 @@ public:
   // Login to MIDAS
   bool Login(const char* applicationname, const char* email, const char* apikey);
 
+  // Login to MIDAS using two-factor authentication
+  bool TfaLogin(const char* applicationname, const char* email, const char* apikey,
+                const char* otp);
+
   // Clears the API token
   void Logout();
 
