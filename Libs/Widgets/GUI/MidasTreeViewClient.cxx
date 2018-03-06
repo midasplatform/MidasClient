@@ -48,17 +48,17 @@ MidasTreeViewClient::MidasTreeViewClient(QWidget* parent)
   this->setSelectionMode(QTreeView::SingleSelection);
 
   connect(this, SIGNAL( collapsed(const QModelIndex &) ),
-          this->model(), SLOT(itemCollapsed(const QModelIndex &) ) );
+          this->model(), SLOT(ItemCollapsed(const QModelIndex &) ) );
   connect(this, SIGNAL( expanded(const QModelIndex &) ),
-          this->model(), SLOT(itemExpanded(const QModelIndex &) ) );
-  connect(m_Model, SIGNAL( expand(const QModelIndex &) ),
+          this->model(), SLOT(ItemCollapsed(const QModelIndex &) ) );
+  connect(m_Model, SIGNAL( Expand(const QModelIndex &) ),
           this, SLOT( expand(const QModelIndex &) ) );
 
   // define action to be triggered when tree item is selected
   QItemSelectionModel* itemSelectionModel = this->selectionModel();
   connect(itemSelectionModel,
           SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &) ),
-          this, SLOT(updateSelection(const QItemSelection &, const QItemSelection & ) ) );
+          this, SLOT(UpdateSelection(const QItemSelection &, const QItemSelection & ) ) );
 
   m_MimeType = "MIDAS/client_resource";
   m_AcceptMimeType = "MIDAS/server_resource";
