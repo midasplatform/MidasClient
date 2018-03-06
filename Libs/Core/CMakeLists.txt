@@ -126,7 +126,7 @@ add_custom_target(
 add_library(MIDASClientCore ${MIDASClientCore_SRCS})
 
 target_link_libraries(MIDASClientCore
-  sqlite
+  sqlite3
   ${QT_QTCORE_LIBRARY}
   ${QT_QTGUI_LIBRARY}
   ${QT_QTSCRIPT_LIBRARY}
